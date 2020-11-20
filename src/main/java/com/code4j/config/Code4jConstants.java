@@ -1,0 +1,31 @@
+package com.code4j.config;
+
+import java.awt.*;
+
+/**
+ * @author liu_wp
+ * @date 2020/11/17
+ * @see
+ */
+public class Code4jConstants {
+    public static Dimension FROM_MIN_DEFAULT_SIZE = new Dimension(900, 600);
+    public static Dimension TOP_MIN_DEFAULT_SIZE = new Dimension(900, 25);
+    public static Dimension LEFT_MIN_DEFAULT_SIZE = new Dimension(200, 530);
+    public static Dimension RIGHT_MIN_DEFAULT_SIZE = new Dimension(700, 530);
+    public static Dimension BOTTOM_MIN_DEFAULT_SIZE = new Dimension(900, 15);
+
+    public final static String DEFAULT_ROOT_PACKAGE="com";
+    public final static String PROJECT_ROOT_PATH = System.getProperty("user.dir");
+    public final static String SYS_TEMP_PATH = System.getProperty("java.io.tmpdir");
+
+    public final static String DO_SUFFIX = "DO";
+    public final static String VO_SUFFIX = "VO";
+    public final static String MAPPER_SUFFIX = "Mapper";
+
+
+    public final static String DEFAULT_PATH = "src/main/java";
+    public final static String DEFAULT_XML_PATH = "src/main/resources";
+    public final static String DEFAULT_MAPPER_PACKAGE = "mapper";
+
+    public static final String TEMPLATE_PATH = "src/main/java/com/code4j/templates";
+}
