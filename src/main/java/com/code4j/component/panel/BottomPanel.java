@@ -1,5 +1,8 @@
 package com.code4j.component.panel;
 
+import com.code4j.config.Code4jConstants;
+
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -23,5 +26,7 @@ public class BottomPanel extends BasePanel {
     @Override
     protected void init() {
         setBackground(Color.LIGHT_GRAY);
+        this.add(new JLabel("当前版本："+Code4jConstants.APP_VERSION));
+        this.setLayout(new FlowLayout(FlowLayout.RIGHT));
     }
 }
