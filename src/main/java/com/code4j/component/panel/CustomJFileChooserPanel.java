@@ -78,6 +78,10 @@ public class CustomJFileChooserPanel extends BasePanel {
         return file;
     }
 
+    public String getFileName() {
+        return file == null ? null : file.getName();
+    }
+
     public void setFile(final File file) {
         this.file = file;
     }

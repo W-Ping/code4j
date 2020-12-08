@@ -10,13 +10,13 @@ public class PojoParamsInfo extends BaseTemplateInfo {
     /**
      * 父类
      */
-    public SuperInfo superInfo;
+    private SuperPojoInfo superPojoInfo;
 
-    public SuperInfo getSuperInfo() {
-        return superInfo;
+    public SuperPojoInfo getSuperPojoInfo() {
+        return superPojoInfo;
     }
 
-    public void setSuperInfo(final SuperInfo superInfo) {
-        this.superInfo = superInfo;
+    public void setSuperPojoInfo(final SuperPojoInfo superPojoInfo) {
+        this.superPojoInfo = superPojoInfo;
     }
 }

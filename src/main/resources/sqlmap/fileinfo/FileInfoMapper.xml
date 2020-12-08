@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="">
+    <!--
+        @author code4j
+        @date Created in 2020-11-23 18:40:55
+    -->
+    <resultMap id="BaseResultMap" type="com.code4j.pojo.dao.fileinfo.FileInfoDO">
+            <result column="id" property="id" jdbcType="BIGINT"/>
+            
+            
+            <result column="file_type" property="fileType" jdbcType="VARCHAR"/>
+            <result column="file_path" property="filePath" jdbcType="VARCHAR"/>
+            <result column="file_relative_path" property="fileRelativePath" jdbcType="VARCHAR"/>
+            <result column="file_size" property="fileSize" jdbcType="BIGINT"/>
+            <result column="status" property="status" jdbcType="TINYINT"/>
+            <result column="create_by" property="createBy" jdbcType="VARCHAR"/>
+            <result column="update_by" property="updateBy" jdbcType="VARCHAR"/>
+            <result column="create_time" property="createTime" jdbcType="INT"/>
+            <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+</mapper>

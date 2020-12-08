@@ -1,7 +1,5 @@
 package com.code4j.component;
 
-import com.code4j.component.panel.CommonPanel;
-
 import javax.swing.*;
 
 /**
@@ -11,7 +9,9 @@ import javax.swing.*;
  */
 public class CustomJCheckBox extends JCheckBox {
     private String id;
-    private CommonPanel bindCommonPanel;
+    private Object bindObject;
+    private JComponent bindComponent;
+
     public CustomJCheckBox(String text, boolean isSelect, String id) {
         super(text, isSelect);
         this.id = id;
@@ -25,11 +25,19 @@ public class CustomJCheckBox extends JCheckBox {
         this.id = id;
     }
 
-    public CommonPanel getBindCommonPanel() {
-        return bindCommonPanel;
+    public Object getBindObject() {
+        return bindObject;
     }
 
-    public void setBindCommonPanel(final CommonPanel bindCommonPanel) {
-        this.bindCommonPanel = bindCommonPanel;
+    public void setBindObject(final Object bindObject) {
+        this.bindObject = bindObject;
+    }
+
+    public JComponent getBindComponent() {
+        return bindComponent;
+    }
+
+    public void setBindComponent(final JComponent bindComponent) {
+        this.bindComponent = bindComponent;
     }
 }

@@ -9,7 +9,6 @@ import freemarker.template.TemplateException;
 
 import java.io.*;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author liu_wp
@@ -21,16 +20,16 @@ public class FreemarkerUtil {
 
     /**
      * @param projectPath
-     * @param templateInfo
      * @param baseTemplateInfo
      * @param dataMap
      * @return
      */
-    public static String generateCodeByTemplate(String projectPath, TemplateInfo templateInfo, BaseTemplateInfo baseTemplateInfo, Map<String, Object> dataMap) {
+    public static String generateCodeByTemplate(String projectPath, BaseTemplateInfo baseTemplateInfo, Map<String, Object> dataMap) {
         if (baseTemplateInfo != null && dataMap != null && !dataMap.isEmpty()) {
             Writer out = null;
             try {
                 Configuration configuration = new Configuration(Configuration.VERSION_2_3_30);
+                TemplateInfo templateInfo = baseTemplateInfo.getTemplateInfo();
                 configuration.setDirectoryForTemplateLoading(new File(templateInfo.getTemplatePath()));
                 TemplateTypeEnum templateTypeEnum = TemplateTypeEnum.getTemplateTypeEnum(templateInfo.getTemplateId());
                 String generatePojoFolder = baseTemplateInfo.getGeneratePojoFolder(projectPath);

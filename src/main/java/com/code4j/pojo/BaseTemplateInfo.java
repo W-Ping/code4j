@@ -1,7 +1,11 @@
 package com.code4j.pojo;
 
+import com.code4j.config.Code4jConstants;
+import com.code4j.config.TemplateTypeEnum;
 import com.code4j.util.StrUtil;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /**
  * @author liu_wp
@@ -22,6 +26,10 @@ public class BaseTemplateInfo {
      */
     private String packageName;
     /**
+     * 默认对象包
+     */
+    private String defaultPackageName;
+    /**
      * 对象路径
      */
     private String pojoPath;
@@ -37,6 +45,16 @@ public class BaseTemplateInfo {
     private JdbcTableInfo jdbcTableInfo;
 
     private String pojoDesc;
+
+    private TemplateTypeEnum templateTypeEnum;
+    /**
+     *
+     */
+    private TemplateInfo templateInfo;
+    /**
+     *
+     */
+    private List<JdbcMapJavaInfo> tableColumnInfos;
 
     public String getPojoName() {
         return pojoName;
@@ -143,5 +161,65 @@ public class BaseTemplateInfo {
 
     public void setPojoDesc(final String pojoDesc) {
         this.pojoDesc = pojoDesc;
+    }
+
+    public TemplateTypeEnum getTemplateTypeEnum() {
+        return templateTypeEnum;
+    }
+
+    public void setTemplateTypeEnum(final TemplateTypeEnum templateTypeEnum) {
+        this.templateTypeEnum = templateTypeEnum;
+    }
+
+    public String getDefaultPackageName() {
+        return defaultPackageName;
+    }
+
+    public void setDefaultPackageName(final String defaultPackageName) {
+        this.defaultPackageName = defaultPackageName;
+    }
+
+    public TemplateInfo getTemplateInfo() {
+        return templateInfo;
+    }
+
+    public void setTemplateInfo(final TemplateInfo templateInfo) {
+        this.templateInfo = templateInfo;
+    }
+
+    /**
+     * @param fileName
+     * @return
+     */
+    public String getUseDefaultPackageRoot(String fileName) {
+        if (StringUtils.isNotBlank(this.defaultPackageName) && StringUtils.isNotBlank(this.packageName)
+                && this.defaultPackageName.equals(this.packageName) && StringUtils.isNotBlank(fileName)) {
+
+            return packageRoot = Code4jConstants.DEFAULT_ROOT_PACKAGE + "." + fileName + ".";
+        }
+        return null;
+    }
+
+    public static String getDefaultPackageName(TemplateTypeEnum templateTypeEnum, String packageName) {
+        if (TemplateTypeEnum.MAPPER.equals(templateTypeEnum)) {
+            return Code4jConstants.DEFAULT_MAPPER_PACKAGE + "." + packageName;
+        } else if (TemplateTypeEnum.XML.equals(templateTypeEnum)) {
+            return Code4jConstants.DEFAULT_SQL_XML_PACKAGE + "." + packageName;
+        } else if (TemplateTypeEnum.VO.equals(templateTypeEnum)) {
+            return Code4jConstants.DEFAULT_VO_PACKAGE + "." + packageName;
+        } else if (TemplateTypeEnum.DO.equals(templateTypeEnum)) {
+            return Code4jConstants.DEFAULT_DO_PACKAGE + "." + packageName;
+        } else if (TemplateTypeEnum.SERVICE_API.equals(templateTypeEnum)) {
+            return packageName;
+        }
+        return null;
+    }
+
+    public List<JdbcMapJavaInfo> getTableColumnInfos() {
+        return tableColumnInfos;
+    }
+
+    public void setTableColumnInfos(final List<JdbcMapJavaInfo> tableColumnInfos) {
+        this.tableColumnInfos = tableColumnInfos;
     }
 }

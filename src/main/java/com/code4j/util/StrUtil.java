@@ -100,8 +100,17 @@ public class StrUtil {
         return null;
     }
 
+    public static String subFirstStr(String str, String substr) {
+        if (StringUtils.isNotBlank(str) && StringUtils.isNotBlank(substr)
+                && str.indexOf(substr) >= 0) {
+            return str.substring(str.indexOf(substr) + substr.length());
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
-        String user_name = StrUtil.replaceAll("src.main.java", ".", "\\\\");
+        String user_name = "t_application_info";
+        user_name = StrUtil.subFirstStr(user_name, "t_");
         System.out.println(user_name);
     }
 }

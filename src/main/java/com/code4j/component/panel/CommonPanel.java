@@ -1,7 +1,5 @@
 package com.code4j.component.panel;
 
-import com.code4j.pojo.BaseInfo;
-
 import java.awt.*;
 
 /**
@@ -9,8 +7,9 @@ import java.awt.*;
  * @date 2020/11/17
  * @see
  */
-public class CommonPanel<T extends BaseInfo> extends BasePanel {
-    protected T bindValue;
+public class CommonPanel extends BasePanel {
+
+    private Object bindObject;
 
     public CommonPanel() {
         super();
@@ -41,11 +40,11 @@ public class CommonPanel<T extends BaseInfo> extends BasePanel {
         }
     }
 
-    public T getBindValue() {
-        return bindValue;
+    public Object getBindObject() {
+        return bindObject;
     }
 
-    public void setBindValue(final T bindValue) {
-        this.bindValue = bindValue;
+    public void setBindObject(final Object bindObject) {
+        this.bindObject = bindObject;
     }
 }

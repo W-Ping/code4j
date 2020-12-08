@@ -1,10 +1,15 @@
 package com.code4j.util;
 
 import com.code4j.config.Code4jConstants;
+import com.code4j.pojo.JdbcSourceInfo;
+import com.code4j.pojo.PropertyInfo;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author liu_wp
@@ -13,12 +18,11 @@ import java.util.Properties;
  */
 public class PropertiesUtil {
 
-
     /**
      * @param fileName
+     * @return
      * @param tClass
      * @param <T>
-     * @return
      */
     public static <T> T getPropertyObject(String fileName, Class<T> tClass) {
         try {
@@ -39,6 +43,75 @@ public class PropertiesUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * @param fileName
+     * @param keyPrefix
+     * @param tClass
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> getPropertyValues(String fileName, String keyPrefix, Class<T> tClass) {
+        try (InputStream inputStream = PropertiesUtil.getPropertyStream(fileName)) {
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            Set<String> stringSet = properties.stringPropertyNames();
+            Map<String, List<PropertyInfo>> map = new HashMap<>();
+            for (final String key : stringSet) {
+                String value = properties.getProperty(key);
+                if (key.startsWith(keyPrefix)) {
+                    String[] split = key.split("[.]");
+                    String k1 = split[0];
+                    String k2 = split[1];
+                    String k1v = k1.substring(keyPrefix.length() + 1, keyPrefix.length() + 2);
+                    List<PropertyInfo> listMap = null;
+                    if (map.get(k1v) == null) {
+                        listMap = new ArrayList<>();
+                    } else {
+                        listMap = map.get(k1v);
+                    }
+                    PropertyInfo newMap = new PropertyInfo(k2, value);
+                    if (CollectionUtils.isEmpty(listMap) || !listMap.stream().anyMatch(v -> v.equals(newMap))) {
+                        listMap.add(newMap);
+                    }
+                    map.put(k1v, listMap);
+                }
+            }
+            if (!map.isEmpty()) {
+                List<T> list = new ArrayList<>();
+                for (Map.Entry<String, List<PropertyInfo>> pMap : map.entrySet()) {
+                    Map<String, String> vMap = pMap.getValue().stream().collect(Collectors.toMap(PropertyInfo::getKey, PropertyInfo::getValue));
+                    T newInstance = tClass.newInstance();
+                    Field[] declaredFields = tClass.getDeclaredFields();
+                    boolean isAdd = false;
+                    for (final Field declaredField : declaredFields) {
+                        declaredField.setAccessible(true);
+                        String name = declaredField.getName();
+                        String value = vMap.get(name);
+                        if (StringUtils.isNotBlank(value)) {
+                            isAdd = true;
+                            String type = declaredField.getGenericType().getTypeName();
+                            System.out.println(type);
+                            if (type.equals(Integer.class.getTypeName())) {
+                                declaredField.set(newInstance, Integer.valueOf(value));
+                            } else if (type.equals(Double.class.getTypeName())) {
+                                declaredField.setDouble(newInstance, Double.valueOf(value));
+                            } else {
+                                declaredField.set(newInstance, vMap.get(name));
+                            }
+                        }
+                    }
+                    if (isAdd) {
+                        list.add(newInstance);
+                    }
+                }
+                return list;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -67,23 +140,102 @@ public class PropertiesUtil {
         return false;
     }
 
+    /**
+     * @return
+     */
+    public static List<JdbcSourceInfo> getJdbcPropertyValues() {
+        List<JdbcSourceInfo> proList = getPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, JdbcSourceInfo.class);
+        return proList;
+    }
+
+    /**
+     * @param jdbcSourceInfo
+     * @return
+     */
+    public static boolean setJdbcPropertyValues(JdbcSourceInfo jdbcSourceInfo) {
+        List<JdbcSourceInfo> proList = getJdbcPropertyValues();
+        if (CollectionUtils.isNotEmpty(proList)) {
+            boolean isUpdate = false;
+            for (JdbcSourceInfo sourceInfo : proList) {
+                if (isUpdate = sourceInfo.equals(jdbcSourceInfo)) {
+                    sourceInfo.setConnectName(jdbcSourceInfo.getConnectName());
+                    sourceInfo.setConnectHost(jdbcSourceInfo.getConnectHost());
+                    sourceInfo.setConnectPort(jdbcSourceInfo.getConnectPort());
+                    sourceInfo.setUserName(jdbcSourceInfo.getUserName());
+                    sourceInfo.setPassword(jdbcSourceInfo.getPassword());
+                    sourceInfo.setCreator(jdbcSourceInfo.getCreator());
+                    sourceInfo.setDataSourceTypeEnum(jdbcSourceInfo.getDataSourceTypeEnum());
+                }
+            }
+            if (!isUpdate) {
+                proList.add(jdbcSourceInfo);
+            }
+            return setPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, proList, "dataSourceTypeEnum");
+        }
+        return setPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, Arrays.asList(jdbcSourceInfo), "dataSourceTypeEnum");
+    }
+
+    /**
+     * @param fileName
+     * @param keyPrefix
+     * @param objects
+     * @param igFields
+     * @param <T>
+     * @return
+     */
+    public static <T> boolean setPropertyValues(String fileName, String keyPrefix, List<T> objects, String... igFields) {
+        if (CollectionUtils.isEmpty(objects)) {
+            return false;
+        }
+        Set<String> igList = igFields != null && igFields.length > 0 ? Arrays.stream(igFields).collect(Collectors.toSet()) : null;
+        try (FileOutputStream fileOutputStream = new FileOutputStream(getPropertyPath(fileName));) {
+            Properties properties = new Properties();
+            properties.load(getPropertyStream(fileName));
+            for (int i = 0; i < objects.size(); i++) {
+                T object = objects.get(i);
+                Class<?> aClass = object.getClass();
+                Field[] declaredFields = aClass.getDeclaredFields();
+                for (final Field declaredField : declaredFields) {
+                    declaredField.setAccessible(true);
+                    Object value = declaredField.get(object);
+                    if (igList != null && igList.contains(declaredField.getName())) {
+                        continue;
+                    }
+                    properties.setProperty(keyPrefix + "[" + i + "]." + declaredField.getName() + "", value != null ? value.toString() : "");
+                }
+            }
+            properties.store(fileOutputStream, null);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     /**
      * @param fileName
      * @return
      */
     public static InputStream getPropertyStream(String fileName) {
-//        try {
-//            InputStream resourceAsStream = PropertiesUtil.class.getClassLoader().getResourceAsStream(fileName);
-//            return resourceAsStream;
-//        } catch (Exception e) {
-//
-//        }
         String propertyPath = getPropertyPath(fileName);
         try {
             return new FileInputStream(propertyPath);
         } catch (FileNotFoundException fileNotFoundException) {
             fileNotFoundException.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * @param fileName
+     * @return
+     */
+    public static InputStream getPropertySysStream(String fileName) {
+        try {
+            InputStream resourceAsStream = PropertiesUtil.class.getClassLoader().getResourceAsStream(fileName);
+            return resourceAsStream;
+        } catch (Exception e) {
+
         }
         return null;
     }
@@ -101,6 +253,22 @@ public class PropertiesUtil {
                 }
             }
         }
+        System.out.println(path);
         return path;
+    }
+
+
+    public static void main(String[] args) throws Exception {
+//        List<JdbcSourceInfo> list = getPropertyValues("log4j2.properties", "dataSource", JdbcSourceInfo.class);
+//        System.out.println(list);
+        JdbcSourceInfo jdbcSourceInfo = new JdbcSourceInfo();
+        jdbcSourceInfo.setConnectHost("122222");
+        jdbcSourceInfo.setConnectName("测试121212rqewrqw");
+        jdbcSourceInfo.setPassword("dffd20000");
+        jdbcSourceInfo.setUserName("wodfd111");
+        jdbcSourceInfo.setConnectPort(33891);
+//        list.add(jdbcSourceInfo);
+        PropertiesUtil.setJdbcPropertyValues(jdbcSourceInfo);
+//        System.out.println(JSONUtil.Object2JSON(list));
     }
 }

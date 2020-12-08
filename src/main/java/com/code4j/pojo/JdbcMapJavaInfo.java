@@ -31,6 +31,7 @@ public class JdbcMapJavaInfo {
      */
     private String javaType;
 
+    private boolean ignore;
 
     public JdbcMapJavaInfo() {
 
@@ -38,7 +39,7 @@ public class JdbcMapJavaInfo {
 
     public JdbcMapJavaInfo(String column, String jdbcType, String comment) {
         this.column = column;
-        this.jdbcType = jdbcType;
+        this.jdbcType = jdbcType.equalsIgnoreCase("INT") ? "INTEGER" : jdbcType;
         this.comment = comment;
         this.javaProperty = toJavaProperty(column);
         this.javaType = toJavaType(jdbcType);
@@ -60,38 +61,37 @@ public class JdbcMapJavaInfo {
 
     private String formatDataType(String dataType) {
         dataType = dataType.toUpperCase();
-        if (dataType.contains("CHAR")
-                || dataType.contains("TEXT")
-                || dataType.contains("VARCHAR")
-                || dataType.contains("TINYTEXT")
-                || dataType.contains("LONGTEXT")) {
+        if (dataType.equals("CHAR")
+                || dataType.equals("TEXT")
+                || dataType.equals("VARCHAR")
+                || dataType.equals("TINYTEXT")
+                || dataType.equals("LONGTEXT")) {
             dataType = "java.lang.String";
-        } else if (dataType.contains("INT")
-                || dataType.contains("INTEGER")
-                || dataType.contains("MEDIUMINT")
-                || dataType.contains("TINYINT")) {
-            dataType = "java.lang.Integer";
-        } else if (dataType.contains("TINYINT")) {
-        } else if (dataType.contains("BIGINT")) {
+        } else if (dataType.equals("BIGINT")) {
             dataType = "java.lang.Long";
-        } else if (dataType.contains("FLOAT")) {
+        } else if (dataType.equals("INT")
+                || dataType.equals("INTEGER")
+                || dataType.equals("MEDIUMINT")
+                || dataType.equals("TINYINT")) {
+            dataType = "java.lang.Integer";
+        } else if (dataType.equals("FLOAT")) {
             dataType = "java.lang.Float";
-        } else if (dataType.contains("DOUBLE")) {
+        } else if (dataType.equals("DOUBLE")) {
             dataType = "java.lang.Double";
-        } else if (dataType.contains("NUMERIC")
-                || dataType.contains("DECIMAL")) {
+        } else if (dataType.equals("NUMERIC")
+                || dataType.equals("DECIMAL")) {
             dataType = "java.math.BigDecimal";
-        } else if (dataType.contains("DATE")
-                || dataType.contains("DATETIME")
-                || dataType.contains("TIMESTAMP")
-                || dataType.contains("YEAR")
-                || dataType.contains("TIME")) {
+        } else if (dataType.equals("DATE")
+                || dataType.equals("DATETIME")
+                || dataType.equals("TIMESTAMP")
+                || dataType.equals("YEAR")
+                || dataType.equals("TIME")) {
             return "java.util.Date";
-        } else if (dataType.contains("BIT")) {
+        } else if (dataType.equals("BIT")) {
             return "java.lang.Boolean";
-        } else if (dataType.contains("BLOB")) {
+        } else if (dataType.equals("BLOB")) {
             return "Byte[]";
-        } else if (dataType.contains("CLOB")) {
+        } else if (dataType.equals("CLOB")) {
             dataType = "java.sql.Clob";
         } else {
             dataType = "java.lang.Object";
@@ -116,7 +116,7 @@ public class JdbcMapJavaInfo {
     }
 
     public String getJdbcType() {
-        return jdbcType;
+        return this.jdbcType = jdbcType.equalsIgnoreCase("INT") ? "INTEGER" : jdbcType;
     }
 
     public void setJdbcType(final String jdbcType) {
@@ -137,5 +137,13 @@ public class JdbcMapJavaInfo {
 
     public void setJavaType(final String javaType) {
         this.javaType = javaType;
+    }
+
+    public boolean isIgnore() {
+        return ignore;
+    }
+
+    public void setIgnore(final boolean ignore) {
+        this.ignore = ignore;
     }
 }

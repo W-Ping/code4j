@@ -3,7 +3,6 @@ package com.code4j.action;
 import com.code4j.component.CustomJCheckBox;
 import com.code4j.component.panel.CommonPanel;
 import com.code4j.component.panel.CustomJFileChooserPanel;
-import com.code4j.config.Code4jConstants;
 import com.code4j.config.TemplateTypeEnum;
 import com.code4j.connect.JDBCService;
 import com.code4j.connect.JdbcServiceFactory;
@@ -11,6 +10,8 @@ import com.code4j.exception.Code4jException;
 import com.code4j.pojo.*;
 import com.code4j.util.CustomDialogUtil;
 import com.code4j.util.FreemarkerUtil;
+import com.code4j.util.StrUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -36,12 +37,16 @@ public class GenerateCodeAction implements ActionListener {
     private List<CustomJCheckBox> customJCheckBoxes;
 
     public GenerateCodeAction(CustomJFileChooserPanel customJFileChooserPanel, JdbcTableInfo jdbcTableInfo, List<CustomJCheckBox> customJCheckBoxes, JdbcSourceInfo jdbcSourceInfo) {
-        this.pojoParamsInfoMap.clear();
+        this.clearData();
         this.customJFileChooserPanel = customJFileChooserPanel;
         this.customJCheckBoxes = customJCheckBoxes;
         this.jdbcTableInfo = jdbcTableInfo;
         this.jdbcSourceInfo = jdbcSourceInfo;
         this.jdbcService = JdbcServiceFactory.getJdbcService(jdbcSourceInfo);
+    }
+
+    public void clearData() {
+        this.pojoParamsInfoMap.clear();
     }
 
     @Override
@@ -56,33 +61,30 @@ public class GenerateCodeAction implements ActionListener {
             CustomDialogUtil.showError("生成代码配置不能为空");
             return;
         }
-        List<JdbcMapJavaInfo> tableColumnInfos = jdbcService.getTableColumnInfo(jdbcTableInfo.getDbName(), jdbcTableInfo.getTableName());
         for (Map.Entry<String, ? extends BaseTemplateInfo> mp : pojoParamsInfoMap.entrySet()) {
             String templateId = mp.getKey();
-            TemplateInfo templateInfo = new TemplateInfo();
-            templateInfo.setTemplateId(templateId);
             BaseTemplateInfo baseTemplateInfo = mp.getValue();
             Map<String, Object> dataMap;
-            String packageRoot = null;
-            JTextField field = (JTextField) customJFileChooserPanel.getExtObject();
-            if (StringUtils.isNotBlank(field.getText())) {
-                packageRoot = field.getText().trim() + ".";
+            if (TemplateTypeEnum.XML.getTemplateId().equals(templateId)) {
+                dataMap = this.convertXmlTemplateData(baseTemplateInfo);
             } else {
-                if (customJFileChooserPanel.getFile() != null) {
-                    packageRoot = Code4jConstants.DEFAULT_ROOT_PACKAGE + "." + customJFileChooserPanel.getFile().getName() + ".";
+                if (TemplateTypeEnum.SERVICE_API.getTemplateId().equals(templateId)) {
+                    ServiceParamsInfo serviceParamsInfo = (ServiceParamsInfo) baseTemplateInfo;
+                    InterfaceInfo interfaceInfo = serviceParamsInfo.getInterfaceInfo();
+                    Map<String, Object> interfaceDataMap = this.convertServiceApiPojoTemplateData(interfaceInfo);
+                    String interfacePath = FreemarkerUtil.generateCodeByTemplate(projectPath, interfaceInfo, interfaceDataMap);
+                    System.out.println("interface path:" + interfacePath);
+                    dataMap = convertServicePojoTemplateData(baseTemplateInfo);
+                } else {
+                    dataMap = this.convertPojoTemplateData(baseTemplateInfo);
                 }
             }
-            if (TemplateTypeEnum.XML.getTemplateId().equals(templateId)) {
-                dataMap = convertXmlTemplateData(baseTemplateInfo, packageRoot, tableColumnInfos);
-            } else {
-                baseTemplateInfo.setPackageRoot(packageRoot);
-                dataMap = convertPojoTemplateData(baseTemplateInfo, tableColumnInfos);
-            }
-            String codePath = FreemarkerUtil.generateCodeByTemplate(projectPath, templateInfo, mp.getValue(), dataMap);
+            String codePath = FreemarkerUtil.generateCodeByTemplate(projectPath, mp.getValue(), dataMap);
+            System.out.println("template path:" + codePath);
             //恢复
             baseTemplateInfo.setPackageRoot(null);
-            System.out.println("templateId:" + codePath);
         }
+
     }
 
     /**
@@ -90,31 +92,55 @@ public class GenerateCodeAction implements ActionListener {
      * @param tableColumnInfos
      * @return
      */
-    private Map<String, Object> convertPojoTemplateData(BaseTemplateInfo baseTemplateInfo, List<JdbcMapJavaInfo> tableColumnInfos) {
+    private Map<String, Object> convertPojoTemplateData(BaseTemplateInfo baseTemplateInfo) {
+        List<JdbcMapJavaInfo> tableColumnInfos = baseTemplateInfo.getTableColumnInfos();
         PojoParamsInfo pojoParamsInfo = (PojoParamsInfo) baseTemplateInfo;
         HashMap<String, Object> dataMap = new HashMap<>();
-        dataMap.put("columnPackages", columnPackage(tableColumnInfos));
-        dataMap.put("tableColumnInfos", tableColumnInfos);
+        if (CollectionUtils.isNotEmpty(tableColumnInfos)) {
+            dataMap.put("columnPackages", columnPackage(tableColumnInfos));
+            dataMap.put("tableColumnInfos", tableColumnInfos);
+        }
         dataMap.put("pojo", pojoParamsInfo);
         return dataMap;
     }
 
     /**
      * @param baseTemplateInfo
-     * @param packageRoot
-     * @param tableColumnInfos
      * @return
      */
-    private Map<String, Object> convertXmlTemplateData(BaseTemplateInfo baseTemplateInfo, String packageRoot, List<JdbcMapJavaInfo> tableColumnInfos) {
+    private Map<String, Object> convertServicePojoTemplateData(BaseTemplateInfo baseTemplateInfo) {
+        ServiceParamsInfo serviceParamsInfo = (ServiceParamsInfo) baseTemplateInfo;
+        HashMap<String, Object> dataMap = new HashMap<>();
+        dataMap.put("pojo", serviceParamsInfo);
+        return dataMap;
+    }
+
+    /**
+     * @param baseTemplateInfo
+     * @return
+     */
+    private Map<String, Object> convertServiceApiPojoTemplateData(BaseTemplateInfo baseTemplateInfo) {
+        InterfaceInfo interfaceInfo = (InterfaceInfo) baseTemplateInfo;
+        HashMap<String, Object> dataMap = new HashMap<>();
+        dataMap.put("pojo", interfaceInfo);
+        return dataMap;
+    }
+
+    /**
+     * @param baseTemplateInfo
+     * @return
+     */
+    private Map<String, Object> convertXmlTemplateData(BaseTemplateInfo baseTemplateInfo) {
         BaseTemplateInfo doPojo = pojoParamsInfoMap.get(TemplateTypeEnum.DO.getTemplateId());
         BaseTemplateInfo mapperPojo = pojoParamsInfoMap.get(TemplateTypeEnum.MAPPER.getTemplateId());
         XMLParamsInfo xmlParamsInfo = (XMLParamsInfo) baseTemplateInfo;
-        xmlParamsInfo.setTableColumnInfos(tableColumnInfos);
+
         if (mapperPojo != null) {
-            xmlParamsInfo.setNamespace(StringUtils.isNotBlank(packageRoot) ? packageRoot + mapperPojo.getPackagePath() : mapperPojo.getPackagePath());
+            xmlParamsInfo.setNamespace(StringUtils.isNotBlank(mapperPojo.getPackageRoot()) ? mapperPojo.getPackageRoot() + mapperPojo.getPackagePath() : mapperPojo.getPackagePath());
         }
         if (doPojo != null) {
-            xmlParamsInfo.setResultMapType(StringUtils.isNotBlank(packageRoot) ? packageRoot + doPojo.getPackagePath() : doPojo.getPackagePath());
+            xmlParamsInfo.setTableColumnInfos(doPojo.getTableColumnInfos());
+            xmlParamsInfo.setResultMapType(StringUtils.isNotBlank(doPojo.getPackageRoot()) ? doPojo.getPackageRoot() + doPojo.getPackagePath() : doPojo.getPackagePath());
         }
         HashMap<String, Object> dataMap = new HashMap<>();
         dataMap.put("xmlMap", xmlParamsInfo);
@@ -124,6 +150,9 @@ public class GenerateCodeAction implements ActionListener {
     private List<String> columnPackage(List<JdbcMapJavaInfo> tableColumnInfos) {
         List<String> packageList = new ArrayList<>();
         for (final JdbcMapJavaInfo tableColumnInfo : tableColumnInfos) {
+            if (tableColumnInfo.isIgnore()) {
+                continue;
+            }
             String javaType = tableColumnInfo.getJavaType();
             if (javaType.contains(".")) {
                 if (javaType.startsWith("java.lang")) {
@@ -155,16 +184,18 @@ public class GenerateCodeAction implements ActionListener {
     }
 
     /**
-     * @param jdbcTableInfo
-     * @param jdbcSourceInfo
+     *
      */
     private void setPojoParams() {
+        this.clearData();
         for (final CustomJCheckBox customJCheckBox : customJCheckBoxes) {
             if (customJCheckBox.isSelected()) {
-                CommonPanel commonPanel = customJCheckBox.getBindCommonPanel();
+                TemplateTypeEnum templateTypeEnum = TemplateTypeEnum.getTemplateTypeEnum(customJCheckBox.getId());
+                CommonPanel commonPanel = (CommonPanel) customJCheckBox.getBindObject();
                 JTextField packNameT = (JTextField) ((CommonPanel) commonPanel.getComponent(0)).getComponent(1);
                 JTextField packageT = (JTextField) ((CommonPanel) commonPanel.getComponent(1)).getComponent(1);
                 JTextField pojoPathT = (JTextField) ((CommonPanel) commonPanel.getComponent(2)).getComponent(1);
+                List<JdbcMapJavaInfo> jdbcMapJavaInfos = (List<JdbcMapJavaInfo>) commonPanel.getBindObject();
                 if (TemplateTypeEnum.XML.getTemplateId().equals(customJCheckBox.getId())) {
                     XMLParamsInfo xmlParamsInfo = new XMLParamsInfo();
                     xmlParamsInfo.setPojoType(customJCheckBox.getId());
@@ -174,20 +205,62 @@ public class GenerateCodeAction implements ActionListener {
                     xmlParamsInfo.setAuthor(jdbcSourceInfo.getCreator());
                     xmlParamsInfo.setJdbcTableInfo(jdbcTableInfo);
                     xmlParamsInfo.setPojoDesc(TemplateTypeEnum.XML.getTemplateDesc());
+                    TemplateInfo templateInfo = new TemplateInfo();
+                    templateInfo.setTemplateId(customJCheckBox.getId());
+                    xmlParamsInfo.setTemplateInfo(templateInfo);
+                    xmlParamsInfo.setTableColumnInfos(jdbcMapJavaInfos);
+                    xmlParamsInfo.setPackageRoot(xmlParamsInfo.getUseDefaultPackageRoot(customJFileChooserPanel.getFileName()));
+                    xmlParamsInfo.setTemplateTypeEnum(templateTypeEnum);
                     this.checkTemplate(xmlParamsInfo);
                     pojoParamsInfoMap.put(customJCheckBox.getId(), xmlParamsInfo);
                 } else {
-                    PojoParamsInfo pojoParamsInfo = new PojoParamsInfo();
-                    TemplateTypeEnum templateTypeEnum = TemplateTypeEnum.getTemplateTypeEnum(customJCheckBox.getId());
-                    pojoParamsInfo.setPojoDesc(templateTypeEnum.getTemplateDesc());
-                    pojoParamsInfo.setPojoType(customJCheckBox.getId());
-                    pojoParamsInfo.setPojoName(packNameT.getText());
-                    pojoParamsInfo.setPackageName(packageT.getText());
-                    pojoParamsInfo.setPojoPath(pojoPathT.getText());
-                    pojoParamsInfo.setAuthor(jdbcSourceInfo.getCreator());
-                    pojoParamsInfo.setJdbcTableInfo(jdbcTableInfo);
-                    this.checkTemplate(pojoParamsInfo);
-                    pojoParamsInfoMap.put(customJCheckBox.getId(), pojoParamsInfo);
+                    if (TemplateTypeEnum.SERVICE_API.getTemplateId().equals(customJCheckBox.getId())) {
+                        InterfaceInfo interfaceInfo = new InterfaceInfo();
+                        interfaceInfo.setPojoName(packNameT.getText());
+                        interfaceInfo.setPojoPath(pojoPathT.getText());
+                        interfaceInfo.setPackageName(packageT.getText());
+                        interfaceInfo.setDefaultPackageName(StrUtil.underlineToCamelToLower(jdbcTableInfo.getTableName()));
+                        interfaceInfo.setPackageRoot(interfaceInfo.getUseDefaultPackageRoot(customJFileChooserPanel.getFileName()));
+                        interfaceInfo.setAuthor(jdbcSourceInfo.getCreator());
+                        TemplateInfo interfaceTp = new TemplateInfo();
+                        interfaceTp.setTemplateId(customJCheckBox.getId());
+                        interfaceInfo.setTemplateInfo(interfaceTp);
+                        ServiceParamsInfo serviceParamsInfo = new ServiceParamsInfo();
+                        serviceParamsInfo.setInterfaceInfo(interfaceInfo);
+                        serviceParamsInfo.setPojoPath(interfaceInfo.getPojoPath());
+                        if (interfaceInfo.getPojoName().startsWith("I")) {
+                            serviceParamsInfo.setPojoName(interfaceInfo.getPojoName().substring(1) + "Impl");
+                        } else {
+                            serviceParamsInfo.setPojoName(interfaceInfo.getPojoName() + "Impl");
+                        }
+                        serviceParamsInfo.setPackageName(interfaceInfo.getPackageName() + ".impl");
+                        serviceParamsInfo.setPojoDesc(templateTypeEnum.getTemplateDesc());
+                        serviceParamsInfo.setAuthor(interfaceInfo.getAuthor());
+                        serviceParamsInfo.setPackageRoot(interfaceInfo.getPackageRoot());
+                        TemplateInfo templateInfo = new TemplateInfo();
+                        templateInfo.setTemplateId(TemplateTypeEnum.SERVICE.getTemplateId());
+                        serviceParamsInfo.setTemplateInfo(templateInfo);
+                        this.checkTemplate(serviceParamsInfo);
+                        pojoParamsInfoMap.put(customJCheckBox.getId(), serviceParamsInfo);
+                    } else {
+                        PojoParamsInfo pojoParamsInfo = new PojoParamsInfo();
+                        pojoParamsInfo.setPojoDesc(templateTypeEnum.getTemplateDesc());
+                        pojoParamsInfo.setPojoType(customJCheckBox.getId());
+                        pojoParamsInfo.setPackageName(packageT.getText());
+                        pojoParamsInfo.setPojoName(packNameT.getText());
+                        pojoParamsInfo.setPojoPath(pojoPathT.getText());
+                        pojoParamsInfo.setAuthor(jdbcSourceInfo.getCreator());
+                        pojoParamsInfo.setJdbcTableInfo(jdbcTableInfo);
+                        pojoParamsInfo.setTemplateTypeEnum(templateTypeEnum);
+                        TemplateInfo templateInfo = new TemplateInfo();
+                        templateInfo.setTemplateId(customJCheckBox.getId());
+                        pojoParamsInfo.setTemplateInfo(templateInfo);
+                        pojoParamsInfo.setDefaultPackageName(PojoParamsInfo.getDefaultPackageName(templateTypeEnum, StrUtil.underlineToCamelToLower(jdbcTableInfo.getTableName())));
+                        pojoParamsInfo.setPackageRoot(pojoParamsInfo.getUseDefaultPackageRoot(customJFileChooserPanel.getFileName()));
+                        pojoParamsInfo.setTableColumnInfos(jdbcMapJavaInfos);
+                        this.checkTemplate(pojoParamsInfo);
+                        pojoParamsInfoMap.put(customJCheckBox.getId(), pojoParamsInfo);
+                    }
                 }
             } else {
                 pojoParamsInfoMap.remove(customJCheckBox.getId());

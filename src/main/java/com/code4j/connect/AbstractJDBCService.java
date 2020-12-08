@@ -28,6 +28,14 @@ public abstract class AbstractJDBCService implements JDBCService {
 
     @Override
     public boolean test() {
+        Connection connection = null;
+        try {
+            return (connection = getConnection()) != null;
+        } catch (Exception e) {
+            log.error("数据库连接失败！{}", e);
+        } finally {
+            close(connection, null, null);
+        }
         return false;
     }
 
@@ -68,7 +76,7 @@ public abstract class AbstractJDBCService implements JDBCService {
             connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             DatabaseMetaData metaData = connection.getMetaData();
             //目录名称; 数据库名; 表名称; 表类型;
-            rs = metaData.getTables(catalog(), dbName, tableNamePattern(), types());
+            rs = metaData.getTables(dbName, dbName, tableNamePattern(), types());
             while (rs.next()) {
                 JdbcTableInfo jdbcTableInfo = new JdbcTableInfo();
                 jdbcTableInfo.setDbName(dbName);
@@ -95,7 +103,8 @@ public abstract class AbstractJDBCService implements JDBCService {
     }
 
     protected String[] types() {
-        return new String[]{"TABLE", "VIEW"};
+        return new String[]{"TABLE"};
+//        return new String[]{"TABLE", "VIEW"};
     }
 
     /**

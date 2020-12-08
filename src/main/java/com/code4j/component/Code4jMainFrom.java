@@ -1,5 +1,6 @@
 package com.code4j.component;
 
+import com.code4j.component.event.LayoutReSizeEvent;
 import com.code4j.component.panel.BottomPanel;
 import com.code4j.component.panel.LeftPanel;
 import com.code4j.component.panel.RightPanel;
@@ -38,6 +39,9 @@ public class Code4jMainFrom extends JFrame {
         vBox2.add(rightPanel);
         vBox1.add(vBox2);
         vBox1.add(bottomPanel);
+        LayoutReSizeEvent layoutReSizeEvent = new LayoutReSizeEvent();
+        leftPanel.addMouseListener(layoutReSizeEvent);
+        leftPanel.addMouseMotionListener(layoutReSizeEvent);
         add(vBox1);
         this.setPreferredSize(Code4jConstants.FROM_MIN_DEFAULT_SIZE);
         this.setVisible(true);

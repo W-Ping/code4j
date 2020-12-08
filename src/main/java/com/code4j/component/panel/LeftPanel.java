@@ -4,6 +4,8 @@ import com.code4j.connect.JDBCService;
 import com.code4j.connect.JdbcServiceFactory;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.pojo.JdbcTableInfo;
+import com.code4j.util.PropertiesUtil;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -27,6 +29,34 @@ public class LeftPanel extends BasePanel {
 
     @Override
     protected void init() {
+        List<JdbcSourceInfo> jdbcPropertyValues = PropertiesUtil.getJdbcPropertyValues();
+//        showDbTree(jdbcPropertyValues);
+
+    }
+
+    /**
+     * @param jdbcPropertyValues
+     */
+    public void showDbTree(List<JdbcSourceInfo> jdbcPropertyValues) {
+        if (CollectionUtils.isNotEmpty(jdbcPropertyValues)) {
+            CommonPanel commonPanel = new CommonPanel(new FlowLayout(FlowLayout.LEFT));
+            Box box = Box.createVerticalBox();
+            for (final JdbcSourceInfo jdbcSourceInfo : jdbcPropertyValues) {
+                DefaultMutableTreeNode top = new DefaultMutableTreeNode(jdbcSourceInfo.getConnectName() + "(" + jdbcSourceInfo.getConnectHost() + ")");
+                final JTree tree = new JTree(top);
+                box.add(tree);
+            }
+            commonPanel.addList(box);
+            JScrollPane jScrollPane = new JScrollPane(commonPanel) {
+                @Override
+                public Dimension getPreferredSize() {
+                    return getJScrollPaneDimension();
+                }
+            };
+            jScrollPane.setBorder(null);
+            this.add(jScrollPane);
+            this.updateUI();
+        }
     }
 
     /**

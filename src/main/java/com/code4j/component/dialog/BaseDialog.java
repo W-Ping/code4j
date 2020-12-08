@@ -1,7 +1,7 @@
 package com.code4j.component.dialog;
 
 import com.code4j.component.panel.CommonPanel;
-import com.code4j.pojo.BaseInfo;
+import com.code4j.util.CustomDialogUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,14 +12,14 @@ import java.awt.event.ActionEvent;
  * @date 2020/11/18
  * @see
  */
-public abstract class BaseDialog<T extends BaseInfo> extends JDialog {
+public abstract class BaseDialog extends JDialog {
     private String title;
     protected Component parentComponent;
-    protected CommonPanel<T> contentPanel;
+    protected Component contentPanel;
     protected Object extObj;
 
     public BaseDialog(Component parentComponent, String title, boolean modal, Object extObj) {
-        super((Frame) SwingUtilities.windowForComponent(parentComponent));
+        super(parentComponent == null ? CustomDialogUtil.getRootFrame() : (Frame) SwingUtilities.windowForComponent(parentComponent));
         this.parentComponent = parentComponent;
         this.extObj = extObj;
         setTitle(title);
@@ -28,16 +28,25 @@ public abstract class BaseDialog<T extends BaseInfo> extends JDialog {
     }
 
     public void init() {
+        beforeInit();
         Box box = Box.createVerticalBox();
         box.add(contentPanel = this.content());
         box.add(this.bottom());
         this.setContentPane(box);
+        afterInit();
+    }
+
+    public void beforeInit() {
+
+    }
+
+    public void afterInit() {
         this.pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    protected abstract CommonPanel<T> content();
+    protected abstract Component content();
 
     protected CommonPanel bottom() {
         CommonPanel commonPanel = new CommonPanel();
@@ -81,15 +90,6 @@ public abstract class BaseDialog<T extends BaseInfo> extends JDialog {
         this.dispose();
     }
 
-    @Override
-    public String getTitle() {
-        return title;
-    }
-
-    @Override
-    public void setTitle(final String title) {
-        this.title = title;
-    }
 
     public Component getParentComponent() {
         return parentComponent;
@@ -99,11 +99,4 @@ public abstract class BaseDialog<T extends BaseInfo> extends JDialog {
         this.parentComponent = parentComponent;
     }
 
-    public CommonPanel<T> getContentPanel() {
-        return contentPanel;
-    }
-
-    public void setContentPanel(final CommonPanel<T> contentPanel) {
-        this.contentPanel = contentPanel;
-    }
 }

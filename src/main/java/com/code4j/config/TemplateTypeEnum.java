@@ -8,11 +8,12 @@ import org.apache.commons.lang3.StringUtils;
  * @see
  */
 public enum TemplateTypeEnum {
-    DO("DO", "pojo_do.ftl", ".java", "DO 配置"),
-    VO("VO", "pojo_vo.ftl", ".java", "VO 配置"),
-    DIY("DIY", "pojo_diy.ftl", ".java", "自定义对象配置"),
-    XML("XML", "pojo_xml.ftl", ".xml", "xml 配置"),
-    MAPPER("MAPPER", "pojo_mapper.ftl", ".java", "mapper 配置"),
+    DO("DO", "template_do.ftl", ".java", "DO 配置"),
+    VO("VO", "template_vo.ftl", ".java", "VO 配置"),
+    XML("XML", "template_xml.ftl", ".xml", "xml 配置"),
+    MAPPER("MAPPER", "template_mapper.ftl", ".java", "mapper 配置"),
+    SERVICE_API("SERVICE_API", "template_service_api.ftl", ".java", "service API 配置"),
+    SERVICE("SERVICE", "template_service.ftl", ".java", "service API 配置"),
     ;
     private String templateId;
     private String templateName;

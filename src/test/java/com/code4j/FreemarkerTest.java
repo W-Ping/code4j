@@ -36,10 +36,10 @@ public class FreemarkerTest {
         jdbcTableInfo.setRemark("测试表");
         pojoParamsInfo.setAuthor("刘伟平");
         pojoParamsInfo.setJdbcTableInfo(jdbcTableInfo);
-        SuperInfo superInfo = new SuperInfo();
-        superInfo.setSuperClassName("BaseInfo");
-        superInfo.setSuperClassPackage("com.code4j.pojo");
-        pojoParamsInfo.setSuperInfo(superInfo);
+        SuperPojoInfo superPojoInfo = new SuperPojoInfo();
+        superPojoInfo.setPojoName("BaseInfo");
+        superPojoInfo.setPackageName("com.code4j.pojo");
+        pojoParamsInfo.setSuperPojoInfo(superPojoInfo);
         List<JdbcMapJavaInfo> tableColumnInfos = new ArrayList<>();
         JdbcMapJavaInfo j1 = new JdbcMapJavaInfo();
         j1.setJavaProperty("userName");
@@ -62,11 +62,12 @@ public class FreemarkerTest {
         TemplateInfo templateInfo = new TemplateInfo();
         templateInfo.setTemplateId(TemplateTypeEnum.DO.getTemplateId());
         templateInfo.setTemplatePath(Code4jConstants.TEMPLATE_PATH);
+        pojoParamsInfo.setTemplateInfo(templateInfo);
         HashMap<String, Object> dataMap = new HashMap<>();
         dataMap.put("tableColumnInfos", tableColumnInfos);
         dataMap.put("columnPackages", columnPackage(tableColumnInfos));
         dataMap.put("pojo", pojoParamsInfo);
-        String pojoPath = FreemarkerUtil.generateCodeByTemplate(rootPath, templateInfo, pojoParamsInfo, dataMap);
+        String pojoPath = FreemarkerUtil.generateCodeByTemplate(rootPath, pojoParamsInfo, dataMap);
         System.out.println(pojoPath);
     }
 
@@ -104,13 +105,15 @@ public class FreemarkerTest {
         TemplateInfo templateInfo = new TemplateInfo();
         templateInfo.setTemplateId(TemplateTypeEnum.VO.getTemplateId());
         templateInfo.setTemplatePath(Code4jConstants.TEMPLATE_PATH);
+        pojoParamsInfo.setTemplateInfo(templateInfo);
         HashMap<String, Object> dataMap = new HashMap<>();
         dataMap.put("tableColumnInfos", tableColumnInfos);
         dataMap.put("columnPackages", columnPackage(tableColumnInfos));
         dataMap.put("pojo", pojoParamsInfo);
-        String pojoPath = FreemarkerUtil.generateCodeByTemplate(rootPath, templateInfo, pojoParamsInfo, dataMap);
+        String pojoPath = FreemarkerUtil.generateCodeByTemplate(rootPath, pojoParamsInfo, dataMap);
         System.out.println(pojoPath);
     }
+
     @Test
     public void testMapperTemplate() {
         String rootPath = "D:\\iris-work\\code4j";
@@ -126,11 +129,13 @@ public class FreemarkerTest {
         TemplateInfo templateInfo = new TemplateInfo();
         templateInfo.setTemplateId(TemplateTypeEnum.MAPPER.getTemplateId());
         templateInfo.setTemplatePath(Code4jConstants.TEMPLATE_PATH);
+        pojoParamsInfo.setTemplateInfo(templateInfo);
         HashMap<String, Object> dataMap = new HashMap<>();
         dataMap.put("pojo", pojoParamsInfo);
-        String pojoPath = FreemarkerUtil.generateCodeByTemplate(rootPath, templateInfo, pojoParamsInfo, dataMap);
+        String pojoPath = FreemarkerUtil.generateCodeByTemplate(rootPath, pojoParamsInfo, dataMap);
         System.out.println(pojoPath);
     }
+
     @Test
     public void testXmlTemplate() {
         String rootPath = "D:\\iris-work\\code4j";
@@ -177,9 +182,10 @@ public class FreemarkerTest {
         xmlParamsInfo.setPojoPath("src/main/java");
         xmlParamsInfo.setPackageName("com.code4j.templates");
         xmlParamsInfo.setAuthor("刘伟平");
+        xmlParamsInfo.setTemplateInfo(templateInfo);
         HashMap<String, Object> dataMap = new HashMap<>();
         dataMap.put("xmlMap", xmlParamsInfo);
-        String pojoPath = FreemarkerUtil.generateCodeByTemplate(rootPath, templateInfo, xmlParamsInfo, dataMap);
+        String pojoPath = FreemarkerUtil.generateCodeByTemplate(rootPath, xmlParamsInfo, dataMap);
         System.out.println(pojoPath);
     }
 
