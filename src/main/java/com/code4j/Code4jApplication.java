@@ -4,6 +4,9 @@ import com.code4j.component.Code4jMainFrom;
 import com.code4j.component.panel.*;
 import com.code4j.config.Code4jConstants;
 
+import javax.swing.*;
+import javax.swing.border.MatteBorder;
+import java.awt.*;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 

@@ -121,7 +121,7 @@ public class RightPanel extends BasePanel {
         serviceP3.addList(service3, service3v);
         CommonPanel serviceP4 = new CommonPanel();
         TemplateClickLabel serviceP41 = new TemplateClickLabel("API配置", jdbcTableInfo.getTableName() + " API配置", TemplateTypeEnum.SERVICE_API, serviceP);
-//        serviceP4.addList(serviceP41);
+        serviceP4.addList(serviceP41);
         serviceP.addList(serviceP1, serviceP2, serviceP3, serviceP4);
 
         CommonPanel mapperP = new CommonPanel(new FlowLayout(FlowLayout.LEFT), dimensionP);

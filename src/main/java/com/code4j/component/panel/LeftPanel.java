@@ -8,6 +8,7 @@ import com.code4j.util.PropertiesUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.swing.*;
+import javax.swing.border.MatteBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -29,6 +30,8 @@ public class LeftPanel extends BasePanel {
 
     @Override
     protected void init() {
+        MatteBorder matteBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, Color.gray);
+        this.setBorder(matteBorder);
         List<JdbcSourceInfo> jdbcPropertyValues = PropertiesUtil.getJdbcPropertyValues();
 //        showDbTree(jdbcPropertyValues);
 
