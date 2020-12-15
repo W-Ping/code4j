@@ -2,6 +2,8 @@ package com.code4j.pojo;
 
 import com.code4j.connect.DataSourceTypeEnum;
 
+import java.util.List;
+
 /**
  * @author liu_wp
  * @date 2020/11/17
@@ -30,8 +32,11 @@ public class JdbcSourceInfo extends BaseInfo implements Cloneable {
     private String password;
 
     private String creator = "code4j";
+
+    private String sourceType = "MYSQL";
     private DataSourceTypeEnum dataSourceTypeEnum;
 
+    private List<JdbcDbInfo> jdbcDbInfos;
     @Override
     public JdbcSourceInfo clone() {
         try {
@@ -42,11 +47,17 @@ public class JdbcSourceInfo extends BaseInfo implements Cloneable {
             jdbcSourceInfo.setUserName(this.getUserName());
             jdbcSourceInfo.setPassword(this.getPassword());
             jdbcSourceInfo.setCreator(this.getCreator());
+            jdbcSourceInfo.setSourceType(this.getSourceType());
             jdbcSourceInfo.setDataSourceTypeEnum(this.getDataSourceTypeEnum());
             return jdbcSourceInfo;
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return this.connectName;
     }
 
     /**
@@ -107,10 +118,16 @@ public class JdbcSourceInfo extends BaseInfo implements Cloneable {
     }
 
     public DataSourceTypeEnum getDataSourceTypeEnum() {
+        if (this.sourceType != null) {
+            return this.dataSourceTypeEnum = DataSourceTypeEnum.getDataSourceTypeEnum(this.sourceType);
+        }
         return dataSourceTypeEnum;
     }
 
     public void setDataSourceTypeEnum(final DataSourceTypeEnum dataSourceTypeEnum) {
+        if (null != dataSourceTypeEnum) {
+            this.sourceType = dataSourceTypeEnum.typeName();
+        }
         this.dataSourceTypeEnum = dataSourceTypeEnum;
     }
 
@@ -120,5 +137,27 @@ public class JdbcSourceInfo extends BaseInfo implements Cloneable {
 
     public void setCreator(final String creator) {
         this.creator = creator;
+    }
+
+    public String getSourceType() {
+        if (null != dataSourceTypeEnum) {
+            return this.sourceType = dataSourceTypeEnum.typeName();
+        }
+        return sourceType;
+    }
+
+    public void setSourceType(final String sourceType) {
+        if (this.sourceType != null) {
+            this.dataSourceTypeEnum = DataSourceTypeEnum.getDataSourceTypeEnum(this.sourceType);
+        }
+        this.sourceType = sourceType;
+    }
+
+    public List<JdbcDbInfo> getJdbcDbInfos() {
+        return jdbcDbInfos;
+    }
+
+    public void setJdbcDbInfos(final List<JdbcDbInfo> jdbcDbInfos) {
+        this.jdbcDbInfos = jdbcDbInfos;
     }
 }

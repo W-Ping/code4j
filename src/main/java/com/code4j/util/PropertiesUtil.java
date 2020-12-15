@@ -20,9 +20,9 @@ public class PropertiesUtil {
 
     /**
      * @param fileName
-     * @return
      * @param tClass
      * @param <T>
+     * @return
      */
     public static <T> T getPropertyObject(String fileName, Class<T> tClass) {
         try {

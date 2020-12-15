@@ -3,6 +3,7 @@ package com.code4j.component.panel;
 import com.code4j.config.Code4jConstants;
 
 import javax.swing.*;
+import javax.swing.border.MatteBorder;
 import java.awt.*;
 
 /**
@@ -25,8 +26,12 @@ public class BottomPanel extends BasePanel {
 
     @Override
     protected void init() {
-        setBackground(Color.LIGHT_GRAY);
-        this.add(new JLabel("当前版本："+Code4jConstants.APP_VERSION));
-        this.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        MatteBorder matteBorder = BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray);
+        this.setBorder(matteBorder);
+        CommonPanel commonPanel = new CommonPanel();
+        commonPanel.add(new JLabel("当前版本："+Code4jConstants.APP_VERSION));
+//        this.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        this.setLayout(new BorderLayout());
+        this.add(commonPanel, BorderLayout.EAST);
     }
 }

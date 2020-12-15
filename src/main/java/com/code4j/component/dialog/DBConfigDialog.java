@@ -7,6 +7,7 @@ import com.code4j.connect.DataSourceTypeEnum;
 import com.code4j.connect.JDBCService;
 import com.code4j.connect.JdbcServiceFactory;
 import com.code4j.exception.Code4jException;
+import com.code4j.pojo.JdbcDbInfo;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.util.CustomDialogUtil;
 import com.code4j.util.JSONUtil;
@@ -114,27 +115,28 @@ public class DBConfigDialog extends BaseDialog {
 
     private void getConnectInfo(boolean isSave) {
         this.checkParams();
-        JdbcSourceInfo JDBCSourceInfo = new JdbcSourceInfo();
-        JDBCSourceInfo.setConnectName(connectNameField.getText());
-        JDBCSourceInfo.setConnectHost(connectHostField.getText());
-        JDBCSourceInfo.setConnectPort(Integer.valueOf(connectPortField.getText()));
-        JDBCSourceInfo.setUserName(nameField.getText());
-        JDBCSourceInfo.setPassword(new String(passwordField.getPassword()));
-        JDBCSourceInfo.setDataSourceTypeEnum((DataSourceTypeEnum) extObj);
-        ((CommonPanel) contentPanel).setBindObject(JDBCSourceInfo);
-        JDBCService jdbcService = JdbcServiceFactory.getJdbcService(JDBCSourceInfo);
+        JdbcSourceInfo jdbcSourceInfo = new JdbcSourceInfo();
+        jdbcSourceInfo.setConnectName(connectNameField.getText());
+        jdbcSourceInfo.setConnectHost(connectHostField.getText());
+        jdbcSourceInfo.setConnectPort(Integer.valueOf(connectPortField.getText()));
+        jdbcSourceInfo.setUserName(nameField.getText());
+        jdbcSourceInfo.setPassword(new String(passwordField.getPassword()));
+        jdbcSourceInfo.setDataSourceTypeEnum((DataSourceTypeEnum) extObj);
+        ((CommonPanel) contentPanel).setBindObject(jdbcSourceInfo);
+        JDBCService jdbcService = JdbcServiceFactory.getJdbcService(jdbcSourceInfo);
         if (!jdbcService.test()) {
             CustomDialogUtil.showError("连接失败！");
             return;
         }
         if (isSave) {
-            List<String> allDbName = jdbcService.getAllDbName();
-            System.out.println(JSONUtil.Object2JSON(allDbName));
+            List<JdbcDbInfo> jdbcDbInfos = jdbcService.getAllJdbcDbInfo();
+            System.out.println(JSONUtil.Object2JSON(jdbcDbInfos));
             if (parentComponent instanceof TopPanel) {
                 TopPanel topPanel = (TopPanel) parentComponent;
                 LeftPanel leftPanel = topPanel.getLeftPanel();
-                leftPanel.showTreeView(allDbName, JDBCSourceInfo);
-                if (!PropertiesUtil.setJdbcPropertyValues(JDBCSourceInfo)) {
+                jdbcSourceInfo.setJdbcDbInfos(jdbcDbInfos);
+                leftPanel.showTreeView(jdbcSourceInfo);
+                if (!PropertiesUtil.setJdbcPropertyValues(jdbcSourceInfo)) {
                     CustomDialogUtil.showError("保存数据连接失败");
                     return;
                 }

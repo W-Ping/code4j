@@ -4,6 +4,7 @@ import com.code4j.connect.DataSourceTypeEnum;
 import com.code4j.util.CustomDialogUtil;
 
 import javax.swing.*;
+import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -17,6 +18,7 @@ public class TopPanel extends BasePanel {
      *
      */
     private LeftPanel leftPanel;
+
     public TopPanel(final Dimension dimension) {
         super(dimension);
         JMenuBar jMenuBar = new JMenuBar();
@@ -30,13 +32,19 @@ public class TopPanel extends BasePanel {
         });
         m1.add(item);
         jMenuBar.add(m1);
-        this.add(jMenuBar);
-        this.setLayout(new FlowLayout(FlowLayout.LEFT));
+        CommonPanel commonPanel = new CommonPanel();
+        commonPanel.add(jMenuBar);
+//        this.setLayout(new FlowLayout(FlowLayout.LEFT));
+        this.setLayout(new BorderLayout());
+        this.add(commonPanel, BorderLayout.WEST);
     }
 
     @Override
     protected void init() {
-        setBackground(Color.LIGHT_GRAY);
+
+//        setBackground(Color.LIGHT_GRAY);
+        MatteBorder matteBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray);
+        this.setBorder(matteBorder);
     }
 
     public void showDialog(String title, DataSourceTypeEnum dataSourceTypeEnum) {

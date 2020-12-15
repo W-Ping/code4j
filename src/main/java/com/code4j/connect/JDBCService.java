@@ -1,5 +1,6 @@
 package com.code4j.connect;
 
+import com.code4j.pojo.JdbcDbInfo;
 import com.code4j.pojo.JdbcMapJavaInfo;
 import com.code4j.pojo.JdbcTableInfo;
 
@@ -19,13 +20,13 @@ public interface JDBCService {
     /**
      * @return
      */
-    List<String> getAllDbName();
+    List<JdbcDbInfo> getAllJdbcDbInfo();
 
     /**
      * @param dbName
      * @return
      */
-    List<JdbcTableInfo> getJdbcTableInfo(String dbName);
+    List<JdbcTableInfo> getJdbcTableInfo(JdbcDbInfo jdbcDbInfo);
 
     /**
      * @param tableName

@@ -1,6 +1,7 @@
 package com.code4j.connect;
 
 import com.code4j.exception.Code4jException;
+import com.code4j.pojo.JdbcDbInfo;
 import com.code4j.pojo.JdbcMapJavaInfo;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.pojo.JdbcTableInfo;
@@ -40,7 +41,7 @@ public abstract class AbstractJDBCService implements JDBCService {
     }
 
     @Override
-    public List<String> getAllDbName() {
+    public List<JdbcDbInfo> getAllJdbcDbInfo() {
         Connection connection = null;
         try {
             connection = getConnection();
@@ -48,11 +49,12 @@ public abstract class AbstractJDBCService implements JDBCService {
                 return null;
             }
             DatabaseMetaData metaData = connection.getMetaData();
-            List<String> dbNames = new ArrayList<>();
+            List<JdbcDbInfo> dbNames = new ArrayList<>();
             ResultSet catalogs = metaData.getCatalogs();
             while (catalogs.next()) {
                 String dbName = catalogs.getString("TABLE_CAT");
-                dbNames.add(dbName);
+                JdbcDbInfo jdbcDbInfo = new JdbcDbInfo(dbName, jdbcSourceInfo);
+                dbNames.add(jdbcDbInfo);
             }
             return dbNames;
         } catch (Exception e) {
@@ -64,7 +66,7 @@ public abstract class AbstractJDBCService implements JDBCService {
     }
 
     @Override
-    public List<JdbcTableInfo> getJdbcTableInfo(final String dbName) {
+    public List<JdbcTableInfo> getJdbcTableInfo(final JdbcDbInfo jdbcDbInfo) {
         Connection connection = null;
         ResultSet rs = null;
         try {
@@ -72,6 +74,7 @@ public abstract class AbstractJDBCService implements JDBCService {
             if (connection == null) {
                 return null;
             }
+            String dbName = jdbcDbInfo.getDbName();
             List<JdbcTableInfo> tableInfos = new ArrayList<>();
             connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             DatabaseMetaData metaData = connection.getMetaData();
@@ -83,6 +86,7 @@ public abstract class AbstractJDBCService implements JDBCService {
                 jdbcTableInfo.setTableType(rs.getString("TABLE_TYPE"));
                 jdbcTableInfo.setTableName(rs.getString("TABLE_NAME"));
                 jdbcTableInfo.setRemark(rs.getString("REMARKS"));
+                jdbcTableInfo.setJdbcSourceInfo(jdbcDbInfo.getJdbcSourceInfo());
                 tableInfos.add(jdbcTableInfo);
             }
             return tableInfos;

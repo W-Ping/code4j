@@ -18,6 +18,11 @@ public enum DataSourceTypeEnum {
         }
 
         @Override
+        public String typeName() {
+            return "MYSQL";
+        }
+
+        @Override
         public String getUrl(final JdbcSourceInfo JDBCSourceInfo) {
             String url = "jdbc:mysql://" + JDBCSourceInfo.getConnectHost() + ":" + JDBCSourceInfo.getConnectPort();
             return url;
@@ -45,7 +50,21 @@ public enum DataSourceTypeEnum {
      */
     public abstract String getDriver();
 
+    /**
+     * @return
+     */
+    public abstract String typeName();
+
     public abstract String getUrl(JdbcSourceInfo JDBCSourceInfo);
 
     public abstract Connection getConnection(JdbcSourceInfo jdbcSourceInfo);
+
+    public static DataSourceTypeEnum getDataSourceTypeEnum(String typeName) {
+        for (final DataSourceTypeEnum value : values()) {
+            if (value.typeName().equals(typeName)) {
+                return value;
+            }
+        }
+        return null;
+    }
 }

@@ -9,8 +9,8 @@ public class JdbcTableInfo {
     private String dbName;
     private String tableName;
     private String tableType;
-    public String remark;
-
+    private String remark;
+    private JdbcSourceInfo jdbcSourceInfo;
     public String getDbName() {
         return dbName;
     }
@@ -47,5 +47,12 @@ public class JdbcTableInfo {
     public void setRemark(final String remark) {
         this.remark = remark;
     }
-    
+
+    public JdbcSourceInfo getJdbcSourceInfo() {
+        return jdbcSourceInfo;
+    }
+
+    public void setJdbcSourceInfo(final JdbcSourceInfo jdbcSourceInfo) {
+        this.jdbcSourceInfo = jdbcSourceInfo;
+    }
 }

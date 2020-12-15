@@ -11,6 +11,7 @@ import com.code4j.pojo.JdbcMapJavaInfo;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.pojo.JdbcTableInfo;
 import com.code4j.util.StrUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -26,7 +27,8 @@ import java.util.stream.Stream;
  * @see
  */
 public class RightPanel extends BasePanel {
-
+    private LayoutManager defaultLayoutManger;
+    private Dimension preferredSize;
     private List<CustomJCheckBox> customJCheckBoxList = new ArrayList<>();
 
     public RightPanel(final Dimension dimension) {
@@ -36,11 +38,36 @@ public class RightPanel extends BasePanel {
 
     @Override
     protected void init() {
+        this.setLayout(new BorderLayout());
+        defaultLayoutManger = this.getLayout();
+        preferredSize = this.getPreferredSize();
+        System.out.println("width:" + preferredSize.getWidth());
+        System.out.println("height:" + preferredSize.getHeight());
     }
 
+    public void clearEmpty(String promptMsg) {
+        if (StringUtils.isNotBlank(promptMsg)) {
+            JLabel jLabel = new JLabel(promptMsg, JLabel.CENTER);
+            jLabel.setFont(jLabel.getFont().deriveFont(30.0f));
+            jLabel.setForeground(Color.gray);
+//            this.setBounds(100, 100, (int) preferredSize.getWidth(), (int) preferredSize.getHeight());
+            this.add(jLabel, BorderLayout.CENTER);
+            System.out.println("width1:" + preferredSize.getWidth());
+            System.out.println("height2:" + preferredSize.getHeight());
+            this.setPreferredSize(preferredSize);
+//            this.setBackground(Color.blue);
+        } else {
+            this.removeAll();
+            this.updateUI();
+        }
+    }
 
+    /**
+     * @param jdbcTableInfo
+     * @param jdbcSourceInfo
+     */
     public void showGenerateView(JdbcTableInfo jdbcTableInfo, JdbcSourceInfo jdbcSourceInfo) {
-        this.removeAll();
+        this.setLayout(defaultLayoutManger);
         List<JdbcMapJavaInfo> tableColumnInfos = JdbcServiceFactory.getJdbcService(jdbcSourceInfo).getTableColumnInfo(jdbcTableInfo.getDbName(), jdbcTableInfo.getTableName());
         String tableName = jdbcTableInfo.getTableName();
         Dimension inputDimension = new Dimension(200, 30);
