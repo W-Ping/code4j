@@ -1,5 +1,6 @@
 package com.code4j.util;
 
+import com.code4j.annotation.IgnoreReflection;
 import com.code4j.config.Code4jConstants;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.pojo.PropertyInfo;
@@ -88,11 +89,14 @@ public class PropertiesUtil {
                     for (final Field declaredField : declaredFields) {
                         declaredField.setAccessible(true);
                         String name = declaredField.getName();
+                        IgnoreReflection annotation = declaredField.getAnnotation(IgnoreReflection.class);
+                        if (annotation != null) {
+                            continue;
+                        }
                         String value = vMap.get(name);
                         if (StringUtils.isNotBlank(value)) {
                             isAdd = true;
                             String type = declaredField.getGenericType().getTypeName();
-                            System.out.println(type);
                             if (type.equals(Integer.class.getTypeName())) {
                                 declaredField.set(newInstance, Integer.valueOf(value));
                             } else if (type.equals(Double.class.getTypeName())) {
@@ -145,8 +149,20 @@ public class PropertiesUtil {
      */
     public static List<JdbcSourceInfo> getJdbcPropertyValues() {
         List<JdbcSourceInfo> proList = getPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, JdbcSourceInfo.class);
+        if (CollectionUtils.isNotEmpty(proList) && proList.size() > 1) {
+            proList.sort((v1, v2) -> v1.getIndex().compareTo(v2.getIndex()));
+        }
         return proList;
     }
+
+    /**
+     * @param jdbcSourceInfo
+     * @return
+     */
+    public static boolean deleteJdbcProperty(JdbcSourceInfo jdbcSourceInfo) {
+        return removeProperty(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, jdbcSourceInfo, jdbcSourceInfo.getIndex());
+    }
+
 
     /**
      * @param jdbcSourceInfo
@@ -164,44 +180,49 @@ public class PropertiesUtil {
                     sourceInfo.setUserName(jdbcSourceInfo.getUserName());
                     sourceInfo.setPassword(jdbcSourceInfo.getPassword());
                     sourceInfo.setCreator(jdbcSourceInfo.getCreator());
+                    sourceInfo.setIndex(jdbcSourceInfo.getIndex());
                     sourceInfo.setDataSourceTypeEnum(jdbcSourceInfo.getDataSourceTypeEnum());
                 }
             }
             if (!isUpdate) {
                 proList.add(jdbcSourceInfo);
             }
-            return setPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, proList, "dataSourceTypeEnum");
+            return setPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, proList);
         }
-        return setPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, Arrays.asList(jdbcSourceInfo), "dataSourceTypeEnum");
+        return setPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, Arrays.asList(jdbcSourceInfo));
     }
 
     /**
      * @param fileName
      * @param keyPrefix
      * @param objects
-     * @param igFields
      * @param <T>
      * @return
      */
-    public static <T> boolean setPropertyValues(String fileName, String keyPrefix, List<T> objects, String... igFields) {
+    public static <T> boolean setPropertyValues(String fileName, String keyPrefix, List<T> objects) {
         if (CollectionUtils.isEmpty(objects)) {
             return false;
         }
-        Set<String> igList = igFields != null && igFields.length > 0 ? Arrays.stream(igFields).collect(Collectors.toSet()) : null;
-        try (FileOutputStream fileOutputStream = new FileOutputStream(getPropertyPath(fileName));) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(getPropertyPath(fileName));
+             InputStream inputStream = getPropertyStream(fileName);) {
             Properties properties = new Properties();
-            properties.load(getPropertyStream(fileName));
+            properties.load(inputStream);
             for (int i = 0; i < objects.size(); i++) {
                 T object = objects.get(i);
                 Class<?> aClass = object.getClass();
                 Field[] declaredFields = aClass.getDeclaredFields();
                 for (final Field declaredField : declaredFields) {
-                    declaredField.setAccessible(true);
-                    Object value = declaredField.get(object);
-                    if (igList != null && igList.contains(declaredField.getName())) {
+                    IgnoreReflection annotation = declaredField.getAnnotation(IgnoreReflection.class);
+                    if (annotation != null) {
                         continue;
                     }
-                    properties.setProperty(keyPrefix + "[" + i + "]." + declaredField.getName() + "", value != null ? value.toString() : "");
+                    declaredField.setAccessible(true);
+                    Object value = declaredField.get(object);
+                    String index = i + "";
+                    if (declaredField.getName().equals("index")) {
+                        index = value.toString();
+                    }
+                    properties.setProperty(keyPrefix + "[" + index + "]." + declaredField.getName() + "", value != null ? value.toString() : "");
                 }
             }
             properties.store(fileOutputStream, null);
@@ -210,6 +231,53 @@ public class PropertiesUtil {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * @param fileName
+     * @param keyPrefix
+     * @param object
+     * @param index
+     * @param <T>
+     * @return
+     */
+    public static <T> boolean removeProperty(String fileName, String keyPrefix, T object, Integer index) {
+        InputStream inputStream = null;
+        FileOutputStream fileOutputStream = null;
+        try {
+            Properties properties = new Properties();
+            properties.load(inputStream = getPropertyStream(fileName));
+            Class<?> aClass = object.getClass();
+            Field[] declaredFields = aClass.getDeclaredFields();
+            for (final Field declaredField : declaredFields) {
+                declaredField.setAccessible(true);
+                IgnoreReflection annotation = declaredField.getAnnotation(IgnoreReflection.class);
+                if (annotation != null) {
+                    continue;
+                }
+                String key = keyPrefix + "[" + index + "]." + declaredField.getName();
+                if (properties.containsKey(key)) {
+                    System.out.println("删除文件key：" + key);
+                    properties.remove(key);
+                }
+            }
+            fileOutputStream = new FileOutputStream(getPropertyPath(fileName));
+            properties.store(fileOutputStream, "");
+            return true;
+        } catch (Exception e) {
+            return false;
+        } finally {
+            try {
+                if (fileOutputStream != null) {
+                    fileOutputStream.close();
+                }
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (Exception e) {
+            }
+
+        }
     }
 
     /**
@@ -269,6 +337,7 @@ public class PropertiesUtil {
         jdbcSourceInfo.setConnectPort(33891);
 //        list.add(jdbcSourceInfo);
         PropertiesUtil.setJdbcPropertyValues(jdbcSourceInfo);
+        PropertiesUtil.deleteJdbcProperty(jdbcSourceInfo);
 //        System.out.println(JSONUtil.Object2JSON(list));
     }
 }

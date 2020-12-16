@@ -5,6 +5,7 @@ import com.code4j.connect.JdbcServiceFactory;
 import com.code4j.pojo.JdbcDbInfo;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.pojo.JdbcTableInfo;
+import com.code4j.util.CustomDialogUtil;
 import com.code4j.util.PropertiesUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -16,6 +17,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 /**
@@ -26,6 +30,7 @@ import java.util.List;
 public class LeftPanel extends BasePanel {
     private RightPanel rightPanel;
     private JTree tree;
+    private JScrollPane treeJScrollPane;
 
     public LeftPanel(final Dimension dimension) {
         super(new FlowLayout(FlowLayout.LEFT), dimension);
@@ -33,6 +38,38 @@ public class LeftPanel extends BasePanel {
 
     @Override
     protected void init() {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+        root.setAllowsChildren(true);
+        tree = new JTree(new DefaultTreeModel(root));
+        tree.setShowsRootHandles(true);
+        tree.setRootVisible(false);
+        tree.setEditable(false);
+        tree.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(final MouseEvent evt) {
+                tree.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                tree.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+
+            @Override
+            public void mouseClicked(final MouseEvent evt) {
+                if (evt.getButton() == MouseEvent.BUTTON3) {
+                    TreePath path = tree.getPathForLocation(evt.getX(), evt.getY());
+                    if (path == null) {
+                        return;
+                    }
+                    tree.setSelectionPath(path);
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+                            .getLastSelectedPathComponent();
+                    getJPopupMenu(node, evt.getX(), evt.getY());
+                }
+            }
+        });
+
         this.setLayout(new BorderLayout());
         MatteBorder matteBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, Color.gray);
         this.setBorder(matteBorder);
@@ -46,19 +83,15 @@ public class LeftPanel extends BasePanel {
     public void showDbTree(List<JdbcSourceInfo> jdbcPropertyValues) {
         if (CollectionUtils.isNotEmpty(jdbcPropertyValues)) {
             System.out.println("数据库连接数量:" + jdbcPropertyValues.size());
-            DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+            DefaultTreeModel defaultTreeModel = (DefaultTreeModel) tree.getModel();
+            DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) defaultTreeModel.getRoot();
             for (final JdbcSourceInfo jdbcSourceInfo : jdbcPropertyValues) {
-                JDBCService jdbcService = JdbcServiceFactory.getJdbcService(jdbcSourceInfo);
-                List<JdbcDbInfo> allJdbcDbInfo = jdbcService.getAllJdbcDbInfo();
-                jdbcSourceInfo.setJdbcDbInfos(allJdbcDbInfo);
                 DefaultMutableTreeNode top = new DefaultMutableTreeNode(jdbcSourceInfo);
-                root.add(top);
+                rootNode.add(top);
             }
-            tree = new JTree(new DefaultTreeModel(root));
-            tree.setShowsRootHandles(true);
-            tree.setRootVisible(false);
-            tree.setEditable(false);
+            defaultTreeModel.reload();
             tree.addTreeSelectionListener(new TreeSelectionListener() {
+
                 @Override
                 public void valueChanged(final TreeSelectionEvent e) {
                     rightPanel.clearEmpty(null);
@@ -77,6 +110,7 @@ public class LeftPanel extends BasePanel {
                         if (CollectionUtils.isEmpty(jdbcDbInfos)) {
                             JDBCService jdbcService = JdbcServiceFactory.getJdbcService(jdbcSourceInfo);
                             jdbcDbInfos = jdbcService.getAllJdbcDbInfo();
+                            jdbcSourceInfo.setJdbcDbInfos(jdbcDbInfos);
                         }
                         if (CollectionUtils.isNotEmpty(jdbcDbInfos)) {
                             for (final JdbcDbInfo jdbcDbInfo : jdbcDbInfos) {
@@ -106,22 +140,30 @@ public class LeftPanel extends BasePanel {
                     }
                 }
             });
-            JScrollPane jScrollPane = new JScrollPane(tree) {
-                @Override
-                public Dimension getPreferredSize() {
-                    return getJScrollPaneDimension();
-                }
-            };
-            jScrollPane.setBorder(null);
-            this.add(jScrollPane);
-            this.updateUI();
+            treeJScrollPane = treeJScrollPane(tree);
         }
 
     }
 
+    public JScrollPane treeJScrollPane(JTree tree) {
+        if (treeJScrollPane != null) {
+            return treeJScrollPane;
+        }
+        JScrollPane treeJScrollPane = new JScrollPane(tree) {
+            @Override
+            public Dimension getPreferredSize() {
+                return getJScrollPaneDimension();
+            }
+        };
+        treeJScrollPane.setBorder(null);
+        this.add(treeJScrollPane);
+        this.updateUI();
+        return treeJScrollPane;
+    }
+
     public void addTreeNode(DefaultMutableTreeNode newNode) {
-        DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) tree.getModel().getRoot();
-        rootNode.add(newNode);
+        DefaultTreeModel defaultTreeModel = (DefaultTreeModel) tree.getModel();
+        DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) defaultTreeModel.getRoot();
         Object userObject = newNode.getUserObject();
         if (userObject instanceof JdbcSourceInfo) {
             JdbcSourceInfo jdbcSourceInfo = (JdbcSourceInfo) userObject;
@@ -133,68 +175,43 @@ public class LeftPanel extends BasePanel {
                 }
             }
         }
-        TreePath treePath = new TreePath(newNode);
-        System.out.println("-------:" + treePath.getPath().length);
-        System.out.println("-------:" + treePath.getPathCount());
-        tree.expandPath(treePath);
-        tree.updateUI();
+        rootNode.add(newNode);
+        defaultTreeModel.reload();
+        treeJScrollPane = treeJScrollPane(tree);
+    }
+
+    public void deleteTreeNode(JdbcSourceInfo jdbcSourceInfo, DefaultMutableTreeNode deleNode) {
+        int res = JOptionPane.showConfirmDialog(null,
+                "确认删除?【" + jdbcSourceInfo.getConnectName() + "】", "确认",
+                JOptionPane.YES_NO_OPTION);
+        if (res == JOptionPane.YES_OPTION) {
+            ((DefaultTreeModel) tree.getModel()).removeNodeFromParent(deleNode);
+            ((DefaultTreeModel) tree.getModel()).reload();
+            if (!PropertiesUtil.deleteJdbcProperty(jdbcSourceInfo)) {
+                CustomDialogUtil.showError("删除连接失败");
+                return;
+            }
+        }
     }
 
     /**
      * @param dbNames
      * @param jdbcSourceInfo
      */
-    public void showTreeView(JdbcSourceInfo jdbcSourceInfo) {
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode(jdbcSourceInfo);
-        addTreeNode(top);
-
-//        DefaultMutableTreeNode top = new DefaultMutableTreeNode(jdbcSourceInfo.getConnectName() + "(" + jdbcSourceInfo.getConnectHost() + ")");
-//        for (final String dbName : dbNames) {
-//            DefaultMutableTreeNode node = new DefaultMutableTreeNode(dbName);
-//            top.add(node);
-//        }
-//        final JTree tree = new JTree(top);
-//        tree.addTreeSelectionListener(new TreeSelectionListener() {
-//            @Override
-//            public void valueChanged(final TreeSelectionEvent e) {
-//                DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
-//                        .getLastSelectedPathComponent();
-//                if (node == null) {
-//                    return;
-//                }
-//                Object object = node.getUserObject();
-//                System.out.println("你选择了：" + object.toString());
-//                if (node.isLeaf()) {
-//                    JDBCService jdbcService = JdbcServiceFactory.getJdbcService(jdbcSourceInfo);
-//                    if (node.getAllowsChildren() && !(object instanceof JdbcTableInfo)) {
-//                        JdbcTableInfo jdbcTableInfo = (JdbcTableInfo) object;
-//                        JdbcDbInfo jdbcDbInfo = new JdbcDbInfo(jdbcTableInfo.getDbName(), jdbcTableInfo.getJdbcSourceInfo());
-//                        List<JdbcTableInfo> jdbcTableInfos = jdbcService.getJdbcTableInfo(jdbcDbInfo);
-//                        for (final JdbcTableInfo table : jdbcTableInfos) {
-//                            DefaultMutableTreeNode defaultMutableTreeNode = new DefaultMutableTreeNode(table, false);
-//                            node.add(defaultMutableTreeNode);
-//                        }
-//                    } else {
-//                        if (rightPanel != null) {
-//                            JdbcTableInfo jdbcTableInfo = (JdbcTableInfo) object;
-//                            rightPanel.showGenerateView(jdbcTableInfo, jdbcSourceInfo);
-//                        }
-//                    }
-//                }
-//
-//            }
-//        });
-//        CommonPanel commonPanel = new CommonPanel(new FlowLayout(FlowLayout.LEFT));
-//        commonPanel.add(tree);
-//        JScrollPane jScrollPane = new JScrollPane(commonPanel) {
-//            @Override
-//            public Dimension getPreferredSize() {
-//                return getJScrollPaneDimension();
-//            }
-//        };
-//        jScrollPane.setBorder(null);
-//        this.add(jScrollPane);
-//        this.updateUI();
+    public void editTreeNode(JdbcSourceInfo jdbcSourceInfo) {
+        if (!PropertiesUtil.setJdbcPropertyValues(jdbcSourceInfo)) {
+            CustomDialogUtil.showError("保存数据连接失败");
+            return;
+        }
+        DefaultMutableTreeNode currTreeNode = jdbcSourceInfo.getCurrTreeNode();
+        if (currTreeNode != null) {
+            currTreeNode.setUserObject(jdbcSourceInfo);
+            tree.updateUI();
+        } else {
+            DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(jdbcSourceInfo);
+            jdbcSourceInfo.setCurrTreeNode(newNode);
+            addTreeNode(newNode);
+        }
     }
 
     public Dimension getJScrollPaneDimension() {
@@ -208,5 +225,29 @@ public class LeftPanel extends BasePanel {
 
     public void setRightPanel(final RightPanel rightPanel) {
         this.rightPanel = rightPanel;
+    }
+
+    private void getJPopupMenu(DefaultMutableTreeNode selectNode, int x, int y) {
+        JdbcSourceInfo jdbcSourceInfo = (JdbcSourceInfo) selectNode.getUserObject();
+        jdbcSourceInfo.setCurrTreeNode(selectNode);
+        JPopupMenu jPopupMenu = new JPopupMenu();
+        JMenuItem editItem = new JMenuItem("编辑连接");
+        LeftPanel leftPanel = this;
+        editItem.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                CustomDialogUtil.showDBConfigDialog(leftPanel, "编辑连接", jdbcSourceInfo.getDataSourceTypeEnum(), jdbcSourceInfo);
+            }
+        });
+        JMenuItem delItem = new JMenuItem("删除连接");
+        delItem.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                deleteTreeNode(jdbcSourceInfo, selectNode);
+            }
+        });
+        jPopupMenu.add(editItem);
+        jPopupMenu.add(delItem);
+        jPopupMenu.show(tree, x, y);
     }
 }

@@ -10,7 +10,6 @@ import com.code4j.exception.Code4jException;
 import com.code4j.pojo.JdbcDbInfo;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.util.CustomDialogUtil;
-import com.code4j.util.JSONUtil;
 import com.code4j.util.PropertiesUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,18 +30,26 @@ public class DBConfigDialog extends BaseDialog {
     private JTextField connectPortField;
     private JTextField nameField;
     private JPasswordField passwordField;
+    private DataSourceTypeEnum dataSourceTypeEnum;
 
-    public DBConfigDialog(final Component parentComponent, final String title, final DataSourceTypeEnum dataSourceTypeEnum) {
-        super(parentComponent, title, true, dataSourceTypeEnum);
+    public DBConfigDialog(final Component parentComponent, final String title, Object extObj, final DataSourceTypeEnum dataSourceTypeEnum) {
+        super(parentComponent, title, true, extObj);
+        this.dataSourceTypeEnum = dataSourceTypeEnum;
     }
+
+    private JdbcSourceInfo getDefaultJdbcSourceInfo() {
+        if (extObj != null && extObj instanceof JdbcSourceInfo) {
+            return (JdbcSourceInfo) extObj;
+        }
+        return new JdbcSourceInfo();
+//        List<JdbcSourceInfo> jdbcPropertyValues = PropertiesUtil.getJdbcPropertyValues();
+//        return CollectionUtils.isNotEmpty(jdbcPropertyValues) ? jdbcPropertyValues.get(jdbcPropertyValues.size() - 1) : new JdbcSourceInfo();
+    }
+
 
     @Override
     protected Component content() {
-        List<JdbcSourceInfo> jdbcPropertyValues = PropertiesUtil.getJdbcPropertyValues();
-        JdbcSourceInfo jdbcSourceInfo = new JdbcSourceInfo();
-        if (CollectionUtils.isNotEmpty(jdbcPropertyValues)) {
-            jdbcSourceInfo = jdbcPropertyValues.get(jdbcPropertyValues.size() - 1);
-        }
+        JdbcSourceInfo jdbcSourceInfo = getDefaultJdbcSourceInfo();
         String port = String.valueOf(jdbcSourceInfo.getConnectPort() == null ? 3306 : jdbcSourceInfo.getConnectPort()).trim();
         Dimension inputDim = new Dimension(230, 30);
         CommonPanel c1 = new CommonPanel();
@@ -121,7 +128,11 @@ public class DBConfigDialog extends BaseDialog {
         jdbcSourceInfo.setConnectPort(Integer.valueOf(connectPortField.getText()));
         jdbcSourceInfo.setUserName(nameField.getText());
         jdbcSourceInfo.setPassword(new String(passwordField.getPassword()));
-        jdbcSourceInfo.setDataSourceTypeEnum((DataSourceTypeEnum) extObj);
+        jdbcSourceInfo.setDataSourceTypeEnum(dataSourceTypeEnum);
+        //编辑
+        if (extObj != null) {
+            jdbcSourceInfo.setCurrTreeNode(((JdbcSourceInfo) extObj).getCurrTreeNode());
+        }
         ((CommonPanel) contentPanel).setBindObject(jdbcSourceInfo);
         JDBCService jdbcService = JdbcServiceFactory.getJdbcService(jdbcSourceInfo);
         if (!jdbcService.test()) {
@@ -129,17 +140,30 @@ public class DBConfigDialog extends BaseDialog {
             return;
         }
         if (isSave) {
-            List<JdbcDbInfo> jdbcDbInfos = jdbcService.getAllJdbcDbInfo();
-            System.out.println(JSONUtil.Object2JSON(jdbcDbInfos));
-            if (parentComponent instanceof TopPanel) {
-                TopPanel topPanel = (TopPanel) parentComponent;
-                LeftPanel leftPanel = topPanel.getLeftPanel();
-                jdbcSourceInfo.setJdbcDbInfos(jdbcDbInfos);
-                leftPanel.showTreeView(jdbcSourceInfo);
-                if (!PropertiesUtil.setJdbcPropertyValues(jdbcSourceInfo)) {
-                    CustomDialogUtil.showError("保存数据连接失败");
-                    return;
+            //新增
+            if (extObj == null) {
+                List<JdbcSourceInfo> jdbcPropertyValues = PropertiesUtil.getJdbcPropertyValues();
+                if (CollectionUtils.isEmpty(jdbcPropertyValues)) {
+                    jdbcSourceInfo.setIndex(0);
+                } else {
+                    //最后一条
+                    Integer index = jdbcPropertyValues.get(jdbcPropertyValues.size() - 1).getIndex();
+                    jdbcSourceInfo.setIndex(++index);
                 }
+            } else {
+                jdbcSourceInfo.setIndex(((JdbcSourceInfo) extObj).getIndex());
+            }
+            List<JdbcDbInfo> jdbcDbInfos = jdbcService.getAllJdbcDbInfo();
+            if (parentComponent instanceof TopPanel || parentComponent instanceof LeftPanel) {
+                LeftPanel leftPanel;
+                if (parentComponent instanceof TopPanel) {
+                    TopPanel topPanel = (TopPanel) parentComponent;
+                    leftPanel = topPanel.getLeftPanel();
+                } else {
+                    leftPanel = (LeftPanel) parentComponent;
+                }
+                jdbcSourceInfo.setJdbcDbInfos(jdbcDbInfos);
+                leftPanel.editTreeNode(jdbcSourceInfo);
                 this.close();
             }
         } else {

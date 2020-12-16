@@ -27,7 +27,7 @@ public class TopPanel extends BasePanel {
         item.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                showDialog("MySQL配置管理", DataSourceTypeEnum.MYSQL);
+                showDialog("新增连接", DataSourceTypeEnum.MYSQL);
             }
         });
         m1.add(item);
@@ -48,7 +48,7 @@ public class TopPanel extends BasePanel {
     }
 
     public void showDialog(String title, DataSourceTypeEnum dataSourceTypeEnum) {
-        CustomDialogUtil.showDBConfigDialog(this, title, dataSourceTypeEnum);
+        CustomDialogUtil.showDBConfigDialog(this, title, dataSourceTypeEnum, null);
     }
 
     public LeftPanel getLeftPanel() {

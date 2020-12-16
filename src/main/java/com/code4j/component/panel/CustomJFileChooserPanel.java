@@ -1,5 +1,7 @@
 package com.code4j.component.panel;
 
+import com.code4j.config.Code4jConstants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -20,7 +22,7 @@ public class CustomJFileChooserPanel extends BasePanel {
     public CustomJFileChooserPanel(Component parent, Boolean isMultiSelect, Integer mode) {
         super();
         this.jFileChooser = new JFileChooser();
-        this.selectFile = new JTextField();
+        this.selectFile = new JTextField(Code4jConstants.CACHE_PROJECT_SELECTED_FILE.getAbsolutePath());
         this.selectFile.setPreferredSize(new Dimension(250, 30));
         this.selectFile.setEditable(false);
         this.selectBtn = new JButton("选择");
@@ -44,7 +46,7 @@ public class CustomJFileChooserPanel extends BasePanel {
      */
     public void showFileOpenDialog(Component parent, Integer mode, Boolean isMultiSelect) {
         // 设置默认显示的文件夹为当前文件夹
-        jFileChooser.setCurrentDirectory(new File("."));
+        jFileChooser.setCurrentDirectory(Code4jConstants.CACHE_PROJECT_SELECTED_FILE);
         // 设置文件选择的模式（只选文件、只选文件夹、文件和文件均可选）
         jFileChooser.setFileSelectionMode(mode == null ? JFileChooser.FILES_AND_DIRECTORIES : mode);
         // 设置是否允许多选
@@ -58,6 +60,7 @@ public class CustomJFileChooserPanel extends BasePanel {
         if (result == JFileChooser.APPROVE_OPTION) {
             // 如果点击了"确定", 则获取选择的文件路径
             file = jFileChooser.getSelectedFile();
+            Code4jConstants.CACHE_PROJECT_SELECTED_FILE=file;
             // 如果允许选择多个文件, 则通过下面方法获取选择的所有文件
             // File[] files = fileChooser.getSelectedFiles();
             selectFile.setText(file.getAbsolutePath());

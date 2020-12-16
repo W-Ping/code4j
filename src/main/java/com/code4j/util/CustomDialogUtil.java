@@ -5,6 +5,7 @@ import com.code4j.component.dialog.ServiceApiConfigDialog;
 import com.code4j.component.dialog.TableConfigDialog;
 import com.code4j.config.TemplateTypeEnum;
 import com.code4j.connect.DataSourceTypeEnum;
+import com.code4j.pojo.JdbcSourceInfo;
 import sun.awt.AppContext;
 
 import javax.swing.*;
@@ -27,8 +28,8 @@ public class CustomDialogUtil {
      * @param title
      * @return
      */
-    public static DBConfigDialog showDBConfigDialog(final Component parentComponent, final String title, DataSourceTypeEnum dataSourceTypeEnum) {
-        DBConfigDialog dbConfigDialog = new DBConfigDialog(parentComponent, title, dataSourceTypeEnum);
+    public static DBConfigDialog showDBConfigDialog(final Component parentComponent, final String title, DataSourceTypeEnum dataSourceTypeEnum, JdbcSourceInfo jdbcSourceInfo) {
+        DBConfigDialog dbConfigDialog = new DBConfigDialog(parentComponent, title, jdbcSourceInfo, dataSourceTypeEnum);
         return dbConfigDialog;
     }
 
@@ -101,6 +102,7 @@ public class CustomDialogUtil {
     }
 
     static class CustomerSharedOwnerFrame extends Frame implements WindowListener {
+        @Override
         public void addNotify() {
             super.addNotify();
             installListeners();
@@ -123,6 +125,7 @@ public class CustomDialogUtil {
          * Watches for displayability changes and disposes shared instance if there are no
          * displayable children left.
          */
+        @Override
         public void windowClosed(WindowEvent e) {
             synchronized (getTreeLock()) {
                 Window[] windows = getOwnedWindows();
@@ -138,28 +141,36 @@ public class CustomDialogUtil {
             }
         }
 
+        @Override
         public void windowOpened(WindowEvent e) {
         }
 
+        @Override
         public void windowClosing(WindowEvent e) {
         }
 
+        @Override
         public void windowIconified(WindowEvent e) {
         }
 
+        @Override
         public void windowDeiconified(WindowEvent e) {
         }
 
+        @Override
         public void windowActivated(WindowEvent e) {
         }
 
+        @Override
         public void windowDeactivated(WindowEvent e) {
         }
 
+        @Override
         public void show() {
             // This frame can never be shown
         }
 
+        @Override
         public void dispose() {
             try {
                 getToolkit().getSystemEventQueue();

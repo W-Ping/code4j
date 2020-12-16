@@ -1,6 +1,7 @@
 package com.code4j.config;
 
 import java.awt.*;
+import java.io.File;
 
 /**
  * @author liu_wp
@@ -8,7 +9,7 @@ import java.awt.*;
  * @see
  */
 public class Code4jConstants {
-    public static String APP_VERSION="V1.0.0";
+    public static String APP_VERSION = "V1.0.0";
 
     public static Dimension FROM_MIN_DEFAULT_SIZE = new Dimension(1050, 620);
     public static Dimension TOP_MIN_DEFAULT_SIZE = new Dimension(900, 25);
@@ -35,4 +36,9 @@ public class Code4jConstants {
     public final static String DEFAULT_DO_PACKAGE = "pojo.dao";
 
     public static final String TEMPLATE_PATH = "src/main/java/com/code4j/templates";
+
+    /**
+     * 选择的项目地址
+     */
+    public static File CACHE_PROJECT_SELECTED_FILE = new File(".");
 }

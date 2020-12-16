@@ -1,7 +1,10 @@
 package com.code4j.pojo;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.code4j.annotation.IgnoreReflection;
 import com.code4j.connect.DataSourceTypeEnum;
 
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.List;
 
 /**
@@ -21,7 +24,7 @@ public class JdbcSourceInfo extends BaseInfo implements Cloneable {
     /**
      * 连接端口
      */
-    private Integer connectPort;
+    private Integer connectPort = 3306;
     /**
      * 用户名
      */
@@ -34,9 +37,18 @@ public class JdbcSourceInfo extends BaseInfo implements Cloneable {
     private String creator = "code4j";
 
     private String sourceType = "MYSQL";
+    @IgnoreReflection
     private DataSourceTypeEnum dataSourceTypeEnum;
-
+    @IgnoreReflection
     private List<JdbcDbInfo> jdbcDbInfos;
+    @IgnoreReflection
+    @JSONField(deserialize = false, serialize = false)
+    private DefaultMutableTreeNode currTreeNode;
+    /**
+     * 索引位置
+     */
+    private Integer index;
+
     @Override
     public JdbcSourceInfo clone() {
         try {
@@ -49,6 +61,7 @@ public class JdbcSourceInfo extends BaseInfo implements Cloneable {
             jdbcSourceInfo.setCreator(this.getCreator());
             jdbcSourceInfo.setSourceType(this.getSourceType());
             jdbcSourceInfo.setDataSourceTypeEnum(this.getDataSourceTypeEnum());
+            jdbcSourceInfo.setCurrTreeNode(this.getCurrTreeNode());
             return jdbcSourceInfo;
         } catch (Exception e) {
             return null;
@@ -71,7 +84,7 @@ public class JdbcSourceInfo extends BaseInfo implements Cloneable {
         }
         JdbcSourceInfo jdbcSourceInfo = (JdbcSourceInfo) obj;
         if (jdbcSourceInfo.getConnectHost() != null && jdbcSourceInfo.getConnectHost().equals(this.getConnectHost())
-                && jdbcSourceInfo.getConnectPort() != null && jdbcSourceInfo.getConnectPort().equals(this.getConnectPort())) {
+                && jdbcSourceInfo.getConnectPort() != null && jdbcSourceInfo.getConnectPort().equals(this.getConnectPort()) && jdbcSourceInfo.getConnectName().equals(this.getConnectName())) {
             return true;
         }
         return false;
@@ -159,5 +172,21 @@ public class JdbcSourceInfo extends BaseInfo implements Cloneable {
 
     public void setJdbcDbInfos(final List<JdbcDbInfo> jdbcDbInfos) {
         this.jdbcDbInfos = jdbcDbInfos;
+    }
+
+    public DefaultMutableTreeNode getCurrTreeNode() {
+        return currTreeNode;
+    }
+
+    public void setCurrTreeNode(final DefaultMutableTreeNode currTreeNode) {
+        this.currTreeNode = currTreeNode;
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public void setIndex(final Integer index) {
+        this.index = index;
     }
 }

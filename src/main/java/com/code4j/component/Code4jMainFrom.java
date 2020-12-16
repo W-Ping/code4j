@@ -39,9 +39,9 @@ public class Code4jMainFrom extends JFrame {
         vBox2.add(rightPanel);
         vBox1.add(vBox2);
         vBox1.add(bottomPanel);
-        LayoutReSizeEvent layoutReSizeEvent = new LayoutReSizeEvent();
-        leftPanel.addMouseListener(layoutReSizeEvent);
-        leftPanel.addMouseMotionListener(layoutReSizeEvent);
+//        LayoutReSizeEvent layoutReSizeEvent = new LayoutReSizeEvent();
+//        leftPanel.addMouseListener(layoutReSizeEvent);
+//        leftPanel.addMouseMotionListener(layoutReSizeEvent);
         add(vBox1);
         this.setPreferredSize(Code4jConstants.FROM_MIN_DEFAULT_SIZE);
         this.setVisible(true);
