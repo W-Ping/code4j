@@ -62,10 +62,7 @@ public class LeftPanel extends BasePanel {
                     if (path == null) {
                         return;
                     }
-//                    tree.setSelectionPath(path);
-                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
-                            .getLastSelectedPathComponent();
-                    getJPopupMenu(node, evt.getX(), evt.getY());
+                    getJPopupMenu(path, evt.getX(), evt.getY());
                 }
             }
         });
@@ -227,15 +224,18 @@ public class LeftPanel extends BasePanel {
         this.rightPanel = rightPanel;
     }
 
-    private void getJPopupMenu(DefaultMutableTreeNode selectNode, int x, int y) {
-        JdbcSourceInfo jdbcSourceInfo = (JdbcSourceInfo) selectNode.getUserObject();
-        jdbcSourceInfo.setCurrTreeNode(selectNode);
+    private void getJPopupMenu(TreePath path, int x, int y) {
         JPopupMenu jPopupMenu = new JPopupMenu();
         JMenuItem editItem = new JMenuItem("编辑连接");
         LeftPanel leftPanel = this;
         editItem.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(final ActionEvent e) {
+                tree.setSelectionPath(path);
+                DefaultMutableTreeNode selectNode = (DefaultMutableTreeNode) tree
+                        .getLastSelectedPathComponent();
+                JdbcSourceInfo jdbcSourceInfo = (JdbcSourceInfo) selectNode.getUserObject();
+                jdbcSourceInfo.setCurrTreeNode(selectNode);
                 CustomDialogUtil.showDBConfigDialog(leftPanel, "编辑连接", jdbcSourceInfo.getDataSourceTypeEnum(), jdbcSourceInfo);
             }
         });
@@ -243,6 +243,11 @@ public class LeftPanel extends BasePanel {
         delItem.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(final ActionEvent e) {
+                tree.setSelectionPath(path);
+                DefaultMutableTreeNode selectNode = (DefaultMutableTreeNode) tree
+                        .getLastSelectedPathComponent();
+                JdbcSourceInfo jdbcSourceInfo = (JdbcSourceInfo) selectNode.getUserObject();
+                jdbcSourceInfo.setCurrTreeNode(selectNode);
                 deleteTreeNode(jdbcSourceInfo, selectNode);
             }
         });
