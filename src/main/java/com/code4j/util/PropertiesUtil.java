@@ -173,7 +173,7 @@ public class PropertiesUtil {
         if (CollectionUtils.isNotEmpty(proList)) {
             boolean isUpdate = false;
             for (JdbcSourceInfo sourceInfo : proList) {
-                if (isUpdate = sourceInfo.equals(jdbcSourceInfo)) {
+                if (isUpdate = sourceInfo.getIndex().equals(jdbcSourceInfo.getIndex())) {
                     sourceInfo.setConnectName(jdbcSourceInfo.getConnectName());
                     sourceInfo.setConnectHost(jdbcSourceInfo.getConnectHost());
                     sourceInfo.setConnectPort(jdbcSourceInfo.getConnectPort());
@@ -182,6 +182,7 @@ public class PropertiesUtil {
                     sourceInfo.setCreator(jdbcSourceInfo.getCreator());
                     sourceInfo.setIndex(jdbcSourceInfo.getIndex());
                     sourceInfo.setDataSourceTypeEnum(jdbcSourceInfo.getDataSourceTypeEnum());
+                    break;
                 }
             }
             if (!isUpdate) {
@@ -222,7 +223,9 @@ public class PropertiesUtil {
                     if (declaredField.getName().equals("index")) {
                         index = value.toString();
                     }
-                    properties.setProperty(keyPrefix + "[" + index + "]." + declaredField.getName() + "", value != null ? value.toString() : "");
+                    String key = keyPrefix + "[" + index + "]." + declaredField.getName();
+                    System.out.println("编辑key:" + key);
+                    properties.setProperty(key, value != null ? value.toString() : "");
                 }
             }
             properties.store(fileOutputStream, null);
