@@ -106,7 +106,7 @@ public class PropertiesUtil {
                             }
                         }
                     }
-                    if (isAdd) {
+                    if (isAdd && newInstance != null) {
                         list.add(newInstance);
                     }
                 }
@@ -150,7 +150,7 @@ public class PropertiesUtil {
     public static List<JdbcSourceInfo> getJdbcPropertyValues() {
         List<JdbcSourceInfo> proList = getPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, JdbcSourceInfo.class);
         if (CollectionUtils.isNotEmpty(proList) && proList.size() > 1) {
-            proList.sort((v1, v2) -> v1.getIndex().compareTo(v2.getIndex()));
+            proList.stream().filter(v -> v != null).collect(Collectors.toList()).sort((v1, v2) -> v1.getIndex().compareTo(v2.getIndex()));
         }
         return proList;
     }

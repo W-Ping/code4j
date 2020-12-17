@@ -62,7 +62,7 @@ public class LeftPanel extends BasePanel {
                     if (path == null) {
                         return;
                     }
-                    tree.setSelectionPath(path);
+//                    tree.setSelectionPath(path);
                     DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
                             .getLastSelectedPathComponent();
                     getJPopupMenu(node, evt.getX(), evt.getY());
