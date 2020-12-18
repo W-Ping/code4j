@@ -1,10 +1,12 @@
 package com.code4j.util;
 
 import com.code4j.component.dialog.DBConfigDialog;
+import com.code4j.component.dialog.GenerateResultDialog;
 import com.code4j.component.dialog.ServiceApiConfigDialog;
 import com.code4j.component.dialog.TableConfigDialog;
 import com.code4j.config.TemplateTypeEnum;
 import com.code4j.connect.DataSourceTypeEnum;
+import com.code4j.pojo.GenerateResultInfo;
 import com.code4j.pojo.JdbcSourceInfo;
 import sun.awt.AppContext;
 
@@ -12,6 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.List;
 
 /**
  * @author liu_wp
@@ -55,6 +58,17 @@ public class CustomDialogUtil {
         return serviceApiConfigDialog;
     }
 
+    /**
+     * @param parentComponent
+     * @param title
+     * @param generateResultInfos
+     * @return
+     */
+    public static GenerateResultDialog showGenerateResultDialog(final Component parentComponent, String title, List<GenerateResultInfo> generateResultInfos) {
+        GenerateResultDialog generateResultDialog = new GenerateResultDialog(parentComponent, title, generateResultInfos);
+        return generateResultDialog;
+    }
+
     public static void showError(String message) {
         JOptionPane.showMessageDialog(null, message, "错误", JOptionPane.ERROR_MESSAGE);
     }
@@ -62,6 +76,7 @@ public class CustomDialogUtil {
     public static void showOk(String message) {
         JOptionPane.showMessageDialog(null, message, "成功", JOptionPane.INFORMATION_MESSAGE, null);
     }
+
 
     static void appContextPut(Object key, Object value) {
         AppContext.getAppContext().put(key, value);

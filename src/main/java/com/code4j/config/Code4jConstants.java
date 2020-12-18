@@ -10,6 +10,8 @@ import java.io.File;
  */
 public class Code4jConstants {
     public static String APP_VERSION = "V1.0.0";
+    public static String SUCCESS = "success";
+    public static String FAIL = "fail";
 
     public static Dimension FROM_MIN_DEFAULT_SIZE = new Dimension(1050, 620);
     public static Dimension TOP_MIN_DEFAULT_SIZE = new Dimension(900, 25);

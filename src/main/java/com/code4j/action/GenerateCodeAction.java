@@ -3,6 +3,7 @@ package com.code4j.action;
 import com.code4j.component.CustomJCheckBox;
 import com.code4j.component.panel.CommonPanel;
 import com.code4j.component.panel.CustomJFileChooserPanel;
+import com.code4j.config.Code4jConstants;
 import com.code4j.config.TemplateTypeEnum;
 import com.code4j.connect.JDBCService;
 import com.code4j.connect.JdbcServiceFactory;
@@ -61,6 +62,7 @@ public class GenerateCodeAction implements ActionListener {
             CustomDialogUtil.showError("生成代码配置不能为空");
             return;
         }
+        List<GenerateResultInfo> result = new ArrayList<>();
         for (Map.Entry<String, ? extends BaseTemplateInfo> mp : pojoParamsInfoMap.entrySet()) {
             String templateId = mp.getKey();
             BaseTemplateInfo baseTemplateInfo = mp.getValue();
@@ -80,11 +82,13 @@ public class GenerateCodeAction implements ActionListener {
                 }
             }
             String codePath = FreemarkerUtil.generateCodeByTemplate(projectPath, mp.getValue(), dataMap);
+            GenerateResultInfo generateResultInfo = new GenerateResultInfo(templateId, StringUtils.isNotBlank(codePath) ? Code4jConstants.SUCCESS : Code4jConstants.FAIL, codePath);
+            result.add(generateResultInfo);
             System.out.println("template path:" + codePath);
             //恢复
             baseTemplateInfo.setPackageRoot(null);
         }
-
+        CustomDialogUtil.showGenerateResultDialog(customJFileChooserPanel, "代码生成结果", result);
     }
 
     /**
@@ -158,7 +162,9 @@ public class GenerateCodeAction implements ActionListener {
                 if (javaType.startsWith("java.lang")) {
                     continue;
                 } else {
-                    packageList.add(javaType);
+                    if (!packageList.contains(javaType)) {
+                        packageList.add(javaType);
+                    }
                 }
             }
         }

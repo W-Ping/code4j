@@ -6,7 +6,9 @@ import ${(pojo.superInfo.superClassPackage)!}.${(pojo.superInfo.superClassName)!
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 
-<#list columnPackages as pak >import ${pak};</#list>
+<#list columnPackages as pak >
+    import ${pak};
+</#list>
 /**
 * ${(pojo.jdbcTableInfo.remark)!}
 * @author ${(pojo.author)!}

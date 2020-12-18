@@ -46,6 +46,9 @@ public abstract class BaseDialog extends JDialog {
         setVisible(true);
     }
 
+    /**
+     * @return
+     */
     protected abstract Component content();
 
     protected CommonPanel bottom() {

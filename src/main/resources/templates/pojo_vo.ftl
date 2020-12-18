@@ -4,7 +4,9 @@ package ${(pojo.packageRoot)!""}${(pojo.packageName)!};
     import ${pojo.superInfo.superClassPackage}.${pojo.superInfo.superClassName};
 </#if>
 
-<#list columnPackages as pak >import ${pak};</#list>
+<#list columnPackages as pak >
+    import ${pak};
+</#list>
 /**
 * ${(pojo.jdbcTableInfo.remark)!}
 * @author ${(pojo.author)!}
