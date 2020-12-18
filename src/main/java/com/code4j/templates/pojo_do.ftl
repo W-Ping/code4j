@@ -1,7 +1,7 @@
 package ${(pojo.packageRoot)!""}${(pojo.packageName)!};
 
 <#if (pojo.superInfo)??>
-import ${pojo.superInfo.superClassPackage}.${pojo.superInfo.superClassName};
+import ${(pojo.superInfo.superClassPackage)!}.${(pojo.superInfo.superClassName)!};
 </#if>
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
