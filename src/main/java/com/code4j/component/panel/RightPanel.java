@@ -66,7 +66,7 @@ public class RightPanel extends BasePanel {
         int avgH = (int) Math.floor(preferredSize.getHeight() / 8);
         Dimension dimensionP = new Dimension((int) preferredSize.getWidth() - 10, avgH);
         CommonPanel projectP = new CommonPanel(new FlowLayout(FlowLayout.LEFT), new Dimension((int) preferredSize.getWidth() - 10, avgH + 20));
-        projectP.setBorder(BorderFactory.createTitledBorder(lineBorder, "项目地址"));
+        projectP.setBorder(BorderFactory.createTitledBorder(lineBorder, "项目配置（" + jdbcTableInfo.getDbName() + "." + tableName + "）"));
         JLabel p1 = new JLabel("项目地址：");
         CustomJFileChooserPanel p1V = new CustomJFileChooserPanel(this, false, JFileChooser.DIRECTORIES_ONLY);
         projectP.addList(p1, p1V);
