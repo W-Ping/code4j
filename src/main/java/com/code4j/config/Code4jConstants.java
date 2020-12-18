@@ -40,5 +40,5 @@ public class Code4jConstants {
     /**
      * 选择的项目地址
      */
-    public static File CACHE_PROJECT_SELECTED_FILE = new File(".");
+    public static File CACHE_PROJECT_SELECTED_FILE = new File("");
 }
