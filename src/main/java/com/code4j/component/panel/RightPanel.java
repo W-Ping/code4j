@@ -40,15 +40,14 @@ public class RightPanel extends BasePanel {
     }
 
     public void clearEmpty(String promptMsg) {
+        this.removeAll();
         if (StringUtils.isNotBlank(promptMsg)) {
             JLabel jLabel = new JLabel(promptMsg, JLabel.CENTER);
             jLabel.setFont(jLabel.getFont().deriveFont(30.0f));
             jLabel.setForeground(Color.gray);
             this.add(jLabel, BorderLayout.CENTER);
-        } else {
-            this.removeAll();
-            this.updateUI();
         }
+        this.updateUI();
     }
 
     /**
@@ -56,6 +55,7 @@ public class RightPanel extends BasePanel {
      * @param jdbcSourceInfo
      */
     public void showGenerateView(JdbcTableInfo jdbcTableInfo, JdbcSourceInfo jdbcSourceInfo) {
+        this.clearEmpty(null);
         List<JdbcMapJavaInfo> tableColumnInfos = JdbcServiceFactory.getJdbcService(jdbcSourceInfo).getTableColumnInfo(jdbcTableInfo.getDbName(), jdbcTableInfo.getTableName());
         String tableName = jdbcTableInfo.getTableName();
         Dimension inputDimension = new Dimension(200, 30);

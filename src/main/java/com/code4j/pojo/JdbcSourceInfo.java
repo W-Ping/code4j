@@ -2,6 +2,7 @@ package com.code4j.pojo;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.code4j.annotation.IgnoreReflection;
+import com.code4j.annotation.PropertyKeyIndexId;
 import com.code4j.connect.DataSourceTypeEnum;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -12,6 +13,7 @@ import java.util.List;
  * @date 2020/11/17
  * @see
  */
+@PropertyKeyIndexId
 public class JdbcSourceInfo extends BaseInfo implements Cloneable {
     /**
      * 连接名称

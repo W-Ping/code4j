@@ -1,6 +1,7 @@
 package com.code4j.util;
 
 import com.code4j.annotation.IgnoreReflection;
+import com.code4j.annotation.PropertyKeyIndexId;
 import com.code4j.config.Code4jConstants;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.pojo.PropertyInfo;
@@ -211,6 +212,14 @@ public class PropertiesUtil {
             for (int i = 0; i < objects.size(); i++) {
                 T object = objects.get(i);
                 Class<?> aClass = object.getClass();
+                PropertyKeyIndexId propertyKeyIndexId = aClass.getAnnotation(PropertyKeyIndexId.class);
+                String indexFiledName = propertyKeyIndexId.fieldName();
+                Field indexField = aClass.getDeclaredField(indexFiledName);
+                indexField.setAccessible(true);
+                String index = i + "";
+                if (indexField != null && indexField.get(object) != null) {
+                    index = indexField.get(object).toString();
+                }
                 Field[] declaredFields = aClass.getDeclaredFields();
                 for (final Field declaredField : declaredFields) {
                     IgnoreReflection annotation = declaredField.getAnnotation(IgnoreReflection.class);
@@ -219,10 +228,6 @@ public class PropertiesUtil {
                     }
                     declaredField.setAccessible(true);
                     Object value = declaredField.get(object);
-                    String index = i + "";
-                    if (declaredField.getName().equals("index")) {
-                        index = value.toString();
-                    }
                     String key = keyPrefix + "[" + index + "]." + declaredField.getName();
                     System.out.println("编辑key:" + key);
                     properties.setProperty(key, value != null ? value.toString() : "");

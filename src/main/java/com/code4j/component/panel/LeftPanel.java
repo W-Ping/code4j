@@ -91,7 +91,7 @@ public class LeftPanel extends BasePanel {
 
                 @Override
                 public void valueChanged(final TreeSelectionEvent e) {
-                    rightPanel.clearEmpty(null);
+
                     DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
                             .getLastSelectedPathComponent();
                     if (node == null) {
