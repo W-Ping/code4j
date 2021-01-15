@@ -14,7 +14,7 @@ public class ServiceParamsInfo extends BaseTemplateInfo {
     /**
      * 接口
      */
-    private InterfaceInfo interfaceInfo;
+    private InterfaceParamsInfo interfaceParamsInfo;
 
     public SuperPojoInfo getSuperPojoInfo() {
         return superPojoInfo;
@@ -24,11 +24,11 @@ public class ServiceParamsInfo extends BaseTemplateInfo {
         this.superPojoInfo = superPojoInfo;
     }
 
-    public InterfaceInfo getInterfaceInfo() {
-        return interfaceInfo;
+    public InterfaceParamsInfo getInterfaceParamsInfo() {
+        return interfaceParamsInfo;
     }
 
-    public void setInterfaceInfo(final InterfaceInfo interfaceInfo) {
-        this.interfaceInfo = interfaceInfo;
+    public void setInterfaceParamsInfo(final InterfaceParamsInfo interfaceParamsInfo) {
+        this.interfaceParamsInfo = interfaceParamsInfo;
     }
 }

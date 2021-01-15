@@ -98,9 +98,9 @@ public class LeftPanel extends BasePanel {
                         return;
                     }
                     Object object = node.getUserObject();
-                    System.out.println("你选择了：" + object.toString());
                     node.getParent().getAllowsChildren();
                     if (object instanceof JdbcSourceInfo) {
+                        System.out.println("你选择连接：" + object.toString());
                         //选择数据链接
                         JdbcSourceInfo jdbcSourceInfo = (JdbcSourceInfo) object;
                         List<JdbcDbInfo> jdbcDbInfos = jdbcSourceInfo.getJdbcDbInfos();
@@ -119,6 +119,7 @@ public class LeftPanel extends BasePanel {
                         }
                     } else if (object instanceof JdbcDbInfo) {
                         //选择数据库
+                        System.out.println("你选择数据库：" + object.toString());
                         JdbcDbInfo jdbcDbInfo = (JdbcDbInfo) object;
                         JDBCService jdbcService = JdbcServiceFactory.getJdbcService(jdbcDbInfo.getJdbcSourceInfo());
                         List<JdbcTableInfo> jdbcTableInfos = jdbcService.getJdbcTableInfo(jdbcDbInfo);
@@ -132,6 +133,7 @@ public class LeftPanel extends BasePanel {
                         }
                     } else if (object instanceof JdbcTableInfo) {
                         //选择数据表
+                        System.out.println("你选择表：" + object.toString());
                         JdbcTableInfo jdbcTableInfo = (JdbcTableInfo) object;
                         rightPanel.showGenerateView(jdbcTableInfo, jdbcTableInfo.getJdbcSourceInfo());
                     }
@@ -225,34 +227,33 @@ public class LeftPanel extends BasePanel {
     }
 
     private void getJPopupMenu(TreePath path, int x, int y) {
-        JPopupMenu jPopupMenu = new JPopupMenu();
-        JMenuItem editItem = new JMenuItem("编辑连接");
-        LeftPanel leftPanel = this;
-        editItem.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                tree.setSelectionPath(path);
-                DefaultMutableTreeNode selectNode = (DefaultMutableTreeNode) tree
-                        .getLastSelectedPathComponent();
-                JdbcSourceInfo jdbcSourceInfo = (JdbcSourceInfo) selectNode.getUserObject();
-                jdbcSourceInfo.setCurrTreeNode(selectNode);
-                CustomDialogUtil.showDBConfigDialog(leftPanel, "编辑连接", jdbcSourceInfo.getDataSourceTypeEnum(), jdbcSourceInfo);
-            }
-        });
-        JMenuItem delItem = new JMenuItem("删除连接");
-        delItem.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                tree.setSelectionPath(path);
-                DefaultMutableTreeNode selectNode = (DefaultMutableTreeNode) tree
-                        .getLastSelectedPathComponent();
-                JdbcSourceInfo jdbcSourceInfo = (JdbcSourceInfo) selectNode.getUserObject();
-                jdbcSourceInfo.setCurrTreeNode(selectNode);
-                deleteTreeNode(jdbcSourceInfo, selectNode);
-            }
-        });
-        jPopupMenu.add(editItem);
-        jPopupMenu.add(delItem);
-        jPopupMenu.show(tree, x, y);
+        tree.setSelectionPath(path);
+        DefaultMutableTreeNode selectNode = (DefaultMutableTreeNode) tree
+                .getLastSelectedPathComponent();
+        Object userObject = selectNode.getUserObject();
+        boolean isCanSelect = userObject instanceof JdbcSourceInfo;
+        if (isCanSelect) {
+            JdbcSourceInfo jdbcSourceInfo = (JdbcSourceInfo) userObject;
+            jdbcSourceInfo.setCurrTreeNode(selectNode);
+            JPopupMenu jPopupMenu = new JPopupMenu();
+            LeftPanel leftPanel = this;
+            JMenuItem editItem = new JMenuItem("编辑连接");
+            editItem.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    CustomDialogUtil.showDBConfigDialog(leftPanel, "编辑连接", jdbcSourceInfo.getDataSourceTypeEnum(), jdbcSourceInfo);
+                }
+            });
+            JMenuItem delItem = new JMenuItem("删除连接");
+            delItem.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    deleteTreeNode(jdbcSourceInfo, selectNode);
+                }
+            });
+            jPopupMenu.add(editItem);
+            jPopupMenu.add(delItem);
+            jPopupMenu.show(tree, x, y);
+        }
     }
 }

@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 
 /**
+ * 文件地址选择器
+ *
  * @author liu_wp
  * @date 2020/11/19
  * @see
@@ -60,7 +62,7 @@ public class CustomJFileChooserPanel extends BasePanel {
         if (result == JFileChooser.APPROVE_OPTION) {
             // 如果点击了"确定", 则获取选择的文件路径
             file = jFileChooser.getSelectedFile();
-            Code4jConstants.CACHE_PROJECT_SELECTED_FILE=file;
+            Code4jConstants.CACHE_PROJECT_SELECTED_FILE = file;
             // 如果允许选择多个文件, 则通过下面方法获取选择的所有文件
             // File[] files = fileChooser.getSelectedFiles();
             selectFile.setText(file.getAbsolutePath());

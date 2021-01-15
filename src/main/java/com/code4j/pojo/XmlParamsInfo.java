@@ -7,7 +7,7 @@ import java.util.List;
  * @date 2020/11/20
  * @see
  */
-public class XMLParamsInfo extends BaseTemplateInfo {
+public class XmlParamsInfo extends BaseTemplateInfo {
     /**
      * mapper 包路径
      */
@@ -17,9 +17,10 @@ public class XMLParamsInfo extends BaseTemplateInfo {
      */
     private String resultMapType;
     /**
-     *
+     * 接口参数
      */
-    private List<JdbcMapJavaInfo> tableColumnInfos;
+    private List<XmlApiParamsInfo> xmlApiParamsInfos;
+
 
     public String getNamespace() {
         return namespace;
@@ -37,12 +38,12 @@ public class XMLParamsInfo extends BaseTemplateInfo {
         this.resultMapType = resultMapType;
     }
 
-    public List<JdbcMapJavaInfo> getTableColumnInfos() {
-        return tableColumnInfos;
+
+    public List<XmlApiParamsInfo> getXmlApiParamsInfos() {
+        return xmlApiParamsInfos;
     }
 
-    public void setTableColumnInfos(final List<JdbcMapJavaInfo> tableColumnInfos) {
-        this.tableColumnInfos = tableColumnInfos;
+    public void setXmlApiParamsInfos(final List<XmlApiParamsInfo> xmlApiParamsInfos) {
+        this.xmlApiParamsInfos = xmlApiParamsInfos;
     }
-
 }

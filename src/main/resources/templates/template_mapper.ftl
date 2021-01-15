@@ -1,12 +1,33 @@
-package ${(pojo.packageRoot)!}${(pojo.packageName)!};
+package ${(baseInfo.packageRoot)!}${(baseInfo.packageName)!};
 import org.springframework.stereotype.Repository;
+<#if (packages)??><#list packages as model>
+import ${model};
+</#list></#if>
 /**
-* ${(pojo.jdbcTableInfo.remark)!}
-* @author ${(pojo.author)!}
+* ${(baseInfo.jdbcTableInfo.remark)!}
+* @author ${(baseInfo.author)!}
 * @date Created in ${.now}
 */
 @Repository
-<#if (pojo.superInfo)??>public interface ${(pojo.pojoName)!} extends ${pojo.superInfo.superClassName}{
-<#else>public interface ${(pojo.pojoName)!}{
+<#if (baseInfo.superInfo)??>public interface ${(baseInfo.pojoName)!} extends ${baseInfo.superInfo.superClassName}{
+<#else>public interface ${(baseInfo.pojoName)!}{
+</#if>
+<#if (apiInfos)??>
+    <#list apiInfos as model>
+        <#if (model.parameterType)??>
+         <#if model.isPageSelect>
+         <#if model.parameterTypeIsList>
+  ${model.resultType} ${model.apiId}(@Param("List") ${(model.parameterType)!} list);
+                <#else>
+  ${model.resultType} ${model.apiId}(${(model.parameterType)!} object);
+            </#if>
+         <#else>
+  ${model.resultType} ${model.apiId}();
+        </#if>
+        </#if>
+        <#if model.isPageSelect>
+  ${model.resultType} ${model.apiId}(${(model.parameterType)!} object,@Param("pageNum") int pageNum,@Param("pageSize") int pageSize);
+        </#if>
+    </#list>
 </#if>
 }

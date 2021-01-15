@@ -3,6 +3,8 @@ package com.code4j.pojo;
 import com.code4j.util.StrUtil;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 /**
  * @author liu_wp
  * @date 2020/11/19
@@ -35,6 +37,23 @@ public class JdbcMapJavaInfo {
 
     public JdbcMapJavaInfo() {
 
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        final JdbcMapJavaInfo that = (JdbcMapJavaInfo) o;
+        return Objects.equals(column, that.column);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(comment, column, jdbcType, javaProperty, javaType, ignore);
     }
 
     public JdbcMapJavaInfo(String column, String jdbcType, String comment) {

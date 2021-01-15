@@ -1,9 +1,6 @@
 package com.code4j.util;
 
-import com.code4j.component.dialog.DBConfigDialog;
-import com.code4j.component.dialog.GenerateResultDialog;
-import com.code4j.component.dialog.ServiceApiConfigDialog;
-import com.code4j.component.dialog.TableConfigDialog;
+import com.code4j.component.dialog.*;
 import com.code4j.config.TemplateTypeEnum;
 import com.code4j.connect.DataSourceTypeEnum;
 import com.code4j.pojo.GenerateResultInfo;
@@ -47,6 +44,27 @@ public class CustomDialogUtil {
         return tableConfigDialog;
     }
 
+    /**
+     * @param parentComponent
+     * @param title
+     * @param templateTypeEnum
+     * @return
+     */
+    public static XmlConfigDialog showXmlConfigDialog(final Component parentComponent, final String title, TemplateTypeEnum templateTypeEnum) {
+        XmlConfigDialog xmlConfigDialog = new XmlConfigDialog(parentComponent, title, true, templateTypeEnum);
+        return xmlConfigDialog;
+    }
+
+    /**
+     * @param parentComponent
+     * @param title
+     * @param templateTypeEnum
+     * @return
+     */
+    public static MapperConfigDialog showMapperConfigDialog(final Component parentComponent, final String title, TemplateTypeEnum templateTypeEnum) {
+        MapperConfigDialog mapperConfigDialog = new MapperConfigDialog(parentComponent, title, true, templateTypeEnum);
+        return mapperConfigDialog;
+    }
     /**
      * @param parentComponent
      * @param title

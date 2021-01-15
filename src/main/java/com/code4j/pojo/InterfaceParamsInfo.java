@@ -5,5 +5,5 @@ package com.code4j.pojo;
  * @date 2020/11/23
  * @see
  */
-public class InterfaceInfo extends BaseTemplateInfo {
+public class InterfaceParamsInfo extends BaseTemplateInfo {
 }

@@ -174,7 +174,7 @@ public class FreemarkerTest {
         templateInfo.setTemplateId(TemplateTypeEnum.XML.getTemplateId());
         templateInfo.setTemplatePath(Code4jConstants.TEMPLATE_PATH);
 
-        XMLParamsInfo xmlParamsInfo = new XMLParamsInfo();
+        XmlParamsInfo xmlParamsInfo = new XmlParamsInfo();
         xmlParamsInfo.setTableColumnInfos(tableColumnInfos);
         xmlParamsInfo.setNamespace("com.mapper");
         xmlParamsInfo.setResultMapType(pojoParamsInfo.getPackagePath());

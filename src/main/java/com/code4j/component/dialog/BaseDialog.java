@@ -93,6 +93,21 @@ public abstract class BaseDialog extends JDialog {
         this.dispose();
     }
 
+    public Component getContentPanel() {
+        return contentPanel;
+    }
+
+    public void setContentPanel(final Component contentPanel) {
+        this.contentPanel = contentPanel;
+    }
+
+    public Object getExtObj() {
+        return extObj;
+    }
+
+    public void setExtObj(final Object extObj) {
+        this.extObj = extObj;
+    }
 
     public Component getParentComponent() {
         return parentComponent;

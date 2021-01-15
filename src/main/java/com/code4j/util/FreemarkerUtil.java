@@ -31,7 +31,7 @@ public class FreemarkerUtil {
                 Configuration configuration = new Configuration(Configuration.VERSION_2_3_30);
                 TemplateInfo templateInfo = baseTemplateInfo.getTemplateInfo();
 //                File file = new File(templateInfo.getTemplatePath());
-                configuration.setClassForTemplateLoading(FreemarkerUtil.class,"/templates");
+                configuration.setClassForTemplateLoading(FreemarkerUtil.class, "/templates");
                 TemplateTypeEnum templateTypeEnum = TemplateTypeEnum.getTemplateTypeEnum(templateInfo.getTemplateId());
                 String generatePojoFolder = baseTemplateInfo.getGeneratePojoFolder(projectPath);
                 File folder = new File(generatePojoFolder);
@@ -39,6 +39,9 @@ public class FreemarkerUtil {
                     folder.mkdirs();
                 }
                 File outFile = new File(generatePojoFolder + "\\" + baseTemplateInfo.getPojoName() + templateTypeEnum.getFileType());
+                if (outFile.exists()) {
+                    outFile.delete();
+                }
                 Template template = configuration.getTemplate(templateTypeEnum.getTemplateName());
                 out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile)));
                 template.process(dataMap, out);

@@ -13,6 +13,8 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 /**
+ * 代码生成结果 对话框
+ *
  * @author liu_wp
  * @date 2020/12/18
  * @see

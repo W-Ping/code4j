@@ -20,6 +20,8 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 /**
+ * 数据库连接 对话框
+ *
  * @author liu_wp
  * @date 2020/11/18
  * @see

@@ -110,7 +110,7 @@ public class StrUtil {
 
     public static void main(String[] args) {
         String user_name = "t_application_info";
-        user_name = StrUtil.subFirstStr(user_name, "t_");
+        user_name = StrUtil.underlineToCamelFirstToUpper(user_name);
         System.out.println(user_name);
     }
 }

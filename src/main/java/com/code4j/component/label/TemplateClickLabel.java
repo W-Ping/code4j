@@ -22,7 +22,7 @@ public class TemplateClickLabel extends JLabel {
      * @param title
      * @param templateTypeEnum
      */
-    public TemplateClickLabel(String text, final String title, TemplateTypeEnum templateTypeEnum, CommonPanel bindCommonPanel) {
+    public TemplateClickLabel(String text, String title, TemplateTypeEnum templateTypeEnum, CommonPanel bindCommonPanel) {
         super(text);
         this.bindCommonPanel = bindCommonPanel;
         this.setForeground(Color.BLUE);
@@ -32,8 +32,12 @@ public class TemplateClickLabel extends JLabel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
-                    if (TemplateTypeEnum.SERVICE_API.equals(templateTypeEnum.getTemplateId())) {
+                    if (TemplateTypeEnum.SERVICE_API.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
                         CustomDialogUtil.showServiceApiConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                    } else if (TemplateTypeEnum.MAPPER.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
+                        CustomDialogUtil.showMapperConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                    } else if (TemplateTypeEnum.XML.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
+                        CustomDialogUtil.showXmlConfigDialog(bindCommonPanel, title, templateTypeEnum);
                     } else {
                         CustomDialogUtil.showTableConfigDialog(bindCommonPanel, title, templateTypeEnum);
                     }

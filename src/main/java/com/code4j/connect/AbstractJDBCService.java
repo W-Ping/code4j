@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author liu_wp
@@ -128,8 +130,13 @@ public abstract class AbstractJDBCService implements JDBCService {
             List<JdbcMapJavaInfo> result = new ArrayList<>();
             DatabaseMetaData meta = connection.getMetaData();
             rs = meta.getColumns(catalog(), dbName, tableName.trim(), null);
+            Set<String> columnCache = new HashSet<>();
             while (rs.next()) {
                 String columnName = rs.getString("COLUMN_NAME");
+                if (columnCache.contains(columnName)) {
+                    continue;
+                }
+                columnCache.add(columnName);
                 String dataType = rs.getString("TYPE_NAME");
                 String columnComment = rs.getString("REMARKS");
                 JdbcMapJavaInfo jdbcMapJavaInfo = new JdbcMapJavaInfo(columnName, dataType, columnComment);

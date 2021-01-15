@@ -222,4 +222,5 @@ public class BaseTemplateInfo {
     public void setTableColumnInfos(final List<JdbcMapJavaInfo> tableColumnInfos) {
         this.tableColumnInfos = tableColumnInfos;
     }
+
 }

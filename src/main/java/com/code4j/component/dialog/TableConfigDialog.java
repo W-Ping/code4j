@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * DO、VO字段配置 对话框
+ *
  * @author liu_wp
  * @date 2020/11/23
  * @see
@@ -32,7 +34,7 @@ public class TableConfigDialog extends BaseDialog {
 
     @Override
     public void afterInit() {
-        this.setPreferredSize(new Dimension(130 * 4 + 140, 500));
+        this.setPreferredSize(new Dimension(30 + 130 * 4 + 140, 500));
         this.pack();
         setLocationRelativeTo(null);
 //        setResizable(false);
@@ -46,24 +48,28 @@ public class TableConfigDialog extends BaseDialog {
         CommonPanel parentComponent = (CommonPanel) super.getParentComponent();
         List<JdbcMapJavaInfo> tableColumnInfos = (List<JdbcMapJavaInfo>) parentComponent.getBindObject();
         if (CollectionUtils.isNotEmpty(tableColumnInfos)) {
+            Dimension seqNoDimension = new Dimension(30, 25);
             Dimension dimension = new Dimension(130, 25);
             Dimension checkDimension = new Dimension(60, 25);
             CommonPanel c1 = new CommonPanel();
+            JLabel j0 = new JLabel("序号");
             JLabel j1 = new JLabel("数据库字段");
             JLabel j2 = new JLabel("类型");
             JLabel j3 = new JLabel("Java字段");
             JLabel j4 = new JLabel("类型");
             JLabel j5 = new JLabel("是否生成");
+            j0.setPreferredSize(seqNoDimension);
             j1.setPreferredSize(dimension);
             j2.setPreferredSize(dimension);
             j3.setPreferredSize(dimension);
             j4.setPreferredSize(dimension);
             j5.setPreferredSize(checkDimension);
-            c1.addList(j1, j2, j3, j4, j5);
+            c1.addList(j0, j1, j2, j3, j4, j5);
             box.add(c1);
             for (int i = 0; i < tableColumnInfos.size(); i++) {
                 JdbcMapJavaInfo tableColumnInfo = tableColumnInfos.get(i);
                 CommonPanel c2 = new CommonPanel();
+                JLabel j0v = new JLabel((i + 1) + "");
                 JTextField j1v = new JTextField(tableColumnInfo.getColumn());
                 JTextField j2v = new JTextField(tableColumnInfo.getJdbcType());
                 JTextField j3v = new JTextField(tableColumnInfo.getJavaProperty());
@@ -72,6 +78,7 @@ public class TableConfigDialog extends BaseDialog {
                 j5v.setBindObject(tableColumnInfo);
                 j1v.setEditable(false);
                 j2v.setEditable(false);
+                j0v.setPreferredSize(seqNoDimension);
                 j1v.setPreferredSize(dimension);
                 j2v.setPreferredSize(dimension);
                 j3v.setPreferredSize(dimension);
@@ -79,7 +86,7 @@ public class TableConfigDialog extends BaseDialog {
                 j5v.setPreferredSize(checkDimension);
                 j5v.setBindComponent(c2);
                 selectCustomJCheckBoxList.add(j5v);
-                c2.addList(j1v, j2v, j3v, j4v, j5v);
+                c2.addList(j0v, j1v, j2v, j3v, j4v, j5v);
                 box.add(c2);
             }
         }
