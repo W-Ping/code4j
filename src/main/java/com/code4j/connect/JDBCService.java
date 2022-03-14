@@ -23,7 +23,7 @@ public interface JDBCService {
     List<JdbcDbInfo> getAllJdbcDbInfo();
 
     /**
-     * @param dbName
+     * @param jdbcDbInfo
      * @return
      */
     List<JdbcTableInfo> getJdbcTableInfo(JdbcDbInfo jdbcDbInfo);

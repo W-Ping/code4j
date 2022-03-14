@@ -8,6 +8,9 @@ import javax.swing.*;
  * @see
  */
 public class CustomJCheckBox extends JCheckBox {
+    /**
+     * 对应模板ID {@link  com.code4j.config.XmlSqlTemplateEnum}
+     */
     private String id;
     private Object bindObject;
     private JComponent bindComponent;

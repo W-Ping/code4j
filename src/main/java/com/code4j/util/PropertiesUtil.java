@@ -4,6 +4,7 @@ import com.code4j.annotation.IgnoreReflection;
 import com.code4j.annotation.PropertyKeyIndexId;
 import com.code4j.config.Code4jConstants;
 import com.code4j.pojo.JdbcSourceInfo;
+import com.code4j.pojo.ProjectCodeConfigInfo;
 import com.code4j.pojo.PropertyInfo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -146,6 +147,8 @@ public class PropertiesUtil {
     }
 
     /**
+     * 获取数据库配置信息
+     *
      * @return
      */
     public static List<JdbcSourceInfo> getJdbcPropertyValues() {
@@ -154,6 +157,55 @@ public class PropertiesUtil {
             proList.stream().filter(v -> v != null).collect(Collectors.toList()).sort((v1, v2) -> v1.getIndex().compareTo(v2.getIndex()));
         }
         return proList;
+    }
+
+    /**
+     * 获取项目配置信息
+     *
+     * @return
+     */
+    public static List<ProjectCodeConfigInfo> getProjectConfigPropertyValues() {
+        List<ProjectCodeConfigInfo> proList = getPropertyValues(Code4jConstants.DEFAULT_PROJECT_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_PROJECT_CONFIG_KEY_PREFIX, ProjectCodeConfigInfo.class);
+        if (CollectionUtils.isNotEmpty(proList) && proList.size() > 1) {
+            proList.stream().filter(v -> v != null).collect(Collectors.toList()).sort((v1, v2) -> v1.getIndex().compareTo(v2.getIndex()));
+        }
+        return proList;
+    }
+
+    /**
+     * @param projectCodeConfigInfo
+     * @param projectCodeConfigInfos
+     * @return
+     */
+    public static boolean setProjectConfigPropertyValues(ProjectCodeConfigInfo projectCodeConfigInfo, List<ProjectCodeConfigInfo> projectCodeConfigInfos) {
+        if (projectCodeConfigInfo != null) {
+            projectCodeConfigInfos = projectCodeConfigInfos == null ? getProjectConfigPropertyValues() : projectCodeConfigInfos;
+            if (!CollectionUtils.isEmpty(projectCodeConfigInfos)) {
+                boolean isUpdate = false;
+                for (ProjectCodeConfigInfo codeConfigInfo : projectCodeConfigInfos) {
+                    if (isUpdate = projectCodeConfigInfo.getIndex().equals(codeConfigInfo.getIndex())) {
+                        codeConfigInfo.setServiceApiPath(projectCodeConfigInfo.getServiceApiPath());
+                        codeConfigInfo.setServiceApiPackageName(projectCodeConfigInfo.getServiceApiPackageName());
+                        codeConfigInfo.setMapperPath(projectCodeConfigInfo.getMapperPath());
+                        codeConfigInfo.setMapperPackageName(projectCodeConfigInfo.getMapperPackageName());
+                        codeConfigInfo.setXmlPath(projectCodeConfigInfo.getXmlPath());
+                        codeConfigInfo.setXmlPackageName(projectCodeConfigInfo.getXmlPackageName());
+                        codeConfigInfo.setVoPath(projectCodeConfigInfo.getVoPath());
+                        codeConfigInfo.setVoPackageName(projectCodeConfigInfo.getVoPackageName());
+                        codeConfigInfo.setDoPath(projectCodeConfigInfo.getDoPath());
+                        codeConfigInfo.setDoPackageName(projectCodeConfigInfo.getDoPackageName());
+                        codeConfigInfo.setProjectName(projectCodeConfigInfo.getProjectName());
+                        break;
+                    }
+                }
+                if (!isUpdate) {
+                    projectCodeConfigInfos.add(projectCodeConfigInfo);
+                }
+                return setPropertyValues(Code4jConstants.DEFAULT_PROJECT_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_PROJECT_CONFIG_KEY_PREFIX, projectCodeConfigInfos);
+            }
+            return setPropertyValues(Code4jConstants.DEFAULT_PROJECT_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_PROJECT_CONFIG_KEY_PREFIX, Arrays.asList(projectCodeConfigInfo));
+        }
+        return false;
     }
 
     /**
@@ -170,28 +222,31 @@ public class PropertiesUtil {
      * @return
      */
     public static boolean setJdbcPropertyValues(JdbcSourceInfo jdbcSourceInfo) {
-        List<JdbcSourceInfo> proList = getJdbcPropertyValues();
-        if (CollectionUtils.isNotEmpty(proList)) {
-            boolean isUpdate = false;
-            for (JdbcSourceInfo sourceInfo : proList) {
-                if (isUpdate = sourceInfo.getIndex().equals(jdbcSourceInfo.getIndex())) {
-                    sourceInfo.setConnectName(jdbcSourceInfo.getConnectName());
-                    sourceInfo.setConnectHost(jdbcSourceInfo.getConnectHost());
-                    sourceInfo.setConnectPort(jdbcSourceInfo.getConnectPort());
-                    sourceInfo.setUserName(jdbcSourceInfo.getUserName());
-                    sourceInfo.setPassword(jdbcSourceInfo.getPassword());
-                    sourceInfo.setCreator(jdbcSourceInfo.getCreator());
-                    sourceInfo.setIndex(jdbcSourceInfo.getIndex());
-                    sourceInfo.setDataSourceTypeEnum(jdbcSourceInfo.getDataSourceTypeEnum());
-                    break;
+        if (jdbcSourceInfo != null) {
+            List<JdbcSourceInfo> proList = getJdbcPropertyValues();
+            if (CollectionUtils.isNotEmpty(proList)) {
+                boolean isUpdate = false;
+                for (JdbcSourceInfo sourceInfo : proList) {
+                    if (isUpdate = sourceInfo.getIndex().equals(jdbcSourceInfo.getIndex())) {
+                        sourceInfo.setConnectName(jdbcSourceInfo.getConnectName());
+                        sourceInfo.setConnectHost(jdbcSourceInfo.getConnectHost());
+                        sourceInfo.setConnectPort(jdbcSourceInfo.getConnectPort());
+                        sourceInfo.setUserName(jdbcSourceInfo.getUserName());
+                        sourceInfo.setPassword(jdbcSourceInfo.getPassword());
+                        sourceInfo.setCreator(jdbcSourceInfo.getCreator());
+                        sourceInfo.setIndex(jdbcSourceInfo.getIndex());
+                        sourceInfo.setDataSourceTypeEnum(jdbcSourceInfo.getDataSourceTypeEnum());
+                        break;
+                    }
                 }
+                if (!isUpdate) {
+                    proList.add(jdbcSourceInfo);
+                }
+                return setPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, proList);
             }
-            if (!isUpdate) {
-                proList.add(jdbcSourceInfo);
-            }
-            return setPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, proList);
+            return setPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, Arrays.asList(jdbcSourceInfo));
         }
-        return setPropertyValues(Code4jConstants.DEFAULT_DB_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_CONFIG_KEY_PREFIX, Arrays.asList(jdbcSourceInfo));
+        return false;
     }
 
     /**

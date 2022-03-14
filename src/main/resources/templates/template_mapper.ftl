@@ -15,8 +15,8 @@ import ${model};
 <#if (apiInfos)??>
     <#list apiInfos as model>
         <#if (model.parameterType)??>
-         <#if model.isPageSelect>
-         <#if model.parameterTypeIsList>
+         <#if model.pageSelect>
+             <#if model.parameterTypeIsList>
   ${model.resultType} ${model.apiId}(@Param("List") ${(model.parameterType)!} list);
                 <#else>
   ${model.resultType} ${model.apiId}(${(model.parameterType)!} object);
@@ -25,7 +25,7 @@ import ${model};
   ${model.resultType} ${model.apiId}();
         </#if>
         </#if>
-        <#if model.isPageSelect>
+        <#if model.pageSelect>
   ${model.resultType} ${model.apiId}(${(model.parameterType)!} object,@Param("pageNum") int pageNum,@Param("pageSize") int pageSize);
         </#if>
     </#list>

@@ -17,11 +17,18 @@ public abstract class BaseDialog extends JDialog {
     protected Component parentComponent;
     protected Component contentPanel;
     protected Object extObj;
+    protected boolean isUpdate;
 
     public BaseDialog(Component parentComponent, String title, boolean modal, Object extObj) {
+        this(parentComponent, title, modal, extObj, false);
+    }
+
+    public BaseDialog(Component parentComponent, String title, boolean modal, Object extObj, boolean isUpdate) {
         super(parentComponent == null ? CustomDialogUtil.getRootFrame() : (Frame) SwingUtilities.windowForComponent(parentComponent));
+        this.isUpdate = isUpdate;
         this.parentComponent = parentComponent;
         this.extObj = extObj;
+        this.title = title;
         setTitle(title);
         setModal(modal);
         init();
@@ -117,4 +124,21 @@ public abstract class BaseDialog extends JDialog {
         this.parentComponent = parentComponent;
     }
 
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public boolean isUpdate() {
+        return isUpdate;
+    }
+
+    public void setUpdate(boolean update) {
+        isUpdate = update;
+    }
 }

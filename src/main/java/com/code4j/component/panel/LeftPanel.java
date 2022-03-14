@@ -194,7 +194,6 @@ public class LeftPanel extends BasePanel {
     }
 
     /**
-     * @param dbNames
      * @param jdbcSourceInfo
      */
     public void editTreeNode(JdbcSourceInfo jdbcSourceInfo) {

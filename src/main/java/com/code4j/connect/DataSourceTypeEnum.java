@@ -43,9 +43,6 @@ public enum DataSourceTypeEnum {
     ;
 
     /**
-     * @param url
-     * @param username
-     * @param password
      * @return
      */
     public abstract String getDriver();

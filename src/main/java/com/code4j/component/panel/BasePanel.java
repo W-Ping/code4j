@@ -35,6 +35,9 @@ public abstract class BasePanel<T extends BaseInfo> extends JPanel {
         init();
     }
 
+    /**
+     * 初始化组件
+     */
     protected abstract void init();
 
 

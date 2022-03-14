@@ -93,7 +93,6 @@ public class GenerateCodeAction implements ActionListener {
 
     /**
      * @param baseTemplateInfo
-     * @param tableColumnInfos
      * @return
      */
     private Map<String, Object> convertMapperTemplateData(BaseTemplateInfo baseTemplateInfo) {

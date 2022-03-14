@@ -75,6 +75,7 @@ public class MapperConfigDialog extends BaseDialog {
                 if (XmlSqlTemplateEnum.isIntResultType(mapperApiParamsInfo.getTemplateId())) {
                     mapperApiParamsInfo.setResultType(mapperApiParamsInfo.getResultType());
                 }
+                mapperApiParamsInfo.setPageSelect(XmlSqlTemplateEnum.isPageSelect(customJCheckBox.getId()));
                 mapperApiParamsInfos.add(mapperApiParamsInfo);
             }
         }

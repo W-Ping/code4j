@@ -13,6 +13,7 @@ public class MapperApiParamsInfo {
     private String parameterType;
     private String parameterTypePath;
     private boolean parameterTypeIsList;
+    private boolean pageSelect;
 
     public String getApiId() {
         return apiId;
@@ -68,5 +69,13 @@ public class MapperApiParamsInfo {
 
     public void setParameterTypeIsList(final boolean parameterTypeIsList) {
         this.parameterTypeIsList = parameterTypeIsList;
+    }
+
+    public boolean isPageSelect() {
+        return pageSelect;
+    }
+
+    public void setPageSelect(boolean pageSelect) {
+        this.pageSelect = pageSelect;
     }
 }

@@ -1,14 +1,23 @@
 package com.code4j.component.panel;
 
+import com.code4j.component.dialog.BaseDialog;
+import com.code4j.component.menu.CustomJMenuItem;
+import com.code4j.config.Code4jConstants;
 import com.code4j.connect.DataSourceTypeEnum;
+import com.code4j.pojo.ProjectCodeConfigInfo;
 import com.code4j.util.CustomDialogUtil;
+import com.code4j.util.PropertiesUtil;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 /**
+ * 顶部栏
+ *
  * @author liu_wp
  * @date 2020/11/17
  * @see
@@ -18,20 +27,47 @@ public class TopPanel extends BasePanel {
      *
      */
     private LeftPanel leftPanel;
+    private JMenu m2 = null;
 
     public TopPanel(final Dimension dimension) {
         super(dimension);
         JMenuBar jMenuBar = new JMenuBar();
         JMenu m1 = new JMenu("数据源");
         JMenuItem item = new JMenuItem("MySQL");
+        item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         item.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                showDialog("新增连接", DataSourceTypeEnum.MYSQL);
+                showDBConfigDialog("新增连接", DataSourceTypeEnum.MYSQL);
             }
         });
         m1.add(item);
+        m2 = new JMenu("项目配置");
+        CustomJMenuItem m2Item = new CustomJMenuItem(Code4jConstants.CONFIG_NAME+"+", null);
+        m2Item.addActionListener((e) -> {
+            showProjectConfigDialog("新增项目配置", null, false);
+        });
+        MatteBorder matteBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.black);
+        m2Item.setBorder(matteBorder);
+        m2Item.setToolTipText(Code4jConstants.CONFIG_NAME);
+        Font font = new Font(Font.DIALOG, Font.CENTER_BASELINE, 14);
+        m2Item.setFont(font);
+        m2Item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        m2Item.setForeground(Color.BLUE);
+        m2.add(m2Item);
+        // 加载已添加的项目配置
+        List<ProjectCodeConfigInfo> projectConfigPropertyValues = PropertiesUtil.getProjectConfigPropertyValues();
+        if (!CollectionUtils.isEmpty(projectConfigPropertyValues)) {
+            projectConfigPropertyValues.forEach(v -> {
+                CustomJMenuItem itm = new CustomJMenuItem(v.getProjectName(), v);
+                itm.addActionListener(e -> {
+                    showProjectConfigDialog("编辑项目配置", itm.getData(), true);
+                });
+                m2.add(itm);
+            });
+        }
         jMenuBar.add(m1);
+        jMenuBar.add(m2);
         CommonPanel commonPanel = new CommonPanel();
         commonPanel.add(jMenuBar);
 //        this.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -47,8 +83,60 @@ public class TopPanel extends BasePanel {
         this.setBorder(matteBorder);
     }
 
-    public void showDialog(String title, DataSourceTypeEnum dataSourceTypeEnum) {
+    /**
+     * @param dialog
+     * @param projectCodeConfigInfo
+     * @param projectConfigPropertyValues
+     * @param <T>
+     */
+    public <T extends BaseDialog> void addProjectCodeConfig(T dialog, ProjectCodeConfigInfo projectCodeConfigInfo, List<ProjectCodeConfigInfo> projectConfigPropertyValues) {
+        boolean isUpdate = dialog.isUpdate();
+        if (!isUpdate) {
+            JPopupMenu popupMenu = m2.getPopupMenu();
+            Component[] components = popupMenu.getComponents();
+            for (Component component : components) {
+                CustomJMenuItem item = (CustomJMenuItem) component;
+                if (projectCodeConfigInfo.getProjectName().equals(item.getText())) {
+                    CustomDialogUtil.showError("项目存在重复配置");
+                    return;
+                }
+            }
+        }
+        if (!PropertiesUtil.setProjectConfigPropertyValues(projectCodeConfigInfo, projectConfigPropertyValues)) {
+            CustomDialogUtil.showError("保存配置失败");
+        } else {
+            if (!isUpdate) {
+                CustomJMenuItem itm = new CustomJMenuItem(projectCodeConfigInfo.getProjectName(), projectCodeConfigInfo);
+                itm.addActionListener(e -> {
+                    showProjectConfigDialog("编辑项目配置", itm.getData(), true);
+                });
+                m2.add(itm);
+            } else {
+                JPopupMenu popupMenu = m2.getPopupMenu();
+                CustomJMenuItem item = (CustomJMenuItem) popupMenu.getComponent(projectCodeConfigInfo.getIndex() + 1);
+                item.setData(projectCodeConfigInfo);
+                item.setText(projectCodeConfigInfo.getProjectName());
+            }
+            CustomDialogUtil.showOk("保存配置成功");
+            dialog.close();
+        }
+    }
+
+    /**
+     * @param title
+     * @param dataSourceTypeEnum
+     */
+    public void showDBConfigDialog(String title, DataSourceTypeEnum dataSourceTypeEnum) {
         CustomDialogUtil.showDBConfigDialog(this, title, dataSourceTypeEnum, null);
+    }
+
+    /**
+     * @param title
+     * @param extObj
+     * @param isUpdate
+     */
+    public void showProjectConfigDialog(String title, Object extObj, boolean isUpdate) {
+        CustomDialogUtil.showProjectConfigDialog(this, title, extObj, isUpdate);
     }
 
     public LeftPanel getLeftPanel() {

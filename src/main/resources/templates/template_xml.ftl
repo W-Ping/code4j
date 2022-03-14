@@ -112,7 +112,7 @@
                  <#elseif (model.templateId=="7")>
                     <!-- 方法 selectPageByObject -->
                     <select id="${(model.apiId)!}" resultMap="BaseResultMap" parameterType="${(xmlMap.resultMapType)!}">
-                        SELECT * FROM ${(xmlMap.jdbcTableInfo.tableName)!} LIMIT #{pageSize} OFFSET #{pageNum}
+                        SELECT * FROM ${(xmlMap.jdbcTableInfo.tableName)!} LIMIT ${r"#"}{pageSize} OFFSET ${r"#"}{pageNum}
                     </select>
                 </#if>
         </#list>

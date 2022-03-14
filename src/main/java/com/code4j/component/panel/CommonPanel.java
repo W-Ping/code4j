@@ -15,6 +15,11 @@ public class CommonPanel extends BasePanel {
         super();
     }
 
+    public CommonPanel(Component... sbComponent) {
+        super();
+        this.addList(sbComponent);
+    }
+
     public CommonPanel(final Dimension dimension) {
         super(dimension);
     }

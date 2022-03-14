@@ -9,12 +9,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.List;
 
 /**
+ * 数据库连接信息
+ *
  * @author liu_wp
  * @date 2020/11/17
  * @see
  */
 @PropertyKeyIndexId
-public class JdbcSourceInfo extends BaseInfo implements Cloneable {
+public class JdbcSourceInfo extends BaseInfo {
     /**
      * 连接名称
      */

@@ -3,16 +3,36 @@ package com.code4j.config;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * 模板枚举
+ *
  * @author liu_wp
  * @date Created in 2020/11/19 18:24
  * @see
  */
 public enum TemplateTypeEnum {
+    /**
+     *
+     */
     DO("DO", "template_do.ftl", ".java", "DO 配置"),
+    /**
+     *
+     */
     VO("VO", "template_vo.ftl", ".java", "VO 配置"),
+    /**
+     *
+     */
     XML("XML", "template_xml.ftl", ".xml", "xml 配置"),
+    /**
+     *
+     */
     MAPPER("MAPPER", "template_mapper.ftl", ".java", "mapper 配置"),
+    /**
+     *
+     */
     SERVICE_API("SERVICE_API", "template_service_api.ftl", ".java", "service API 配置"),
+    /**
+     *
+     */
     SERVICE("SERVICE", "template_service.ftl", ".java", "service API 配置"),
     ;
     private String templateId;

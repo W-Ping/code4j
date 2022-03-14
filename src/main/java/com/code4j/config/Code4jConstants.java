@@ -18,8 +18,18 @@ public class Code4jConstants {
     public static Dimension LEFT_MIN_DEFAULT_SIZE = new Dimension(200, 530);
     public static Dimension RIGHT_MIN_DEFAULT_SIZE = new Dimension(830, 530);
     public static Dimension BOTTOM_MIN_DEFAULT_SIZE = new Dimension(900, 15);
+
+    /**
+     * 数据连接配置文件
+     */
     public final static String DEFAULT_DB_CONFIG_FILE_NAME = "code4j_db.properties";
     public final static String DEFAULT_DB_CONFIG_KEY_PREFIX = "dataSource";
+    /**
+     * 项目配置文件
+     */
+    public final static String DEFAULT_PROJECT_CONFIG_FILE_NAME = "code4j_config.properties";
+    public final static String DEFAULT_DB_PROJECT_CONFIG_KEY_PREFIX = "PRConfig";
+
     public final static String DEFAULT_ROOT_PACKAGE = "com";
     public final static String PROJECT_ROOT_PATH = System.getProperty("user.dir");
     public final static String SYS_TEMP_PATH = System.getProperty("java.io.tmpdir");
@@ -36,8 +46,11 @@ public class Code4jConstants {
     public final static String DEFAULT_SQL_XML_PACKAGE = "sqlmap";
     public final static String DEFAULT_VO_PACKAGE = "pojo.vo";
     public final static String DEFAULT_DO_PACKAGE = "pojo.dao";
+    public final static String DEFAULT_SERVICE_PACKAGE = "pojo.interfaces";
 
     public static final String TEMPLATE_PATH = "src/main/java/com/code4j/templates";
+
+    public static final  String CONFIG_NAME="新建项目配置";
 
     /**
      * 选择的项目地址

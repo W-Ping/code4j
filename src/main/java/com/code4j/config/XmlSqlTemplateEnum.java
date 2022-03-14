@@ -8,6 +8,9 @@ import java.util.Arrays;
  * @see
  */
 public enum XmlSqlTemplateEnum {
+    /**
+     *
+     */
     INSERT("1", "insert ", "insertOne", "int","object"),
     INSERT_BATCH("2", "insert batch", "insertList", "int","objectList"),
     DELETE("3", "delete", "deleteByObject", "int","object"),
@@ -46,6 +49,13 @@ public enum XmlSqlTemplateEnum {
         return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.parameterType.equals("object"));
     }
 
+    /**
+     * @param templateId
+     * @return
+     */
+    public static boolean isPageSelect(String templateId){
+        return templateId!=null && templateId!="" && templateId.equals(SELECT_PAGE.getTemplateId());
+    }
     public static boolean isObjectListParameterType(String templateId) {
         return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.parameterType.equals("objectList"));
     }

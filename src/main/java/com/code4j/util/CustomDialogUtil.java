@@ -24,6 +24,8 @@ public class CustomDialogUtil {
             new StringBuffer("CustomDialogUtil.customerSharedOwnerFrame");
 
     /**
+     * 数据库配置窗口
+     *
      * @param parentComponent
      * @param title
      * @return
@@ -31,6 +33,10 @@ public class CustomDialogUtil {
     public static DBConfigDialog showDBConfigDialog(final Component parentComponent, final String title, DataSourceTypeEnum dataSourceTypeEnum, JdbcSourceInfo jdbcSourceInfo) {
         DBConfigDialog dbConfigDialog = new DBConfigDialog(parentComponent, title, jdbcSourceInfo, dataSourceTypeEnum);
         return dbConfigDialog;
+    }
+
+    public static ProjectConfigDialog showProjectConfigDialog(final Component parentComponent, final String title, Object extObj, boolean isUpdate) {
+        return new ProjectConfigDialog(parentComponent, title, true, extObj, isUpdate);
     }
 
     /**
@@ -65,6 +71,7 @@ public class CustomDialogUtil {
         MapperConfigDialog mapperConfigDialog = new MapperConfigDialog(parentComponent, title, true, templateTypeEnum);
         return mapperConfigDialog;
     }
+
     /**
      * @param parentComponent
      * @param title
@@ -85,6 +92,16 @@ public class CustomDialogUtil {
     public static GenerateResultDialog showGenerateResultDialog(final Component parentComponent, String title, List<GenerateResultInfo> generateResultInfos) {
         GenerateResultDialog generateResultDialog = new GenerateResultDialog(parentComponent, title, generateResultInfos);
         return generateResultDialog;
+    }
+
+    /**
+     * @param parentComponent
+     * @param title
+     * @param extObj
+     * @return
+     */
+    public static SelectProjectConfigDialog showSelectProjectConfigDialog(final Component parentComponent, String title, Object extObj) {
+        return new SelectProjectConfigDialog(parentComponent, title, true, extObj);
     }
 
     public static void showError(String message) {
