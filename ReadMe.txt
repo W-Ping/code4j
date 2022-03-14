@@ -1,5 +1,6 @@
 Camel Java Router Project
 =========================
+代码生成工具
 
 To build this project use
 
@@ -12,4 +13,6 @@ To run this project from within Maven use
 For more help see the Apache Camel documentation
 
     http://camel.apache.org/
+	
+	
 
