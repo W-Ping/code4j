@@ -31,6 +31,7 @@ public class XmlConfigDialog extends BaseDialog {
     @Override
     public void beforeInit() {
         selectCustomJCheckBoxList = new ArrayList<>();
+        this.setPreferredSize(new Dimension(350, 300));
     }
 
     @Override
@@ -38,8 +39,8 @@ public class XmlConfigDialog extends BaseDialog {
         Box box = Box.createVerticalBox();
         CommonPanel cp1 = new CommonPanel();
         CustomJCheckBox cb1 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT.getTemplateDesc(), false, XmlSqlTemplateEnum.INSERT.getTemplateId());
-        CustomJCheckBox cb2 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT_BATCH.getTemplateDesc(), false, XmlSqlTemplateEnum.INSERT_BATCH.getTemplateId());
-        cp1.addList(cb1, cb2);
+//        CustomJCheckBox cb2 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT_BATCH.getTemplateDesc(), false, XmlSqlTemplateEnum.INSERT_BATCH.getTemplateId());
+        cp1.addList(cb1);
         CommonPanel cp2 = new CommonPanel();
         CustomJCheckBox cb3 = new CustomJCheckBox(XmlSqlTemplateEnum.UPDATE.getTemplateDesc(), false, XmlSqlTemplateEnum.UPDATE.getTemplateId());
         CustomJCheckBox cb4 = new CustomJCheckBox(XmlSqlTemplateEnum.DELETE.getTemplateDesc(), false, XmlSqlTemplateEnum.DELETE.getTemplateId());
@@ -47,18 +48,18 @@ public class XmlConfigDialog extends BaseDialog {
         CommonPanel cp3 = new CommonPanel();
         CustomJCheckBox cb5 = new CustomJCheckBox(XmlSqlTemplateEnum.SELECT.getTemplateDesc(), false, XmlSqlTemplateEnum.SELECT.getTemplateId());
         CustomJCheckBox cb6 = new CustomJCheckBox(XmlSqlTemplateEnum.SELECT_ONE.getTemplateDesc(), false, XmlSqlTemplateEnum.SELECT_ONE.getTemplateId());
-        CustomJCheckBox cb7 = new CustomJCheckBox(XmlSqlTemplateEnum.SELECT_PAGE.getTemplateDesc(),
-                false, XmlSqlTemplateEnum.SELECT_PAGE.getTemplateId());
-        cp3.addList(cb5, cb6, cb7);
+//        CustomJCheckBox cb7 = new CustomJCheckBox(XmlSqlTemplateEnum.SELECT_PAGE.getTemplateDesc(),
+//                false, XmlSqlTemplateEnum.SELECT_PAGE.getTemplateId());
+        cp3.addList(cb5, cb6);
         CommonPanel cp4 = new CommonPanel();
         CustomJCheckBox cb8 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT_DUPLICATEKEY.getTemplateDesc(), false, XmlSqlTemplateEnum.INSERT_DUPLICATEKEY.getTemplateId());
-        CustomJCheckBox cb9 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT_DUPLICATEKEY_BATCH.getTemplateDesc(), false, XmlSqlTemplateEnum.INSERT_DUPLICATEKEY_BATCH.getTemplateId());
-        cp4.addList(cb8, cb9);
+//        CustomJCheckBox cb9 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT_DUPLICATEKEY_BATCH.getTemplateDesc(), false, XmlSqlTemplateEnum.INSERT_DUPLICATEKEY_BATCH.getTemplateId());
+        cp4.addList(cb8);
         box.add(cp4);
         box.add(cp1);
         box.add(cp2);
         box.add(cp3);
-        selectCustomJCheckBoxList.addAll(Stream.of(cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9).collect(Collectors.toList()));
+        selectCustomJCheckBoxList.addAll(Stream.of(cb1, cb3, cb4, cb5, cb6, cb8).collect(Collectors.toList()));
         return box;
     }
 

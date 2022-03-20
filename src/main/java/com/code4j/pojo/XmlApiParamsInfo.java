@@ -14,8 +14,17 @@ public class XmlApiParamsInfo {
     private String parameterType;
     private List<JdbcMapJavaInfo> xmlApiWhereParamsInfos;
     private boolean isPageSelect;
+
     public String getApiId() {
         return apiId;
+    }
+
+
+    public XmlApiParamsInfo() {
+    }
+
+    public XmlApiParamsInfo(String templateId) {
+        this.templateId = templateId;
     }
 
     public void setApiId(final String apiId) {

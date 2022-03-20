@@ -16,12 +16,13 @@ import java.util.Optional;
  * @author lwp
  * @date 2022-03-12
  */
+@Deprecated
 public class SelectProjectConfigDialog extends BaseDialog {
 
     private List<CustomJRadioButton> buttonList;
 
     public SelectProjectConfigDialog(Component parentComponent, String title, boolean modal, Object extObj) {
-        super(parentComponent, title, modal, extObj);
+        super(parentComponent, title, modal, extObj,false);
     }
 
     @Override
@@ -62,4 +63,5 @@ public class SelectProjectConfigDialog extends BaseDialog {
             }
         }
     }
+
 }

@@ -118,7 +118,6 @@ public abstract class AbstractJDBCService implements JDBCService {
      * @param tableName
      * @return
      */
-    @Override
     public List<JdbcMapJavaInfo> getTableColumnInfo(final String dbName, final String tableName) {
         Connection connection = null;
         ResultSet rs = null;
@@ -131,6 +130,7 @@ public abstract class AbstractJDBCService implements JDBCService {
             DatabaseMetaData meta = connection.getMetaData();
             rs = meta.getColumns(catalog(), dbName, tableName.trim(), null);
             Set<String> columnCache = new HashSet<>();
+            String pk = getTablePrimaryKeys(dbName, tableName, connection);
             while (rs.next()) {
                 String columnName = rs.getString("COLUMN_NAME");
                 if (columnCache.contains(columnName)) {
@@ -139,7 +139,7 @@ public abstract class AbstractJDBCService implements JDBCService {
                 columnCache.add(columnName);
                 String dataType = rs.getString("TYPE_NAME");
                 String columnComment = rs.getString("REMARKS");
-                JdbcMapJavaInfo jdbcMapJavaInfo = new JdbcMapJavaInfo(columnName, dataType, columnComment);
+                JdbcMapJavaInfo jdbcMapJavaInfo = new JdbcMapJavaInfo(columnName, dataType, columnComment, columnName.equalsIgnoreCase(pk));
                 result.add(jdbcMapJavaInfo);
             }
             return result;
@@ -147,6 +147,24 @@ public abstract class AbstractJDBCService implements JDBCService {
             log.error("获取数据库表信息失败！{}", e);
         } finally {
             close(connection, null, rs);
+        }
+        return null;
+    }
+
+    /**
+     * @param dbName
+     * @param tableName
+     * @return
+     */
+    private String getTablePrimaryKeys(String dbName, String tableName, Connection connection) {
+        try (ResultSet rs = connection.getMetaData().getPrimaryKeys(catalog(), dbName, tableName.trim());) {
+            if (rs != null) {
+                while (rs.next()) {
+                    return rs.getString("COLUMN_NAME");
+                }
+            }
+        } catch (Exception e) {
+            log.error("获取数据库表主键信息失败！{}", e);
         }
         return null;
     }

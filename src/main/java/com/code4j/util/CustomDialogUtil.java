@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author liu_wp
@@ -102,6 +103,20 @@ public class CustomDialogUtil {
      */
     public static SelectProjectConfigDialog showSelectProjectConfigDialog(final Component parentComponent, String title, Object extObj) {
         return new SelectProjectConfigDialog(parentComponent, title, true, extObj);
+    }
+
+    /**
+     * @param parentComponent
+     * @param message
+     * @param function
+     */
+    public static void confirm(final Component parentComponent, String message, Function<Component, Void> function) {
+        int res = JOptionPane.showConfirmDialog(parentComponent,
+                message, "确认",
+                JOptionPane.YES_NO_OPTION);
+        if (res == JOptionPane.YES_OPTION) {
+            function.apply(parentComponent);
+        }
     }
 
     public static void showError(String message) {

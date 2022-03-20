@@ -174,31 +174,31 @@ public class PropertiesUtil {
 
     /**
      * @param projectCodeConfigInfo
-     * @param projectCodeConfigInfos
+     * @param isUpdate
      * @return
      */
-    public static boolean setProjectConfigPropertyValues(ProjectCodeConfigInfo projectCodeConfigInfo, List<ProjectCodeConfigInfo> projectCodeConfigInfos) {
+    public static boolean setProjectConfigPropertyValues(ProjectCodeConfigInfo projectCodeConfigInfo, boolean isUpdate) {
         if (projectCodeConfigInfo != null) {
-            projectCodeConfigInfos = projectCodeConfigInfos == null ? getProjectConfigPropertyValues() : projectCodeConfigInfos;
+            List<ProjectCodeConfigInfo> projectCodeConfigInfos = getProjectConfigPropertyValues();
             if (!CollectionUtils.isEmpty(projectCodeConfigInfos)) {
-                boolean isUpdate = false;
-                for (ProjectCodeConfigInfo codeConfigInfo : projectCodeConfigInfos) {
-                    if (isUpdate = projectCodeConfigInfo.getIndex().equals(codeConfigInfo.getIndex())) {
-                        codeConfigInfo.setServiceApiPath(projectCodeConfigInfo.getServiceApiPath());
-                        codeConfigInfo.setServiceApiPackageName(projectCodeConfigInfo.getServiceApiPackageName());
-                        codeConfigInfo.setMapperPath(projectCodeConfigInfo.getMapperPath());
-                        codeConfigInfo.setMapperPackageName(projectCodeConfigInfo.getMapperPackageName());
-                        codeConfigInfo.setXmlPath(projectCodeConfigInfo.getXmlPath());
-                        codeConfigInfo.setXmlPackageName(projectCodeConfigInfo.getXmlPackageName());
-                        codeConfigInfo.setVoPath(projectCodeConfigInfo.getVoPath());
-                        codeConfigInfo.setVoPackageName(projectCodeConfigInfo.getVoPackageName());
-                        codeConfigInfo.setDoPath(projectCodeConfigInfo.getDoPath());
-                        codeConfigInfo.setDoPackageName(projectCodeConfigInfo.getDoPackageName());
-                        codeConfigInfo.setProjectName(projectCodeConfigInfo.getProjectName());
-                        break;
+                if (isUpdate) {
+                    for (ProjectCodeConfigInfo codeConfigInfo : projectCodeConfigInfos) {
+                        if (projectCodeConfigInfo.getIndex().equals(codeConfigInfo.getIndex())) {
+                            codeConfigInfo.setServiceApiPath(projectCodeConfigInfo.getServiceApiPath());
+                            codeConfigInfo.setServiceApiPackageName(projectCodeConfigInfo.getServiceApiPackageName());
+                            codeConfigInfo.setMapperPath(projectCodeConfigInfo.getMapperPath());
+                            codeConfigInfo.setMapperPackageName(projectCodeConfigInfo.getMapperPackageName());
+                            codeConfigInfo.setXmlPath(projectCodeConfigInfo.getXmlPath());
+                            codeConfigInfo.setXmlPackageName(projectCodeConfigInfo.getXmlPackageName());
+                            codeConfigInfo.setVoPath(projectCodeConfigInfo.getVoPath());
+                            codeConfigInfo.setVoPackageName(projectCodeConfigInfo.getVoPackageName());
+                            codeConfigInfo.setDoPath(projectCodeConfigInfo.getDoPath());
+                            codeConfigInfo.setDoPackageName(projectCodeConfigInfo.getDoPackageName());
+                            codeConfigInfo.setProjectName(projectCodeConfigInfo.getProjectName());
+                            break;
+                        }
                     }
-                }
-                if (!isUpdate) {
+                } else {
                     projectCodeConfigInfos.add(projectCodeConfigInfo);
                 }
                 return setPropertyValues(Code4jConstants.DEFAULT_PROJECT_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_PROJECT_CONFIG_KEY_PREFIX, projectCodeConfigInfos);
@@ -208,6 +208,13 @@ public class PropertiesUtil {
         return false;
     }
 
+    /**
+     * @param projectCodeConfigInfo
+     * @return
+     */
+    public static boolean deleteProjectConfigProperty(ProjectCodeConfigInfo projectCodeConfigInfo) {
+        return removeProperty(Code4jConstants.DEFAULT_PROJECT_CONFIG_FILE_NAME, Code4jConstants.DEFAULT_DB_PROJECT_CONFIG_KEY_PREFIX, projectCodeConfigInfo, projectCodeConfigInfo.getIndex());
+    }
     /**
      * @param jdbcSourceInfo
      * @return
@@ -392,15 +399,16 @@ public class PropertiesUtil {
     public static void main(String[] args) throws Exception {
 //        List<JdbcSourceInfo> list = getPropertyValues("log4j2.properties", "dataSource", JdbcSourceInfo.class);
 //        System.out.println(list);
-        JdbcSourceInfo jdbcSourceInfo = new JdbcSourceInfo();
-        jdbcSourceInfo.setConnectHost("122222");
-        jdbcSourceInfo.setConnectName("测试121212rqewrqw");
-        jdbcSourceInfo.setPassword("dffd20000");
-        jdbcSourceInfo.setUserName("wodfd111");
-        jdbcSourceInfo.setConnectPort(33891);
-//        list.add(jdbcSourceInfo);
-        PropertiesUtil.setJdbcPropertyValues(jdbcSourceInfo);
-        PropertiesUtil.deleteJdbcProperty(jdbcSourceInfo);
+//        JdbcSourceInfo jdbcSourceInfo = new JdbcSourceInfo();
+//        jdbcSourceInfo.setConnectHost("122222");
+//        jdbcSourceInfo.setConnectName("测试121212rqewrqw");
+//        jdbcSourceInfo.setPassword("dffd20000");
+//        jdbcSourceInfo.setUserName("wodfd111");
+//        jdbcSourceInfo.setConnectPort(33891);
+////        list.add(jdbcSourceInfo);
+//        PropertiesUtil.setJdbcPropertyValues(jdbcSourceInfo);
+//        PropertiesUtil.deleteJdbcProperty(jdbcSourceInfo);
 //        System.out.println(JSONUtil.Object2JSON(list));
+        System.out.println(System.getProperty("user.home"));
     }
 }

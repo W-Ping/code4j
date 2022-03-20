@@ -12,12 +12,12 @@ public class Code4jConstants {
     public static String APP_VERSION = "V1.0.0";
     public static String SUCCESS = "success";
     public static String FAIL = "fail";
-
-    public static Dimension FROM_MIN_DEFAULT_SIZE = new Dimension(1050, 620);
-    public static Dimension TOP_MIN_DEFAULT_SIZE = new Dimension(900, 25);
+    public static String APPLICATION_JAR="code4j-v1.jar";
+    public static Dimension FROM_MIN_DEFAULT_SIZE = new Dimension(1250, 650);
+    public static Dimension TOP_MIN_DEFAULT_SIZE = new Dimension(1100, 25);
     public static Dimension LEFT_MIN_DEFAULT_SIZE = new Dimension(200, 530);
-    public static Dimension RIGHT_MIN_DEFAULT_SIZE = new Dimension(830, 530);
-    public static Dimension BOTTOM_MIN_DEFAULT_SIZE = new Dimension(900, 15);
+    public static Dimension RIGHT_MIN_DEFAULT_SIZE = new Dimension(1030, 530);
+    public static Dimension BOTTOM_MIN_DEFAULT_SIZE = new Dimension(1100, 15);
 
     /**
      * 数据连接配置文件
@@ -42,13 +42,15 @@ public class Code4jConstants {
 
     public final static String DEFAULT_PATH = "src/main/java";
     public final static String DEFAULT_XML_PATH = "src/main/resources";
-    public final static String DEFAULT_MAPPER_PACKAGE = "mapper";
-    public final static String DEFAULT_SQL_XML_PACKAGE = "sqlmap";
-    public final static String DEFAULT_VO_PACKAGE = "pojo.vo";
-    public final static String DEFAULT_DO_PACKAGE = "pojo.dao";
-    public final static String DEFAULT_SERVICE_PACKAGE = "pojo.interfaces";
+    public final static String DEFAULT_MAPPER_PACKAGE = "ebx.queen.dao";
+    public final static String DEFAULT_SQL_XML_PACKAGE = "mapping.mysql";
+    public final static String DEFAULT_VO_PACKAGE = "ebx.skeleton.dto.response";
+    public final static String DEFAULT_DO_PACKAGE = "com.ks.skeleton.entity";
+    public final static String DEFAULT_SERVICE_PACKAGE = "ebx.skeleton.interfaces";
 
     public static final String TEMPLATE_PATH = "src/main/java/com/code4j/templates";
+
+    public static final String MAPPER_SUPER_CLASS="com.ks.skeleton.dao.itf.IBaseDao";
 
     public static final  String CONFIG_NAME="新建项目配置";
 

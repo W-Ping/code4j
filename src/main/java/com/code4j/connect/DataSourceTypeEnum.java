@@ -24,7 +24,7 @@ public enum DataSourceTypeEnum {
 
         @Override
         public String getUrl(final JdbcSourceInfo JDBCSourceInfo) {
-            String url = "jdbc:mysql://" + JDBCSourceInfo.getConnectHost() + ":" + JDBCSourceInfo.getConnectPort();
+            String url = "jdbc:mysql://" + JDBCSourceInfo.getConnectHost() + ":" + JDBCSourceInfo.getConnectPort()+"?useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai";
             return url;
         }
 
@@ -35,7 +35,7 @@ public enum DataSourceTypeEnum {
                 Class.forName(this.getDriver());
                 conn = DriverManager.getConnection(this.getUrl(jdbcSourceInfo), jdbcSourceInfo.getUserName(), jdbcSourceInfo.getPassword());
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
             return conn;
         }

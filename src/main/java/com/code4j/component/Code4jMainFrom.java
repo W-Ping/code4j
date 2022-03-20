@@ -1,6 +1,5 @@
 package com.code4j.component;
 
-import com.code4j.component.event.LayoutReSizeEvent;
 import com.code4j.component.panel.BottomPanel;
 import com.code4j.component.panel.LeftPanel;
 import com.code4j.component.panel.RightPanel;

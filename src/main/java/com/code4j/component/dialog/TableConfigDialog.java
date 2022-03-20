@@ -34,7 +34,7 @@ public class TableConfigDialog extends BaseDialog {
 
     @Override
     public void afterInit() {
-        this.setPreferredSize(new Dimension(30 + 130 * 4 + 140, 500));
+        this.setPreferredSize(new Dimension(30 + 130 * 4 + 240, 500));
         this.pack();
         setLocationRelativeTo(null);
 //        setResizable(false);

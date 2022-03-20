@@ -13,19 +13,19 @@ public enum TemplateTypeEnum {
     /**
      *
      */
-    DO("DO", "template_do.ftl", ".java", "DO 配置"),
+    DO("DO", "tp_do.ftlx", ".java", "DO 配置"),
     /**
      *
      */
-    VO("VO", "template_vo.ftl", ".java", "VO 配置"),
+    VO("VO", "tp_vo.ftlx", ".java", "VO 配置"),
     /**
      *
      */
-    XML("XML", "template_xml.ftl", ".xml", "xml 配置"),
+    XML("XML", "tp_xml.ftlx", ".xml", "xml 配置"),
     /**
      *
      */
-    MAPPER("MAPPER", "template_mapper.ftl", ".java", "mapper 配置"),
+    MAPPER("MAPPER", "tp_mapper.ftlx", ".java", "mapper 配置"),
     /**
      *
      */

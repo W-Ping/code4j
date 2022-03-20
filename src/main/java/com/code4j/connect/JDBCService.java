@@ -33,4 +33,5 @@ public interface JDBCService {
      * @return
      */
     List<JdbcMapJavaInfo> getTableColumnInfo(String dbName, String tableName);
+
 }

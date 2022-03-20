@@ -20,7 +20,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author liu_wp
@@ -70,18 +73,23 @@ public class LeftPanel extends BasePanel {
         this.setLayout(new BorderLayout());
         MatteBorder matteBorder = BorderFactory.createMatteBorder(0, 0, 0, 1, Color.gray);
         this.setBorder(matteBorder);
-        List<JdbcSourceInfo> jdbcPropertyValues = PropertiesUtil.getJdbcPropertyValues();
-        showDbTree(jdbcPropertyValues);
+        this.showDbTree();
     }
 
     /**
-     * @param jdbcPropertyValues
+     * @param jdbcPropertyArr
      */
-    public void showDbTree(List<JdbcSourceInfo> jdbcPropertyValues) {
-        if (CollectionUtils.isNotEmpty(jdbcPropertyValues)) {
+    public void showDbTree(JdbcSourceInfo... jdbcPropertyArr) {
+        List<JdbcSourceInfo> jdbcPropertyValues = PropertiesUtil.getJdbcPropertyValues();
+        if (jdbcPropertyArr != null && jdbcPropertyArr.length > 0) {
+            List<JdbcSourceInfo> newJdbcPropertyList = Stream.of(jdbcPropertyArr).collect(Collectors.toList());
+            jdbcPropertyValues = Stream.of(jdbcPropertyValues, newJdbcPropertyList).flatMap(Collection::stream).distinct().collect(Collectors.toList());
+        }
+        if (jdbcPropertyValues != null && jdbcPropertyValues.size() > 0) {
             System.out.println("数据库连接数量:" + jdbcPropertyValues.size());
             DefaultTreeModel defaultTreeModel = (DefaultTreeModel) tree.getModel();
             DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) defaultTreeModel.getRoot();
+            rootNode.removeAllChildren();
             for (final JdbcSourceInfo jdbcSourceInfo : jdbcPropertyValues) {
                 DefaultMutableTreeNode top = new DefaultMutableTreeNode(jdbcSourceInfo);
                 rootNode.add(top);
@@ -160,7 +168,16 @@ public class LeftPanel extends BasePanel {
         return treeJScrollPane;
     }
 
-    public void addTreeNode(DefaultMutableTreeNode newNode) {
+    public void addTreeNode(JdbcSourceInfo jdbcSourceInfo) {
+        this.showDbTree();
+    }
+
+    /**
+     * @param newNode
+     * @param jdbcService
+     */
+    @Deprecated
+    public void addTreeNode(DefaultMutableTreeNode newNode, JDBCService jdbcService) {
         DefaultTreeModel defaultTreeModel = (DefaultTreeModel) tree.getModel();
         DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) defaultTreeModel.getRoot();
         Object userObject = newNode.getUserObject();
@@ -170,6 +187,15 @@ public class LeftPanel extends BasePanel {
             if (!CollectionUtils.isEmpty(jdbcDbInfos)) {
                 for (final JdbcDbInfo jdbcDbInfo : jdbcDbInfos) {
                     DefaultMutableTreeNode defaultMutableTreeNode = new DefaultMutableTreeNode(jdbcDbInfo);
+                    List<JdbcTableInfo> jdbcTableInfos = jdbcService.getJdbcTableInfo(jdbcDbInfo);
+                    if (CollectionUtils.isNotEmpty(jdbcTableInfos)) {
+                        for (final JdbcTableInfo tableInfo : jdbcTableInfos) {
+                            DefaultMutableTreeNode dbNameNode = new DefaultMutableTreeNode(tableInfo, false);
+                            defaultMutableTreeNode.add(dbNameNode);
+                        }
+                    } else {
+                        rightPanel.clearEmpty(jdbcDbInfo.toString() + " 没有表信息");
+                    }
                     newNode.add(defaultMutableTreeNode);
                 }
             }
@@ -206,10 +232,12 @@ public class LeftPanel extends BasePanel {
             currTreeNode.setUserObject(jdbcSourceInfo);
             tree.updateUI();
         } else {
-            DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(jdbcSourceInfo);
-            jdbcSourceInfo.setCurrTreeNode(newNode);
-            addTreeNode(newNode);
+//            DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(jdbcSourceInfo);
+//            jdbcSourceInfo.setCurrTreeNode(newNode);
+//            this.addTreeNode(newNode, jdbcService);
+            this.addTreeNode(jdbcSourceInfo);
         }
+
     }
 
     public Dimension getJScrollPaneDimension() {

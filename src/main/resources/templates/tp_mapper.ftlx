@@ -1,0 +1,18 @@
+package ${(baseInfo.packageRoot)!}${(baseInfo.packageName)!};
+import org.springframework.stereotype.Repository;
+<#if (packages)??><#list packages as model>
+import ${model};
+</#list>
+</#if>
+/**
+ * ${(baseInfo.jdbcTableInfo.remark)!}
+ * @author ${(baseInfo.author)!}
+ * @date Created in ${.now}
+ */
+@Repository
+<#if (baseInfo.superPojoInfo)??>
+public interface ${(baseInfo.pojoName)!} extends ${baseInfo.superPojoInfo.pojoName}<#if baseInfo.superPojoInfo.genericPojoName??><${baseInfo.superPojoInfo.genericPojoName}></#if>{
+<#else>
+public interface ${(baseInfo.pojoName)!}{
+</#if>
+}

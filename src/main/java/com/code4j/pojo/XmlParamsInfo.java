@@ -1,6 +1,11 @@
 package com.code4j.pojo;
 
+import com.code4j.config.XmlSqlTemplateEnum;
+import org.apache.commons.collections4.CollectionUtils;
+
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author liu_wp
@@ -21,6 +26,21 @@ public class XmlParamsInfo extends BaseTemplateInfo {
      */
     private List<XmlApiParamsInfo> xmlApiParamsInfos;
 
+
+    /**
+     *
+     */
+    public void defaultXmlApiParamsInfos() {
+        if (CollectionUtils.isEmpty(xmlApiParamsInfos)) {
+            XmlApiParamsInfo x1 = new XmlApiParamsInfo(XmlSqlTemplateEnum.INSERT.getApiId());
+            XmlApiParamsInfo x2 = new XmlApiParamsInfo(XmlSqlTemplateEnum.DELETE.getApiId());
+            XmlApiParamsInfo x3 = new XmlApiParamsInfo(XmlSqlTemplateEnum.UPDATE.getApiId());
+            XmlApiParamsInfo x4 = new XmlApiParamsInfo(XmlSqlTemplateEnum.SELECT.getApiId());
+            XmlApiParamsInfo x5 = new XmlApiParamsInfo(XmlSqlTemplateEnum.SELECT_ONE.getApiId());
+            XmlApiParamsInfo x6 = new XmlApiParamsInfo(XmlSqlTemplateEnum.INSERT_DUPLICATEKEY.getApiId());
+            xmlApiParamsInfos = Stream.of(x1, x2, x3, x4, x5, x6).collect(Collectors.toList());
+        }
+    }
 
     public String getNamespace() {
         return namespace;

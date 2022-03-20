@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.List;
 
 /**
@@ -43,7 +44,7 @@ public class ProjectConfigDialog extends BaseDialog {
         voComponent = createItemComponent(TemplateTypeEnum.VO, projectCodeConfigInfo.getVoPath(), projectCodeConfigInfo.getVoPackageName());
         xmlComponent = createItemComponent(TemplateTypeEnum.XML, projectCodeConfigInfo.getXmlPath(), projectCodeConfigInfo.getXmlPackageName());
         mapperComponent = createItemComponent(TemplateTypeEnum.MAPPER, projectCodeConfigInfo.getMapperPath(), projectCodeConfigInfo.getMapperPackageName());
-        serviceComponent = createItemComponent(TemplateTypeEnum.SERVICE_API, projectCodeConfigInfo.getServiceApiPath(), projectCodeConfigInfo.getServiceApiPath());
+        serviceComponent = createItemComponent(TemplateTypeEnum.SERVICE_API, projectCodeConfigInfo.getServiceApiPath(), projectCodeConfigInfo.getServiceApiPackageName());
         Box box = Box.createVerticalBox();
         box.add(projectComponent);
         box.add(doComponent);
@@ -58,14 +59,7 @@ public class ProjectConfigDialog extends BaseDialog {
     @Override
     protected void okClick() {
         List<ProjectCodeConfigInfo> projectConfigPropertyValues = PropertiesUtil.getProjectConfigPropertyValues();
-        Integer index = 0;
-        if (!CollectionUtils.isEmpty(projectConfigPropertyValues)) {
-            index = projectConfigPropertyValues.get(projectConfigPropertyValues.size() - 1).getIndex();
-            if (!this.isUpdate) {
-                index++;
-            }
-        }
-        ProjectCodeConfigInfo projectCodeConfigInfo = getProjectCodeConfigInfo(index);
+        ProjectCodeConfigInfo projectCodeConfigInfo = getProjectCodeConfigInfo(this.extObj, projectConfigPropertyValues);
         if (StringUtils.isBlank(projectCodeConfigInfo.getProjectName())) {
             CustomDialogUtil.showError("项目名称不能为空");
             return;
@@ -74,18 +68,72 @@ public class ProjectConfigDialog extends BaseDialog {
             CustomDialogUtil.showError("项目名称不可用");
             return;
         }
-        TopPanel topPanel = (TopPanel) parentComponent;
-        topPanel.addProjectCodeConfig(this, projectCodeConfigInfo, projectConfigPropertyValues);
+        if (CollectionUtils.isNotEmpty(projectConfigPropertyValues)) {
+            if ((!this.isUpdate &&
+                    projectConfigPropertyValues.stream().anyMatch(v -> projectCodeConfigInfo.getProjectName().equals(v.getProjectName())))
+                    || this.isUpdate && projectConfigPropertyValues.stream().filter(v -> !v.getIndex().equals(projectCodeConfigInfo.getIndex())).anyMatch(v -> projectCodeConfigInfo.getProjectName().equals(v.getProjectName()))) {
+                CustomDialogUtil.showError("项目名称不能重复");
+                return;
+            }
+        }
+        if (!PropertiesUtil.setProjectConfigPropertyValues(projectCodeConfigInfo, isUpdate)) {
+            CustomDialogUtil.showError("保存配置失败");
+            return;
+        } else {
+            ((TopPanel) parentComponent).loadProjectCodeConfig();
+            this.close();
+        }
 
     }
 
+    @Override
+    public CommonPanel bottomMid() {
+        if (this.isUpdate) {
+            CommonPanel commonPanel = new CommonPanel();
+            JButton jButton = new JButton("删除配置");
+            ProjectCodeConfigInfo projectCodeConfigInfo = (ProjectCodeConfigInfo) this.extObj;
+            ProjectConfigDialog projectConfigDialog = this;
+            jButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    CustomDialogUtil.confirm(projectConfigDialog, "确认删除", (c) -> {
+                        if (PropertiesUtil.deleteProjectConfigProperty(projectCodeConfigInfo)) {
+                            ((TopPanel) parentComponent).loadProjectCodeConfig();
+                            projectConfigDialog.close();
+                        }
+                        return null;
+                    });
+                }
+            });
+            commonPanel.add(jButton);
+            return commonPanel;
+        }
+        return null;
+    }
+
+    @Override
+    public void afterOkClick() {
+        super.afterOkClick();
+    }
 
     /**
-     * @param index
+     * @param extObj
+     * @param projectConfigPropertyValues
      * @return
      */
-    public ProjectCodeConfigInfo getProjectCodeConfigInfo(Integer index) {
-        ProjectCodeConfigInfo projectCodeConfigInfo = new ProjectCodeConfigInfo();
+    private ProjectCodeConfigInfo getProjectCodeConfigInfo(Object extObj, List<ProjectCodeConfigInfo> projectConfigPropertyValues) {
+        ProjectCodeConfigInfo projectCodeConfigInfo;
+        if (extObj != null) {
+            projectCodeConfigInfo = (ProjectCodeConfigInfo) extObj;
+        } else {
+            projectCodeConfigInfo = new ProjectCodeConfigInfo();
+            Integer index = 0;
+            if (!CollectionUtils.isEmpty(projectConfigPropertyValues)) {
+                index = projectConfigPropertyValues.get(projectConfigPropertyValues.size() - 1).getIndex();
+                index++;
+            }
+            projectCodeConfigInfo.setIndex(index);
+        }
         JTextField pj = (JTextField) projectComponent.getComponent(1);
         projectCodeConfigInfo.setProjectName(pj.getText());
         projectCodeConfigInfo.setVoPackageName(getPackText(voComponent));
@@ -98,7 +146,6 @@ public class ProjectConfigDialog extends BaseDialog {
         projectCodeConfigInfo.setMapperPath(getPathText(mapperComponent));
         projectCodeConfigInfo.setServiceApiPackageName(getPackText(serviceComponent));
         projectCodeConfigInfo.setServiceApiPath(getPathText(serviceComponent));
-        projectCodeConfigInfo.setIndex(index);
         return projectCodeConfigInfo;
     }
 

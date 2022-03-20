@@ -11,18 +11,19 @@ public enum XmlSqlTemplateEnum {
     /**
      *
      */
-    INSERT("1", "insert ", "insertOne", "int","object"),
-    INSERT_BATCH("2", "insert batch", "insertList", "int","objectList"),
-    DELETE("3", "delete", "deleteByObject", "int","object"),
-    UPDATE("4", "update", "updateByObject", "int","object"),
+    INSERT("1", "insert ", "insert", "int","object"),
+    INSERT_BATCH("2", "insert batch", "insertBatch", "int","objectList"),
+    DELETE("3", "delete", "deleteByPrimaryKey", "int","object"),
+    UPDATE("4", "update", "updateByPrimaryKeySelective", "int","object"),
     SELECT("5", "select", "selectByObject", "objectList","object"),
-    SELECT_ONE("6", "select one", "selectOne", "object","object"),
+    SELECT_ONE("6", "select one", "selectByPrimaryKey", "object","object"),
     SELECT_PAGE("7", "page select", "selectPageByObject", "objectList","object"),
-    INSERT_DUPLICATEKEY("8", "insert duplicateKey", "insertDuplicateKey", "int","object"),
+    INSERT_DUPLICATEKEY("8", "insertOrUpdate", "insertOrUpdateSelective", "int","object"),
     INSERT_DUPLICATEKEY_BATCH("9", "insert duplicateKey", "insertListDuplicateKey", "int","objectList");
+
     private String templateId;
-    private String apiId;
     private String templateDesc;
+    private String apiId;
     private String resultType;
     private String parameterType;
 

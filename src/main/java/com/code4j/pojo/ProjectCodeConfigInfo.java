@@ -68,7 +68,13 @@ public class ProjectCodeConfigInfo extends BaseInfo {
      */
     private Integer index;
 
+
+
     public ProjectCodeConfigInfo() {
+        this(null, null);
+    }
+
+    public ProjectCodeConfigInfo(String projectName, Integer index) {
         this.voPackageName = Code4jConstants.DEFAULT_VO_PACKAGE;
         this.voPath = Code4jConstants.DEFAULT_PATH;
         this.doPackageName = Code4jConstants.DEFAULT_DO_PACKAGE;
@@ -79,6 +85,8 @@ public class ProjectCodeConfigInfo extends BaseInfo {
         this.xmlPath = Code4jConstants.DEFAULT_XML_PATH;
         this.serviceApiPackageName = Code4jConstants.DEFAULT_SERVICE_PACKAGE;
         this.serviceApiPath = Code4jConstants.DEFAULT_PATH;
+        this.projectName = projectName;
+        this.index = index;
     }
 
     public String getProjectName() {
@@ -178,4 +186,8 @@ public class ProjectCodeConfigInfo extends BaseInfo {
         this.serviceApiPath = serviceApiPath;
     }
 
+    @Override
+    public String toString() {
+        return this.getProjectName();
+    }
 }

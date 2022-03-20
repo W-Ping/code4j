@@ -1,5 +1,6 @@
 package com.code4j.component.label;
 
+import com.code4j.component.dialog.BaseDialog;
 import com.code4j.component.panel.CommonPanel;
 import com.code4j.config.TemplateTypeEnum;
 import com.code4j.util.CustomDialogUtil;
@@ -14,8 +15,9 @@ import java.awt.event.MouseEvent;
  * @date 2020/11/23
  * @see
  */
-public class TemplateClickLabel extends JLabel {
+public class TemplateClickLabel<T extends BaseDialog> extends JLabel {
     private CommonPanel bindCommonPanel;
+    private T showDialog;
 
     /**
      * @param text
@@ -33,13 +35,13 @@ public class TemplateClickLabel extends JLabel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
                     if (TemplateTypeEnum.SERVICE_API.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
-                        CustomDialogUtil.showServiceApiConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                        showDialog = (T) CustomDialogUtil.showServiceApiConfigDialog(bindCommonPanel, title, templateTypeEnum);
                     } else if (TemplateTypeEnum.MAPPER.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
-                        CustomDialogUtil.showMapperConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                        showDialog = (T) CustomDialogUtil.showMapperConfigDialog(bindCommonPanel, title, templateTypeEnum);
                     } else if (TemplateTypeEnum.XML.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
-                        CustomDialogUtil.showXmlConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                        showDialog = (T) CustomDialogUtil.showXmlConfigDialog(bindCommonPanel, title, templateTypeEnum);
                     } else {
-                        CustomDialogUtil.showTableConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                        showDialog = (T) CustomDialogUtil.showTableConfigDialog(bindCommonPanel, title, templateTypeEnum);
                     }
                 }
             }
@@ -55,5 +57,21 @@ public class TemplateClickLabel extends JLabel {
             }
         });
         setVisible(true);
+    }
+
+    public CommonPanel getBindCommonPanel() {
+        return bindCommonPanel;
+    }
+
+    public void setBindCommonPanel(CommonPanel bindCommonPanel) {
+        this.bindCommonPanel = bindCommonPanel;
+    }
+
+    public T getShowDialog() {
+        return showDialog;
+    }
+
+    public void setShowDialog(T showDialog) {
+        this.showDialog = showDialog;
     }
 }

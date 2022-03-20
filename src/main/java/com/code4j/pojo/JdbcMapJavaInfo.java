@@ -1,6 +1,7 @@
 package com.code4j.pojo;
 
 import com.code4j.util.StrUtil;
+import com.code4j.util.SystemUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
@@ -33,7 +34,15 @@ public class JdbcMapJavaInfo {
      */
     private String javaType;
 
+    /**
+     * 是否忽略此字段
+     */
     private boolean ignore;
+
+    /**
+     * 是否为主键
+     */
+    private boolean primaryKey;
 
     public JdbcMapJavaInfo() {
 
@@ -56,8 +65,9 @@ public class JdbcMapJavaInfo {
         return Objects.hash(comment, column, jdbcType, javaProperty, javaType, ignore);
     }
 
-    public JdbcMapJavaInfo(String column, String jdbcType, String comment) {
+    public JdbcMapJavaInfo(String column, String jdbcType, String comment,boolean primaryKey) {
         this.column = column;
+        this.primaryKey = primaryKey;
         this.jdbcType = jdbcType.equalsIgnoreCase("INT") ? "INTEGER" : jdbcType;
         this.comment = comment;
         this.javaProperty = toJavaProperty(column);
@@ -66,10 +76,11 @@ public class JdbcMapJavaInfo {
 
     private String toJavaType(String jdbcType) {
         if (StringUtils.isNotBlank(jdbcType)) {
-            return formatDataType(jdbcType);
+            return SystemUtil.formatDataType(jdbcType);
         }
         return null;
     }
+
 
     private String toJavaProperty(String column) {
         if (StringUtils.isNotBlank(column)) {
@@ -78,45 +89,7 @@ public class JdbcMapJavaInfo {
         return null;
     }
 
-    private String formatDataType(String dataType) {
-        dataType = dataType.toUpperCase();
-        if (dataType.equals("CHAR")
-                || dataType.equals("TEXT")
-                || dataType.equals("VARCHAR")
-                || dataType.equals("TINYTEXT")
-                || dataType.equals("LONGTEXT")) {
-            dataType = "java.lang.String";
-        } else if (dataType.equals("BIGINT")) {
-            dataType = "java.lang.Long";
-        } else if (dataType.equals("INT")
-                || dataType.equals("INTEGER")
-                || dataType.equals("MEDIUMINT")
-                || dataType.equals("TINYINT")) {
-            dataType = "java.lang.Integer";
-        } else if (dataType.equals("FLOAT")) {
-            dataType = "java.lang.Float";
-        } else if (dataType.equals("DOUBLE")) {
-            dataType = "java.lang.Double";
-        } else if (dataType.equals("NUMERIC")
-                || dataType.equals("DECIMAL")) {
-            dataType = "java.math.BigDecimal";
-        } else if (dataType.equals("DATE")
-                || dataType.equals("DATETIME")
-                || dataType.equals("TIMESTAMP")
-                || dataType.equals("YEAR")
-                || dataType.equals("TIME")) {
-            return "java.util.Date";
-        } else if (dataType.equals("BIT")) {
-            return "java.lang.Boolean";
-        } else if (dataType.equals("BLOB")) {
-            return "Byte[]";
-        } else if (dataType.equals("CLOB")) {
-            dataType = "java.sql.Clob";
-        } else {
-            dataType = "java.lang.Object";
-        }
-        return dataType;
-    }
+
 
     public String getComment() {
         return comment;
@@ -164,5 +137,13 @@ public class JdbcMapJavaInfo {
 
     public void setIgnore(final boolean ignore) {
         this.ignore = ignore;
+    }
+
+    public boolean isPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(boolean primaryKey) {
+        this.primaryKey = primaryKey;
     }
 }

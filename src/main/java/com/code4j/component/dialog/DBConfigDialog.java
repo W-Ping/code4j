@@ -35,7 +35,7 @@ public class DBConfigDialog extends BaseDialog {
     private DataSourceTypeEnum dataSourceTypeEnum;
 
     public DBConfigDialog(final Component parentComponent, final String title, Object extObj, final DataSourceTypeEnum dataSourceTypeEnum) {
-        super(parentComponent, title, true, extObj);
+        super(parentComponent, title, true, extObj,true);
         this.dataSourceTypeEnum = dataSourceTypeEnum;
     }
 

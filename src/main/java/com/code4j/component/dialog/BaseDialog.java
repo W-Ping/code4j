@@ -6,6 +6,7 @@ import com.code4j.util.CustomDialogUtil;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author liu_wp
@@ -71,7 +72,11 @@ public abstract class BaseDialog extends JDialog {
         okBtn.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                okClick();
+                CompletableFuture.runAsync(() -> {
+                    okClick();
+                }).thenRun(() -> {
+                    afterOkClick();
+                });
             }
         });
         commonPanel.add(cancelBtn);
@@ -88,6 +93,10 @@ public abstract class BaseDialog extends JDialog {
     }
 
     protected abstract void okClick();
+
+    public void afterOkClick() {
+
+    }
 
     /**
      *

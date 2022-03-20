@@ -3,9 +3,11 @@ package com.code4j.pojo;
 import com.code4j.config.Code4jConstants;
 import com.code4j.config.TemplateTypeEnum;
 import com.code4j.util.StrUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author liu_wp
@@ -56,13 +58,17 @@ public class BaseTemplateInfo {
      */
     private List<JdbcMapJavaInfo> tableColumnInfos;
 
+    /**
+     *
+     */
+    private String primaryKey;
+
     public String getPojoName() {
         return pojoName;
     }
 
     /**
      * @param rootPath
-     * @param suffix
      * @return
      */
     public String getGeneratePojoFolder(String rootPath) {
@@ -90,6 +96,19 @@ public class BaseTemplateInfo {
             sb.append(packageNameTo);
         }
         return sb.toString();
+    }
+
+    /**
+     * @return
+     */
+    public JdbcMapJavaInfo getTablePrimaryKey() {
+        if (CollectionUtils.isNotEmpty(tableColumnInfos)) {
+            Optional<JdbcMapJavaInfo> first = tableColumnInfos.stream().filter(JdbcMapJavaInfo::isPrimaryKey).findFirst();
+            if (first.isPresent()) {
+                return first.get();
+            }
+        }
+        return null;
     }
 
     /**
@@ -195,7 +214,8 @@ public class BaseTemplateInfo {
         if (StringUtils.isNotBlank(this.defaultPackageName) && StringUtils.isNotBlank(this.packageName)
                 && this.defaultPackageName.equals(this.packageName) && StringUtils.isNotBlank(fileName)) {
 
-            return packageRoot = Code4jConstants.DEFAULT_ROOT_PACKAGE + "." + fileName + ".";
+//            return packageRoot = Code4jConstants.DEFAULT_ROOT_PACKAGE + "." + fileName + ".";
+            return packageRoot = Code4jConstants.DEFAULT_ROOT_PACKAGE + ".";
         }
         return null;
     }
@@ -223,4 +243,11 @@ public class BaseTemplateInfo {
         this.tableColumnInfos = tableColumnInfos;
     }
 
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(String primaryKey) {
+        this.primaryKey = primaryKey;
+    }
 }

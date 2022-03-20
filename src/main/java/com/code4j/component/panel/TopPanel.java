@@ -1,6 +1,5 @@
 package com.code4j.component.panel;
 
-import com.code4j.component.dialog.BaseDialog;
 import com.code4j.component.menu.CustomJMenuItem;
 import com.code4j.config.Code4jConstants;
 import com.code4j.connect.DataSourceTypeEnum;
@@ -27,7 +26,7 @@ public class TopPanel extends BasePanel {
      *
      */
     private LeftPanel leftPanel;
-    private JMenu m2 = null;
+    private JMenu m2;
 
     public TopPanel(final Dimension dimension) {
         super(dimension);
@@ -43,7 +42,8 @@ public class TopPanel extends BasePanel {
         });
         m1.add(item);
         m2 = new JMenu("项目配置");
-        CustomJMenuItem m2Item = new CustomJMenuItem(Code4jConstants.CONFIG_NAME+"+", null);
+
+        CustomJMenuItem m2Item = new CustomJMenuItem(Code4jConstants.CONFIG_NAME + "+", null);
         m2Item.addActionListener((e) -> {
             showProjectConfigDialog("新增项目配置", null, false);
         });
@@ -84,41 +84,22 @@ public class TopPanel extends BasePanel {
     }
 
     /**
-     * @param dialog
-     * @param projectCodeConfigInfo
-     * @param projectConfigPropertyValues
-     * @param <T>
+     *
      */
-    public <T extends BaseDialog> void addProjectCodeConfig(T dialog, ProjectCodeConfigInfo projectCodeConfigInfo, List<ProjectCodeConfigInfo> projectConfigPropertyValues) {
-        boolean isUpdate = dialog.isUpdate();
-        if (!isUpdate) {
-            JPopupMenu popupMenu = m2.getPopupMenu();
-            Component[] components = popupMenu.getComponents();
-            for (Component component : components) {
-                CustomJMenuItem item = (CustomJMenuItem) component;
-                if (projectCodeConfigInfo.getProjectName().equals(item.getText())) {
-                    CustomDialogUtil.showError("项目存在重复配置");
-                    return;
-                }
-            }
-        }
-        if (!PropertiesUtil.setProjectConfigPropertyValues(projectCodeConfigInfo, projectConfigPropertyValues)) {
-            CustomDialogUtil.showError("保存配置失败");
-        } else {
-            if (!isUpdate) {
-                CustomJMenuItem itm = new CustomJMenuItem(projectCodeConfigInfo.getProjectName(), projectCodeConfigInfo);
+    public void loadProjectCodeConfig() {
+        List<ProjectCodeConfigInfo> projectConfigPropertyValues = PropertiesUtil.getProjectConfigPropertyValues();
+        JPopupMenu popupMenu = m2.getPopupMenu();
+        Component firstComponent = popupMenu.getComponent(0);
+        m2.removeAll();
+        m2.add(firstComponent);
+        if (CollectionUtils.isNotEmpty(projectConfigPropertyValues)) {
+            projectConfigPropertyValues.forEach(v -> {
+                CustomJMenuItem itm = new CustomJMenuItem(v.getProjectName(), v);
                 itm.addActionListener(e -> {
                     showProjectConfigDialog("编辑项目配置", itm.getData(), true);
                 });
                 m2.add(itm);
-            } else {
-                JPopupMenu popupMenu = m2.getPopupMenu();
-                CustomJMenuItem item = (CustomJMenuItem) popupMenu.getComponent(projectCodeConfigInfo.getIndex() + 1);
-                item.setData(projectCodeConfigInfo);
-                item.setText(projectCodeConfigInfo.getProjectName());
-            }
-            CustomDialogUtil.showOk("保存配置成功");
-            dialog.close();
+            });
         }
     }
 

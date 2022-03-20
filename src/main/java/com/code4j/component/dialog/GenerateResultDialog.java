@@ -26,7 +26,7 @@ public class GenerateResultDialog extends BaseDialog {
      * @param generateResultInfos
      */
     public GenerateResultDialog(final Component parentComponent, String title, List<GenerateResultInfo> generateResultInfos) {
-        super(parentComponent, title, true, generateResultInfos);
+        super(parentComponent, title, true, generateResultInfos,true);
     }
 
 
