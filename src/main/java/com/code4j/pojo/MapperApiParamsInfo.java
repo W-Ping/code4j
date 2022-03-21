@@ -1,5 +1,7 @@
 package com.code4j.pojo;
 
+import com.code4j.config.XmlSqlTemplateEnum;
+
 /**
  * @author liu_wp
  * @date 2021/1/14
@@ -14,9 +16,29 @@ public class MapperApiParamsInfo {
     private String parameterTypePath;
     private boolean parameterTypeIsList;
     private boolean pageSelect;
+    private boolean parameterTypeIsPk;
+    private XmlSqlTemplateEnum xmlSqlTemplateEnum;
 
     public String getApiId() {
         return apiId;
+    }
+
+    public MapperApiParamsInfo() {
+    }
+
+    public MapperApiParamsInfo(XmlSqlTemplateEnum xmlSqlTemplateEnum) {
+        this.xmlSqlTemplateEnum = xmlSqlTemplateEnum;
+        this.autoSetTemplate(xmlSqlTemplateEnum);
+    }
+
+    public void autoSetTemplate(XmlSqlTemplateEnum xmlSqlTemplateEnum) {
+        if (xmlSqlTemplateEnum != null) {
+            this.setTemplateId(xmlSqlTemplateEnum.getTemplateId());
+            this.setApiId(xmlSqlTemplateEnum.getApiId());
+            this.setParameterTypeIsList(XmlSqlTemplateEnum.isObjectListParameterType(xmlSqlTemplateEnum.getTemplateId()));
+            this.setParameterTypeIsPk(XmlSqlTemplateEnum.isParameterPk(xmlSqlTemplateEnum.getTemplateId()));
+            this.setPageSelect(XmlSqlTemplateEnum.isPageSelect(xmlSqlTemplateEnum.getTemplateId()));
+        }
     }
 
     public void setApiId(final String apiId) {
@@ -77,5 +99,21 @@ public class MapperApiParamsInfo {
 
     public void setPageSelect(boolean pageSelect) {
         this.pageSelect = pageSelect;
+    }
+
+    public boolean isParameterTypeIsPk() {
+        return parameterTypeIsPk;
+    }
+
+    public void setParameterTypeIsPk(boolean parameterTypeIsPk) {
+        this.parameterTypeIsPk = parameterTypeIsPk;
+    }
+
+    public XmlSqlTemplateEnum getXmlSqlTemplateEnum() {
+        return xmlSqlTemplateEnum;
+    }
+
+    public void setXmlSqlTemplateEnum(XmlSqlTemplateEnum xmlSqlTemplateEnum) {
+        this.xmlSqlTemplateEnum = xmlSqlTemplateEnum;
     }
 }

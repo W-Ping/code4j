@@ -65,13 +65,22 @@ public class JdbcMapJavaInfo {
         return Objects.hash(comment, column, jdbcType, javaProperty, javaType, ignore);
     }
 
-    public JdbcMapJavaInfo(String column, String jdbcType, String comment,boolean primaryKey) {
+    public JdbcMapJavaInfo(String column, String jdbcType, String comment, boolean primaryKey) {
         this.column = column;
         this.primaryKey = primaryKey;
-        this.jdbcType = jdbcType.equalsIgnoreCase("INT") ? "INTEGER" : jdbcType;
+        this.jdbcType = toJdbcType(jdbcType);
         this.comment = comment;
         this.javaProperty = toJavaProperty(column);
         this.javaType = toJavaType(jdbcType);
+    }
+
+    private String toJdbcType(String jdbcType) {
+        if (jdbcType.equalsIgnoreCase("INT")) {
+            return "INTEGER";
+        } else if (jdbcType.equalsIgnoreCase("DATETIME")) {
+            return "TIMESTAMP";
+        }
+        return jdbcType;
     }
 
     private String toJavaType(String jdbcType) {
@@ -88,7 +97,6 @@ public class JdbcMapJavaInfo {
         }
         return null;
     }
-
 
 
     public String getComment() {

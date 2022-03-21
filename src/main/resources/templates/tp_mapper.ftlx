@@ -15,4 +15,15 @@ public interface ${(baseInfo.pojoName)!} extends ${baseInfo.superPojoInfo.pojoNa
 <#else>
 public interface ${(baseInfo.pojoName)!}{
 </#if>
+<#if (apiInfos)??>
+<#list apiInfos as model>
+    <#if model.parameterTypeIsList>
+ ${model.resultType?no_esc} ${model.apiId}(@Param("List") list<${(model.parameterType)!}> list);
+    <#elseif model.parameterTypeIsPk>
+ ${model.resultType?no_esc} ${model.apiId}(${(model.parameterType)!} ${tablePK.javaProperty});
+    <#else>
+ ${model.resultType?no_esc} ${model.apiId}(${(model.parameterType)!} entity)
+    </#if>
+</#list>
+</#if>
 }

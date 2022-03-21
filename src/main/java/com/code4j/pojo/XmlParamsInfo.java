@@ -26,19 +26,23 @@ public class XmlParamsInfo extends BaseTemplateInfo {
      */
     private List<XmlApiParamsInfo> xmlApiParamsInfos;
 
+    public XmlParamsInfo(List<JdbcMapJavaInfo> tableColumnInfos) {
+        super(tableColumnInfos);
+    }
 
     /**
      *
      */
     public void defaultXmlApiParamsInfos() {
         if (CollectionUtils.isEmpty(xmlApiParamsInfos)) {
-            XmlApiParamsInfo x1 = new XmlApiParamsInfo(XmlSqlTemplateEnum.INSERT.getApiId());
-            XmlApiParamsInfo x2 = new XmlApiParamsInfo(XmlSqlTemplateEnum.DELETE.getApiId());
-            XmlApiParamsInfo x3 = new XmlApiParamsInfo(XmlSqlTemplateEnum.UPDATE.getApiId());
-            XmlApiParamsInfo x4 = new XmlApiParamsInfo(XmlSqlTemplateEnum.SELECT.getApiId());
-            XmlApiParamsInfo x5 = new XmlApiParamsInfo(XmlSqlTemplateEnum.SELECT_ONE.getApiId());
-            XmlApiParamsInfo x6 = new XmlApiParamsInfo(XmlSqlTemplateEnum.INSERT_DUPLICATEKEY.getApiId());
-            xmlApiParamsInfos = Stream.of(x1, x2, x3, x4, x5, x6).collect(Collectors.toList());
+            XmlApiParamsInfo x1 = new XmlApiParamsInfo(XmlSqlTemplateEnum.INSERT.getTemplateId(), XmlSqlTemplateEnum.INSERT.getApiId());
+            XmlApiParamsInfo x2 = new XmlApiParamsInfo(XmlSqlTemplateEnum.DELETE.getTemplateId(), XmlSqlTemplateEnum.DELETE.getApiId());
+            XmlApiParamsInfo x3 = new XmlApiParamsInfo(XmlSqlTemplateEnum.UPDATE.getTemplateId(), XmlSqlTemplateEnum.UPDATE.getApiId());
+            XmlApiParamsInfo x4 = new XmlApiParamsInfo(XmlSqlTemplateEnum.UPDATE_NOT_NULL.getTemplateId(), XmlSqlTemplateEnum.UPDATE_NOT_NULL.getApiId());
+            XmlApiParamsInfo x5 = new XmlApiParamsInfo(XmlSqlTemplateEnum.SELECT.getTemplateId(), XmlSqlTemplateEnum.SELECT.getApiId());
+            XmlApiParamsInfo x6 = new XmlApiParamsInfo(XmlSqlTemplateEnum.SELECT_ONE.getTemplateId(), XmlSqlTemplateEnum.SELECT_ONE.getApiId());
+            XmlApiParamsInfo x7 = new XmlApiParamsInfo(XmlSqlTemplateEnum.INSERT_DUPLICATEKEY.getTemplateId(), XmlSqlTemplateEnum.INSERT_DUPLICATEKEY.getApiId());
+            xmlApiParamsInfos = Stream.of(x1, x2, x3, x4, x5, x6, x7).collect(Collectors.toList());
         }
     }
 

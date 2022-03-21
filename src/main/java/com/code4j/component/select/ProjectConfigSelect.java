@@ -1,5 +1,6 @@
 package com.code4j.component.select;
 
+import com.code4j.pojo.JdbcTableInfo;
 import com.code4j.pojo.ProjectCodeConfigInfo;
 import com.code4j.util.PropertiesUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -19,16 +20,17 @@ import java.util.function.BiConsumer;
  */
 public class ProjectConfigSelect extends JComboBox {
 
-    public ProjectConfigSelect(Component component, BiConsumer<Component, ProjectCodeConfigInfo> function) {
+    public ProjectConfigSelect(Component component, String tableName, BiConsumer<Component, ProjectCodeConfigInfo> function) {
         ProjectConfigSelect projectConfigSelect = this;
-        this.addItem(new ProjectCodeConfigInfo("---默认配置---", -1));
+        ProjectCodeConfigInfo defaultConfig = new ProjectCodeConfigInfo(tableName);
+        this.addItem(defaultConfig);
         this.addPopupMenuListener(new PopupMenuListener() {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                 List<ProjectCodeConfigInfo> items = PropertiesUtil.getProjectConfigPropertyValues();
                 ProjectCodeConfigInfo selectedItem = (ProjectCodeConfigInfo) projectConfigSelect.getSelectedItem();
                 projectConfigSelect.removeAllItems();
-                projectConfigSelect.addItem(new ProjectCodeConfigInfo("---默认配置---", -1));
+                projectConfigSelect.addItem(defaultConfig);
                 if (CollectionUtils.isNotEmpty(items)) {
                     for (ProjectCodeConfigInfo item : items) {
                         if (selectedItem.getIndex().equals(item.getIndex())) {
@@ -37,8 +39,7 @@ public class ProjectConfigSelect extends JComboBox {
                         projectConfigSelect.addItem(item);
                     }
                     projectConfigSelect.setSelectedItem(selectedItem);
-                    SelectItem selectItem = new SelectItem(component, function);
-                    projectConfigSelect.addItemListener(selectItem);
+                    projectConfigSelect.addItemListener(new SelectItem(component, function));
                 }
             }
 
@@ -65,7 +66,7 @@ public class ProjectConfigSelect extends JComboBox {
         @Override
         public void itemStateChanged(ItemEvent e) {
             Object item = e.getItem();
-            if (e.getStateChange() == ItemEvent.SELECTED && item instanceof ProjectCodeConfigInfo) {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
                 function.accept(component, (ProjectCodeConfigInfo) item);
             }
         }

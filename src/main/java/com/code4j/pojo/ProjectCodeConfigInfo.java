@@ -2,6 +2,9 @@ package com.code4j.pojo;
 
 import com.code4j.annotation.PropertyKeyIndexId;
 import com.code4j.config.Code4jConstants;
+import com.code4j.config.TemplateTypeEnum;
+import com.code4j.util.StrUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 项目配置信息
@@ -21,6 +24,10 @@ public class ProjectCodeConfigInfo extends BaseInfo {
     private String voPackageName;
 
     /**
+     * vo 父类
+     */
+    private String voSuperClass;
+    /**
      * 路径
      */
     private String voPath;
@@ -33,7 +40,11 @@ public class ProjectCodeConfigInfo extends BaseInfo {
      * 路径
      */
     private String doPath;
-    ;
+
+    /**
+     * do 父类
+     */
+    private String doSuperClass;
     /**
      * 包名称
      */
@@ -47,7 +58,10 @@ public class ProjectCodeConfigInfo extends BaseInfo {
      * 包名称
      */
     private String mapperPackageName;
-
+    /**
+     * mapper 父类
+     */
+    private String mapperSuperClass;
     /**
      * 路径
      */
@@ -61,7 +75,10 @@ public class ProjectCodeConfigInfo extends BaseInfo {
      * 路径
      */
     private String serviceApiPath;
-
+    /**
+     * mapper 父类
+     */
+    private String serviceSuperClass;
 
     /**
      * 索引位置
@@ -69,24 +86,47 @@ public class ProjectCodeConfigInfo extends BaseInfo {
     private Integer index;
 
 
-
     public ProjectCodeConfigInfo() {
-        this(null, null);
+        this(null, -99, null, false);
     }
 
-    public ProjectCodeConfigInfo(String projectName, Integer index) {
-        this.voPackageName = Code4jConstants.DEFAULT_VO_PACKAGE;
-        this.voPath = Code4jConstants.DEFAULT_PATH;
-        this.doPackageName = Code4jConstants.DEFAULT_DO_PACKAGE;
-        this.doPath = Code4jConstants.DEFAULT_PATH;
-        this.mapperPackageName = Code4jConstants.DEFAULT_MAPPER_PACKAGE;
-        this.mapperPath = Code4jConstants.DEFAULT_PATH;
-        this.xmlPackageName = Code4jConstants.DEFAULT_SQL_XML_PACKAGE;
-        this.xmlPath = Code4jConstants.DEFAULT_XML_PATH;
-        this.serviceApiPackageName = Code4jConstants.DEFAULT_SERVICE_PACKAGE;
-        this.serviceApiPath = Code4jConstants.DEFAULT_PATH;
-        this.projectName = projectName;
-        this.index = index;
+    public ProjectCodeConfigInfo(String tableName) {
+        this("--默认配置--", -1, tableName, true);
+    }
+
+    public ProjectCodeConfigInfo(boolean isSetDefault) {
+        this(null, null, null, isSetDefault);
+    }
+
+    public ProjectCodeConfigInfo(String projectName, Integer index, String tableName, boolean isSetDefault) {
+        if (isSetDefault) {
+            this.voPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.VO, this.getPackageName(tableName));
+            this.voPath = Code4jConstants.DEFAULT_PATH;
+            this.doPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.DO, this.getPackageName(tableName));
+            this.doPath = Code4jConstants.DEFAULT_PATH;
+            this.mapperPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.MAPPER, this.getPackageName(tableName));
+            this.mapperPath = Code4jConstants.DEFAULT_PATH;
+            this.xmlPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.XML, this.getPackageName(tableName));
+            this.xmlPath = Code4jConstants.DEFAULT_XML_PATH;
+            this.serviceApiPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.SERVICE_API, this.getPackageName(tableName));
+            this.serviceApiPath = Code4jConstants.DEFAULT_PATH;
+            this.projectName = projectName;
+            this.doSuperClass = Code4jConstants.DO_SUPER_CLASS;
+            this.voSuperClass = Code4jConstants.VO_SUPER_CLASS;
+            this.serviceSuperClass = Code4jConstants.SERVICE_SUPER_CLASS;
+            this.mapperSuperClass = Code4jConstants.MAPPER_SUPER_CLASS;
+            this.index = index;
+        }
+    }
+
+    private String getPackageName(String str) {
+        if (StringUtils.isNotBlank(str)) {
+            if (str.startsWith("t_")) {
+                str = StrUtil.subFirstStr(str, "t_");
+            }
+            return StrUtil.underlineToCamelToLower(str);
+        }
+        return null;
     }
 
     public String getProjectName() {
@@ -189,5 +229,37 @@ public class ProjectCodeConfigInfo extends BaseInfo {
     @Override
     public String toString() {
         return this.getProjectName();
+    }
+
+    public String getDoSuperClass() {
+        return doSuperClass;
+    }
+
+    public void setDoSuperClass(String doSuperClass) {
+        this.doSuperClass = doSuperClass;
+    }
+
+    public String getMapperSuperClass() {
+        return mapperSuperClass;
+    }
+
+    public void setMapperSuperClass(String mapperSuperClass) {
+        this.mapperSuperClass = mapperSuperClass;
+    }
+
+    public String getServiceSuperClass() {
+        return serviceSuperClass;
+    }
+
+    public void setServiceSuperClass(String serviceSuperClass) {
+        this.serviceSuperClass = serviceSuperClass;
+    }
+
+    public String getVoSuperClass() {
+        return voSuperClass;
+    }
+
+    public void setVoSuperClass(String voSuperClass) {
+        this.voSuperClass = voSuperClass;
     }
 }

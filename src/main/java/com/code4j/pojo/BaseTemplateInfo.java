@@ -63,6 +63,14 @@ public class BaseTemplateInfo {
      */
     private String primaryKey;
 
+
+    public BaseTemplateInfo() {
+    }
+
+    public BaseTemplateInfo(List<JdbcMapJavaInfo> tableColumnInfos) {
+        this.tableColumnInfos = tableColumnInfos;
+    }
+
     public String getPojoName() {
         return pojoName;
     }
@@ -221,18 +229,23 @@ public class BaseTemplateInfo {
     }
 
     public static String getDefaultPackageName(TemplateTypeEnum templateTypeEnum, String packageName) {
+        StringBuilder sb = new StringBuilder();
         if (TemplateTypeEnum.MAPPER.equals(templateTypeEnum)) {
-            return Code4jConstants.DEFAULT_MAPPER_PACKAGE + "." + packageName;
+            sb.append(Code4jConstants.DEFAULT_MAPPER_PACKAGE);
         } else if (TemplateTypeEnum.XML.equals(templateTypeEnum)) {
-            return Code4jConstants.DEFAULT_SQL_XML_PACKAGE + "." + packageName;
+            sb.append(Code4jConstants.DEFAULT_SQL_XML_PACKAGE);
         } else if (TemplateTypeEnum.VO.equals(templateTypeEnum)) {
-            return Code4jConstants.DEFAULT_VO_PACKAGE + "." + packageName;
+            sb.append(Code4jConstants.DEFAULT_VO_PACKAGE);
         } else if (TemplateTypeEnum.DO.equals(templateTypeEnum)) {
-            return Code4jConstants.DEFAULT_DO_PACKAGE + "." + packageName;
+            sb.append(Code4jConstants.DEFAULT_DO_PACKAGE);
         } else if (TemplateTypeEnum.SERVICE_API.equals(templateTypeEnum)) {
-            return packageName;
+            sb.append(Code4jConstants.DEFAULT_SERVICE_PACKAGE);
         }
-        return null;
+        if (StringUtils.isNotBlank(packageName)) {
+            sb.append(".");
+            sb.append(packageName);
+        }
+        return sb.toString();
     }
 
     public List<JdbcMapJavaInfo> getTableColumnInfos() {

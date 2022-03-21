@@ -77,7 +77,6 @@ public class TopPanel extends BasePanel {
 
     @Override
     protected void init() {
-
 //        setBackground(Color.LIGHT_GRAY);
         MatteBorder matteBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray);
         this.setBorder(matteBorder);

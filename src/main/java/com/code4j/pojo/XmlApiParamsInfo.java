@@ -23,8 +23,9 @@ public class XmlApiParamsInfo {
     public XmlApiParamsInfo() {
     }
 
-    public XmlApiParamsInfo(String templateId) {
+    public XmlApiParamsInfo(String templateId, String apiId) {
         this.templateId = templateId;
+        this.apiId = apiId;
     }
 
     public void setApiId(final String apiId) {

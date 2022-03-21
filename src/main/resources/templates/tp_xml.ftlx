@@ -25,7 +25,7 @@
     </sql>
   <#list xmlMap.xmlApiParamsInfos as methodModel>
     <#if methodModel.templateId=="5">
-    <select id="selectByObject" resultMap="BaseResultMap" parameterType="${(xmlMap.resultMapType)!}">
+    <select id="selectByEntity" resultMap="BaseResultMap" parameterType="${(xmlMap.resultMapType)!}">
         select
         <include refid="Base_Table_Column" />
         from ${(xmlMap.jdbcTableInfo.tableName)!}
@@ -56,7 +56,7 @@
      </delete>
      </#if>
      <#if methodModel.templateId=="4">
-      <update id="updateByPrimaryKey" parameterType="${(xmlMap.resultMapType)!}" >
+      <update id="${(methodModel.apiId)!}" parameterType="${(xmlMap.resultMapType)!}" >
        update ${(xmlMap.jdbcTableInfo.tableName)!}
          <set>
           <#list xmlMap.tableColumnInfos as model>
@@ -65,7 +65,9 @@
          </set>
        where ${tablePK.column} = ${r"#"}{${(tablePK.javaProperty)!}}
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="${(xmlMap.resultMapType)!}" >
+     </#if>
+    <#if methodModel.templateId=="41">
+    <update id="${(methodModel.apiId)!}" parameterType="${(xmlMap.resultMapType)!}" >
       update ${(xmlMap.jdbcTableInfo.tableName)!}
         <set>
          <#list xmlMap.tableColumnInfos as model>
@@ -82,7 +84,7 @@
     </update>
     </#if>
     <#if methodModel.templateId=="1">
-    <insert id="insertSelective" parameterType="${(xmlMap.resultMapType)!}">
+    <insert id="${(methodModel.apiId)!}" parameterType="${(xmlMap.resultMapType)!}">
         <selectKey resultType="${tablePK.javaType}" keyProperty="${tablePK.column}" order="AFTER" >
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -112,7 +114,7 @@
     </insert>
     </#if>
     <#if methodModel.templateId=="8">
-    <insert id="insertOrUpdateSelective" parameterType="${(xmlMap.resultMapType)!}">
+    <insert id="${(methodModel.apiId)!}" parameterType="${(xmlMap.resultMapType)!}">
           <selectKey resultType="${tablePK.javaType}" keyProperty="${tablePK.column}" order="AFTER" >
               SELECT LAST_INSERT_ID()
           </selectKey>

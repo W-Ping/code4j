@@ -1,10 +1,9 @@
 package ${(pojoInfo.packageRoot)!""}${(pojoInfo.packageName)!};
 
-<#if (pojoInfo.superPojoInfo)??>
- import ${pojoInfo.superPojoInfo.superClassPackage}.${pojoInfo.superPojoInfo.superClassName};
-</#if>
 <#if packages??>
-    <#list packages as pak >import ${pak};</#list>
+    <#list packages as pak >
+import ${pak};
+    </#list>
 </#if>
 /**
 * ${(pojoInfo.jdbcTableInfo.remark)!}
@@ -12,7 +11,7 @@ package ${(pojoInfo.packageRoot)!""}${(pojoInfo.packageName)!};
 * @date Created in ${.now}
 */
 <#if (pojoInfo.superPojoInfo)??>
-public class ${(pojoInfo.pojoName)!} extends ${pojoInfo.superPojoInfo.superClassName}{
+public class ${(pojoInfo.pojoName)!} extends ${pojoInfo.superPojoInfo.pojoName!}{
 <#else>
 public class ${(pojoInfo.pojoName)!}{
 </#if>

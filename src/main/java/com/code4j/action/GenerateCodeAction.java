@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PipedReader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -85,7 +86,7 @@ public class GenerateCodeAction implements ActionListener {
             JdbcMapJavaInfo tablePrimaryKey = baseTemplateInfo.getTablePrimaryKey();
             dataMap.put("tablePK", tablePrimaryKey);
             String codePath = FreemarkerUtil.generateCodeByTemplate(projectPath, mp.getValue(), dataMap);
-            GenerateResultInfo generateResultInfo = new GenerateResultInfo(templateId, StringUtils.isNotBlank(codePath) ? Code4jConstants.SUCCESS : Code4jConstants.FAIL, codePath);
+            GenerateResultInfo generateResultInfo = new GenerateResultInfo(baseTemplateInfo.getTemplateTypeEnum().getTemplateDesc(), StringUtils.isNotBlank(codePath) ? Code4jConstants.SUCCESS : Code4jConstants.FAIL, codePath);
             result.add(generateResultInfo);
             System.out.println("template path:" + codePath);
             //恢复
@@ -93,43 +94,67 @@ public class GenerateCodeAction implements ActionListener {
         }
         CustomDialogUtil.showGenerateResultDialog(customJFileChooserPanel, "代码生成结果", result);
     }
-
     /**
      * @param baseTemplateInfo
      * @return
      */
     private Map<String, Object> convertMapperTemplateData(BaseTemplateInfo baseTemplateInfo) {
         Map<String, Object> dataMap = new HashMap<>();
+        PojoParamsInfo doPojo = (PojoParamsInfo) templateParamsInfoMap.get(TemplateTypeEnum.DO.getTemplateId());
         MapperParamsInfo mapperParamsInfo = (MapperParamsInfo) baseTemplateInfo;
         dataMap.put("baseInfo", mapperParamsInfo);
+        dataMap.put("packages", getMapperPackages(mapperParamsInfo, doPojo));
         dataMap.put("apiInfos", mapperParamsInfo.getMapperApiParamsInfos());
-        dataMap.put("packages", getMapperPackages(mapperParamsInfo));
         return dataMap;
     }
 
-    private Set<String> getMapperPackages(MapperParamsInfo mapperParamsInfo) {
+    private Set<String> getMapperPackages(MapperParamsInfo mapperParamsInfo, PojoParamsInfo doPojo) {
         List<MapperApiParamsInfo> mapperApiParamsInfos = mapperParamsInfo.getMapperApiParamsInfos();
         Set<String> packages = new HashSet<>();
         SuperPojoInfo superPojoInfo = mapperParamsInfo.getSuperPojoInfo();
         if (superPojoInfo != null) {
             packages.add(superPojoInfo.getPackageName());
             if (superPojoInfo.isGenericFlag()) {
-                BaseTemplateInfo baseTemplateInfo = templateParamsInfoMap.get(TemplateTypeEnum.DO.getTemplateId());
-                if (baseTemplateInfo != null) {
-                    superPojoInfo.setGenericPojoName(baseTemplateInfo.getPojoName());
-                    superPojoInfo.setGenericPackageName(baseTemplateInfo.getPackageName());
+                if (doPojo != null) {
+                    superPojoInfo.setGenericPojoName(doPojo.getPojoName());
+                    superPojoInfo.setGenericPackageName(doPojo.getPackageName());
                     packages.add(superPojoInfo.getGenericPackageName() + "." + superPojoInfo.getGenericPojoName());
                 }
             }
         }
+        JdbcMapJavaInfo tablePrimaryKey = mapperParamsInfo.getTablePrimaryKey();
+        if (tablePrimaryKey != null) {
+            packages.add(tablePrimaryKey.getJavaType());
+        }
         if (CollectionUtils.isNotEmpty(mapperApiParamsInfos)) {
+            String resultTypePath = getTypePath(doPojo.getPackageRoot(), doPojo.getPackageName(), doPojo.getPojoName());
             for (final MapperApiParamsInfo mapperApiParamsInfo : mapperApiParamsInfos) {
+                //方法返回结果类型
                 if (XmlSqlTemplateEnum.isObjectListResultType(mapperApiParamsInfo.getTemplateId())) {
                     packages.add("java.util.List");
                     packages.add("org.apache.ibatis.annotations.Param");
+                    mapperApiParamsInfo.setResultTypePath(resultTypePath);
                     packages.add(mapperApiParamsInfo.getResultTypePath());
+                    mapperApiParamsInfo.setResultType(doPojo != null ? "List<" + doPojo.getPojoName() + ">" : "List<Object>");
                 } else if (XmlSqlTemplateEnum.isObjectResultType(mapperApiParamsInfo.getTemplateId())) {
+                    mapperApiParamsInfo.setResultTypePath(resultTypePath);
                     packages.add(mapperApiParamsInfo.getResultTypePath());
+                    mapperApiParamsInfo.setResultType(doPojo != null ? doPojo.getPojoName() : "Object");
+                } else if (XmlSqlTemplateEnum.isIntResultType(mapperApiParamsInfo.getTemplateId())) {
+                    mapperApiParamsInfo.setResultType("int");
+                } else {
+                    mapperApiParamsInfo.setResultType("void");
+                }
+                //方法参数类型
+                if (XmlSqlTemplateEnum.isObjectListParameterType(mapperApiParamsInfo.getTemplateId())) {
+                    mapperApiParamsInfo.setParameterType(doPojo.getPojoName());
+                } else if (XmlSqlTemplateEnum.isObjectParameterType(mapperApiParamsInfo.getTemplateId())) {
+                    mapperApiParamsInfo.setParameterType(doPojo.getPojoName());
+                } else if (XmlSqlTemplateEnum.isParameterPk(mapperApiParamsInfo.getTemplateId()) && tablePrimaryKey != null) {
+                    if (tablePrimaryKey.getJdbcType() != null) {
+                        mapperApiParamsInfo.setParameterType(getShortPkJdbcType(tablePrimaryKey.getJavaType()));
+                        packages.add(tablePrimaryKey.getJavaType());
+                    }
                 }
                 if (StringUtils.isNotBlank(mapperApiParamsInfo.getParameterTypePath()) && mapperApiParamsInfo.getParameterTypePath().indexOf(".") > 0) {
                     packages.add(mapperApiParamsInfo.getParameterTypePath());
@@ -139,6 +164,13 @@ public class GenerateCodeAction implements ActionListener {
         return packages;
     }
 
+    private String getShortPkJdbcType(String jdbcType) {
+        if (StringUtils.isNotBlank(jdbcType) && jdbcType.indexOf(".") > 0) {
+            return jdbcType.substring(jdbcType.lastIndexOf(".") + 1);
+        }
+        return jdbcType;
+    }
+
     /**
      * @param baseTemplateInfo
      * @return
@@ -146,7 +178,7 @@ public class GenerateCodeAction implements ActionListener {
     private Map<String, Object> convertPojoTemplateData(BaseTemplateInfo baseTemplateInfo) {
         PojoParamsInfo pojoParamsInfo = (PojoParamsInfo) baseTemplateInfo;
         Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("packages", columnPackage(pojoParamsInfo.getTableColumnInfos()));
+        dataMap.put("packages", columnPackage(pojoParamsInfo));
         dataMap.put("pojoInfo", pojoParamsInfo);
         return dataMap;
     }
@@ -159,6 +191,7 @@ public class GenerateCodeAction implements ActionListener {
         ServiceParamsInfo serviceParamsInfo = (ServiceParamsInfo) baseTemplateInfo;
         HashMap<String, Object> dataMap = new HashMap<>();
         dataMap.put("pojo", serviceParamsInfo);
+        dataMap.put("packages", this.serviceColumnPackages(serviceParamsInfo));
         return dataMap;
     }
 
@@ -182,7 +215,7 @@ public class GenerateCodeAction implements ActionListener {
         BaseTemplateInfo mapperPojo = templateParamsInfoMap.get(TemplateTypeEnum.MAPPER.getTemplateId());
         XmlParamsInfo xmlParamsInfo = (XmlParamsInfo) baseTemplateInfo;
         if (mapperPojo != null) {
-            MapperParamsInfo mapperParamsInfo=(MapperParamsInfo)mapperPojo;
+            MapperParamsInfo mapperParamsInfo = (MapperParamsInfo) mapperPojo;
             xmlParamsInfo.setNamespace(StringUtils.isNotBlank(mapperPojo.getPackageRoot()) ? mapperPojo.getPackageRoot() + mapperPojo.getPackagePath() : mapperPojo.getPackagePath());
             if (mapperParamsInfo.getSuperPojoInfo() != null) {
                 xmlParamsInfo.defaultXmlApiParamsInfos();
@@ -197,8 +230,13 @@ public class GenerateCodeAction implements ActionListener {
         return dataMap;
     }
 
-    private List<String> columnPackage(List<JdbcMapJavaInfo> tableColumnInfos) {
-        List<String> packageList = new ArrayList<>();
+    private Set<String> columnPackage(PojoParamsInfo pojoParamsInfo) {
+        Set<String> packageList = new HashSet<>();
+        SuperPojoInfo superPojoInfo = pojoParamsInfo.getSuperPojoInfo();
+        if (superPojoInfo != null) {
+            packageList.add(superPojoInfo.getPackageName());
+        }
+        List<JdbcMapJavaInfo> tableColumnInfos = pojoParamsInfo.getTableColumnInfos();
         for (final JdbcMapJavaInfo tableColumnInfo : tableColumnInfos) {
             if (tableColumnInfo.isIgnore()) {
                 continue;
@@ -215,6 +253,29 @@ public class GenerateCodeAction implements ActionListener {
             }
         }
         return packageList;
+    }
+
+    /**
+     * @param serviceParamsInfo
+     * @return
+     */
+    private Set<String> serviceColumnPackages(ServiceParamsInfo serviceParamsInfo) {
+        Set<String> packages = new HashSet<>();
+        InterfaceParamsInfo interfaceParamsInfo = serviceParamsInfo.getInterfaceParamsInfo();
+        StringBuilder sb = new StringBuilder();
+        if (StringUtils.isNotBlank(interfaceParamsInfo.getPackageRoot())) {
+            sb.append(interfaceParamsInfo.getPackageRoot());
+            sb.append(".");
+        }
+        sb.append(interfaceParamsInfo.getPackageName());
+        sb.append(".");
+        sb.append(interfaceParamsInfo.getPojoName());
+        packages.add(sb.toString());
+        SuperPojoInfo superPojoInfo = serviceParamsInfo.getSuperPojoInfo();
+        if (superPojoInfo != null) {
+            packages.add(superPojoInfo.getPackageName());
+        }
+        return packages;
     }
 
     /**
@@ -298,6 +359,7 @@ public class GenerateCodeAction implements ActionListener {
                         TemplateInfo interfaceTp = new TemplateInfo();
                         interfaceTp.setTemplateId(customJCheckBox.getId());
                         interfaceParamsInfo.setTemplateInfo(interfaceTp);
+                        //service impl 目标参数
                         ServiceParamsInfo serviceParamsInfo = new ServiceParamsInfo();
                         serviceParamsInfo.setInterfaceParamsInfo(interfaceParamsInfo);
                         serviceParamsInfo.setPojoPath(interfaceParamsInfo.getPojoPath());
@@ -306,13 +368,16 @@ public class GenerateCodeAction implements ActionListener {
                         } else {
                             serviceParamsInfo.setPojoName(interfaceParamsInfo.getPojoName() + "Impl");
                         }
+                        //实现类得包名称
                         serviceParamsInfo.setPackageName(interfaceParamsInfo.getPackageName() + ".impl");
                         serviceParamsInfo.setPojoDesc(templateTypeEnum.getTemplateDesc());
                         serviceParamsInfo.setAuthor(interfaceParamsInfo.getAuthor());
                         serviceParamsInfo.setPackageRoot(interfaceParamsInfo.getPackageRoot());
+                        serviceParamsInfo.setSuperPojoInfo(this.getSuperPojoName(superPathT.getText().trim()));
                         TemplateInfo templateInfo = new TemplateInfo();
                         templateInfo.setTemplateId(TemplateTypeEnum.SERVICE.getTemplateId());
                         serviceParamsInfo.setTemplateInfo(templateInfo);
+                        serviceParamsInfo.setTemplateTypeEnum(TemplateTypeEnum.SERVICE);
                         this.checkTemplate(serviceParamsInfo);
                         templateParamsInfoMap.put(customJCheckBox.getId(), serviceParamsInfo);
                     } else if (TemplateTypeEnum.MAPPER.getTemplateId().equals(customJCheckBox.getId())) {
@@ -333,39 +398,6 @@ public class GenerateCodeAction implements ActionListener {
                         mapperParamsInfo.setDefaultPackageName(PojoParamsInfo.getDefaultPackageName(templateTypeEnum, StrUtil.underlineToCamelToLower(jdbcTableInfo.getTableName())));
                         mapperParamsInfo.setPackageRoot(mapperParamsInfo.getUseDefaultPackageRoot(customJFileChooserPanel.getFileName()));
                         this.checkTemplate(mapperParamsInfo);
-                        List<MapperApiParamsInfo> mapperApiParamsInfos = mapperParamsInfo.getMapperApiParamsInfos();
-                        //设置接口参数信息
-                        if (CollectionUtils.isNotEmpty(mapperApiParamsInfos)) {
-                            //生成DO 则DO配置参数已经存在缓存
-                            PojoParamsInfo pojoParamsInfo = (PojoParamsInfo) templateParamsInfoMap.get(TemplateTypeEnum.DO.getTemplateId());
-                            //未生成DO 则设置默认对象参数信息
-                            if (pojoParamsInfo == null) {
-                                pojoParamsInfo = new PojoParamsInfo();
-                                pojoParamsInfo.setPojoName(StrUtil.underlineToCamelFirstToUpper(jdbcTableInfo.getTableName()));
-                            }
-                            String pojoName = pojoParamsInfo.getPojoName().indexOf(".") >= 0 ? StrUtil.subStrLast(pojoParamsInfo.getPojoName(), ".") : pojoParamsInfo.getPojoName();
-                            for (final MapperApiParamsInfo mapperApiParamsInfo : mapperApiParamsInfos) {
-                                if (XmlSqlTemplateEnum.isObjectListResultType(mapperApiParamsInfo.getTemplateId()) ||
-                                        XmlSqlTemplateEnum.isObjectResultType(mapperApiParamsInfo.getTemplateId())) {
-                                    String resultTypePath = getTypePath(pojoParamsInfo.getPackageRoot(), pojoParamsInfo.getPackageName(), pojoParamsInfo.getPojoName());
-                                    mapperApiParamsInfo.setResultTypePath(resultTypePath);
-                                    if (XmlSqlTemplateEnum.isObjectListResultType(mapperApiParamsInfo.getTemplateId())) {
-                                        mapperApiParamsInfo.setResultType("List<" + pojoName + ">");
-                                    } else {
-                                        mapperApiParamsInfo.setResultType(pojoName);
-                                    }
-                                } else {
-                                    mapperApiParamsInfo.setResultType("int");
-                                }
-                                String parameterTypePath = getTypePath(pojoParamsInfo.getPackageRoot(), pojoParamsInfo.getPackageName(), pojoParamsInfo.getPojoName());
-                                mapperApiParamsInfo.setParameterTypePath(parameterTypePath);
-                                if (XmlSqlTemplateEnum.isObjectListParameterType(mapperApiParamsInfo.getTemplateId())) {
-                                    mapperApiParamsInfo.setParameterType("List<" + pojoName + ">");
-                                } else if (XmlSqlTemplateEnum.isObjectParameterType(mapperApiParamsInfo.getTemplateId())) {
-                                    mapperApiParamsInfo.setParameterType(pojoName);
-                                }
-                            }
-                        }
                         templateParamsInfoMap.put(customJCheckBox.getId(), mapperParamsInfo);
                     } else {
                         List<JdbcMapJavaInfo> jdbcMapJavaInfos = (List<JdbcMapJavaInfo>) commonPanel.getBindObject();

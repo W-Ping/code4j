@@ -13,11 +13,11 @@ public enum TemplateTypeEnum {
     /**
      *
      */
-    DO("DO", "tp_do.ftlx", ".java", "DO 配置"),
+    DO("DO", "tp_do.ftlx", ".java", "entity 配置"),
     /**
      *
      */
-    VO("VO", "tp_vo.ftlx", ".java", "VO 配置"),
+    VO("VO", "tp_vo.ftlx", ".java", "vo 配置"),
     /**
      *
      */
@@ -25,15 +25,15 @@ public enum TemplateTypeEnum {
     /**
      *
      */
-    MAPPER("MAPPER", "tp_mapper.ftlx", ".java", "mapper 配置"),
+    MAPPER("MAPPER", "tp_mapper.ftlx", ".java", "dao 配置"),
     /**
      *
      */
-    SERVICE_API("SERVICE_API", "template_service_api.ftl", ".java", "service API 配置"),
+    SERVICE_API("SERVICE_API", "tp_service_api.ftlx", ".java", "service API 配置"),
     /**
      *
      */
-    SERVICE("SERVICE", "template_service.ftl", ".java", "service API 配置"),
+    SERVICE("SERVICE", "tp_service.ftlx", ".java", "service API 配置"),
     ;
     private String templateId;
     private String templateName;

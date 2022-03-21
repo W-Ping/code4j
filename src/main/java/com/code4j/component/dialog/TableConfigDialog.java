@@ -75,6 +75,7 @@ public class TableConfigDialog extends BaseDialog {
                 JTextField j3v = new JTextField(tableColumnInfo.getJavaProperty());
                 JTextField j4v = new JTextField(tableColumnInfo.getJavaType());
                 CustomJCheckBox j5v = new CustomJCheckBox("", !tableColumnInfo.isIgnore(), i + "");
+                c2.addList(j0v, j1v, j2v, j3v, j4v, j5v);
                 j5v.setBindObject(tableColumnInfo);
                 j1v.setEditable(false);
                 j2v.setEditable(false);
@@ -86,7 +87,6 @@ public class TableConfigDialog extends BaseDialog {
                 j5v.setPreferredSize(checkDimension);
                 j5v.setBindComponent(c2);
                 selectCustomJCheckBoxList.add(j5v);
-                c2.addList(j0v, j1v, j2v, j3v, j4v, j5v);
                 box.add(c2);
             }
         }
@@ -118,10 +118,11 @@ public class TableConfigDialog extends BaseDialog {
             newTableColumnInfo.setColumn(tableColumnInfo.getColumn());
             newTableColumnInfo.setJdbcType(tableColumnInfo.getJdbcType());
             newTableColumnInfo.setComment(tableColumnInfo.getComment());
+            newTableColumnInfo.setPrimaryKey(tableColumnInfo.isPrimaryKey());
             if (customJCheckBox.isSelected()) {
                 JComponent bindComponent = customJCheckBox.getBindComponent();
-                JTextField javaPropertyT = (JTextField) bindComponent.getComponent(2);
-                JTextField javaTypeT = (JTextField) bindComponent.getComponent(3);
+                JTextField javaPropertyT = (JTextField) bindComponent.getComponent(3);
+                JTextField javaTypeT = (JTextField) bindComponent.getComponent(4);
                 newTableColumnInfo.setJavaProperty(javaPropertyT.getText());
                 newTableColumnInfo.setJavaType(javaTypeT.getText());
                 newTableColumnInfo.setIgnore(false);

@@ -118,6 +118,7 @@ public abstract class AbstractJDBCService implements JDBCService {
      * @param tableName
      * @return
      */
+    @Override
     public List<JdbcMapJavaInfo> getTableColumnInfo(final String dbName, final String tableName) {
         Connection connection = null;
         ResultSet rs = null;

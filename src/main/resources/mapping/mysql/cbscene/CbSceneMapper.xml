@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ebx.queen.dao.cbscene.CbSceneDao">
+    <!--
+        @author code4j
+        @date Created in 2022-3-21 17:42:59
+    -->
+    <resultMap id="BaseResultMap" type="com.ebx.skeleton.entity.cbscene.CbSceneEntity">
+                <id column="id" property="id" jdbcType="BIGINT"></id>
+                <result column="name" property="name" jdbcType="VARCHAR"></result>
+                <result column="res_code" property="resCode" jdbcType="VARCHAR"></result>
+                <result column="staff_id" property="staffId" jdbcType="BIGINT"></result>
+                <result column="status" property="status" jdbcType="TINYINT"></result>
+                <result column="time_ranges" property="timeRanges" jdbcType="VARCHAR"></result>
+                <result column="weekday" property="weekday" jdbcType="VARCHAR"></result>
+                <result column="create_time" property="createTime" jdbcType="TIMESTAMP"></result>
+                <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"></result>
+                <result column="remark" property="remark" jdbcType="VARCHAR"></result>
+                <result column="exe_frequency" property="exeFrequency" jdbcType="BIGINT"></result>
+    </resultMap>
+    <sql id="Base_Table_Column" >
+                id,
+                name,
+                res_code,
+                staff_id,
+                status,
+                time_ranges,
+                weekday,
+                create_time,
+                update_time,
+                remark,
+                exe_frequency
+    </sql>
+    <insert id="insertSelective" parameterType="com.ebx.skeleton.entity.cbscene.CbSceneEntity">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into cb_scene
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+                <if test="id != null" >
+                id,
+                </if>
+                <if test="name != null and name != ''" >
+                name,
+                </if>
+                <if test="resCode != null and resCode != ''" >
+                res_code,
+                </if>
+                <if test="staffId != null" >
+                staff_id,
+                </if>
+                <if test="status != null" >
+                status,
+                </if>
+                <if test="timeRanges != null and timeRanges != ''" >
+                time_ranges,
+                </if>
+                <if test="weekday != null and weekday != ''" >
+                weekday,
+                </if>
+                <if test="createTime != null" >
+                create_time,
+                </if>
+                <if test="updateTime != null" >
+                update_time,
+                </if>
+                <if test="remark != null and remark != ''" >
+                remark,
+                </if>
+                <if test="exeFrequency != null" >
+                exe_frequency,
+                </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+                <if test="id != null" >
+                 #{id},
+                </if>
+                <if test="name != null and name != ''" >
+                 #{name},
+                </if>
+                <if test="resCode != null and resCode != ''" >
+                 #{resCode},
+                </if>
+                <if test="staffId != null" >
+                 #{staffId},
+                </if>
+                <if test="status != null" >
+                 #{status},
+                </if>
+                <if test="timeRanges != null and timeRanges != ''" >
+                 #{timeRanges},
+                </if>
+                <if test="weekday != null and weekday != ''" >
+                 #{weekday},
+                </if>
+                <if test="createTime != null" >
+                 #{createTime},
+                </if>
+                <if test="updateTime != null" >
+                 #{updateTime},
+                </if>
+                <if test="remark != null and remark != ''" >
+                 #{remark},
+                </if>
+                <if test="exeFrequency != null" >
+                 #{exeFrequency},
+                </if>
+        </trim>
+    </insert>
+     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+       delete from cb_scene where id = #{id}
+     </delete>
+      <update id="updateByPrimaryKey" parameterType="com.ebx.skeleton.entity.cbscene.CbSceneEntity" >
+       update cb_scene
+         <set>
+           id = #{id},
+           name = #{name},
+           res_code = #{resCode},
+           staff_id = #{staffId},
+           status = #{status},
+           time_ranges = #{timeRanges},
+           weekday = #{weekday},
+           create_time = #{createTime},
+           update_time = #{updateTime},
+           remark = #{remark},
+           exe_frequency = #{exeFrequency},
+         </set>
+       where id = #{id}
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.ebx.skeleton.entity.cbscene.CbSceneEntity" >
+      update cb_scene
+        <set>
+            <if test="id != null" >
+             id = #{id},
+            </if>
+            <if test="name != null and name != ''" >
+             name = #{name},
+            </if>
+            <if test="resCode != null and resCode != ''" >
+             res_code = #{resCode},
+            </if>
+            <if test="staffId != null" >
+             staff_id = #{staffId},
+            </if>
+            <if test="status != null" >
+             status = #{status},
+            </if>
+            <if test="timeRanges != null and timeRanges != ''" >
+             time_ranges = #{timeRanges},
+            </if>
+            <if test="weekday != null and weekday != ''" >
+             weekday = #{weekday},
+            </if>
+            <if test="createTime != null" >
+             create_time = #{createTime},
+            </if>
+            <if test="updateTime != null" >
+             update_time = #{updateTime},
+            </if>
+            <if test="remark != null and remark != ''" >
+             remark = #{remark},
+            </if>
+            <if test="exeFrequency != null" >
+             exe_frequency = #{exeFrequency},
+            </if>
+         </set>
+      where id = #{id}
+    </update>
+    <select id="selectByEntity" resultMap="BaseResultMap" parameterType="com.ebx.skeleton.entity.cbscene.CbSceneEntity">
+        select
+        <include refid="Base_Table_Column" />
+        from cb_scene
+        <where>
+                <if test="id != null" >
+                and id = #{id},
+                </if>
+                <if test="name != null and name != ''" >
+                and name = #{name},
+                </if>
+                <if test="resCode != null and resCode != ''" >
+                and res_code = #{resCode},
+                </if>
+                <if test="staffId != null" >
+                and staff_id = #{staffId},
+                </if>
+                <if test="status != null" >
+                and status = #{status},
+                </if>
+                <if test="timeRanges != null and timeRanges != ''" >
+                and time_ranges = #{timeRanges},
+                </if>
+                <if test="weekday != null and weekday != ''" >
+                and weekday = #{weekday},
+                </if>
+                <if test="createTime != null" >
+                and create_time = #{createTime},
+                </if>
+                <if test="updateTime != null" >
+                and update_time = #{updateTime},
+                </if>
+                <if test="remark != null and remark != ''" >
+                and remark = #{remark},
+                </if>
+                <if test="exeFrequency != null" >
+                and exe_frequency = #{exeFrequency},
+                </if>
+        </where>
+    </select>
+     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+       select <include refid="Base_Table_Column" />
+       from cb_scene
+       where id = #{id}
+    </select>
+    <insert id="insertOrUpdateSelective" parameterType="com.ebx.skeleton.entity.cbscene.CbSceneEntity">
+          <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+              SELECT LAST_INSERT_ID()
+          </selectKey>
+          insert into cb_scene
+          <trim prefix="(" suffix=")" suffixOverrides="," >
+                <if test="id != null" >
+                id,
+            </if>
+                <if test="name != null and name != ''" >
+                name,
+            </if>
+                <if test="resCode != null and resCode != ''" >
+                res_code,
+            </if>
+                <if test="staffId != null" >
+                staff_id,
+            </if>
+                <if test="status != null" >
+                status,
+            </if>
+                <if test="timeRanges != null and timeRanges != ''" >
+                time_ranges,
+            </if>
+                <if test="weekday != null and weekday != ''" >
+                weekday,
+            </if>
+                <if test="createTime != null" >
+                create_time,
+            </if>
+                <if test="updateTime != null" >
+                update_time,
+            </if>
+                <if test="remark != null and remark != ''" >
+                remark,
+            </if>
+                <if test="exeFrequency != null" >
+                exe_frequency,
+            </if>
+          </trim>
+          <trim prefix="values (" suffix=")" suffixOverrides="," >
+                <if test="id != null" >
+                #{id},
+            </if>
+                <if test="name != null and name != ''" >
+                #{name},
+            </if>
+                <if test="resCode != null and resCode != ''" >
+                #{resCode},
+            </if>
+                <if test="staffId != null" >
+                #{staffId},
+            </if>
+                <if test="status != null" >
+                #{status},
+            </if>
+                <if test="timeRanges != null and timeRanges != ''" >
+                #{timeRanges},
+            </if>
+                <if test="weekday != null and weekday != ''" >
+                #{weekday},
+            </if>
+                <if test="createTime != null" >
+                #{createTime},
+            </if>
+                <if test="updateTime != null" >
+                #{updateTime},
+            </if>
+                <if test="remark != null and remark != ''" >
+                #{remark},
+            </if>
+                <if test="exeFrequency != null" >
+                #{exeFrequency},
+            </if>
+          </trim>
+          ON DUPLICATE KEY UPDATE
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+                <if test="id != null" >
+                id=VALUES(id),
+                </if>
+                <if test="name != null and name != ''" >
+                name=VALUES(name),
+                </if>
+                <if test="resCode != null and resCode != ''" >
+                res_code=VALUES(res_code),
+                </if>
+                <if test="staffId != null" >
+                staff_id=VALUES(staff_id),
+                </if>
+                <if test="status != null" >
+                status=VALUES(status),
+                </if>
+                <if test="timeRanges != null and timeRanges != ''" >
+                time_ranges=VALUES(time_ranges),
+                </if>
+                <if test="weekday != null and weekday != ''" >
+                weekday=VALUES(weekday),
+                </if>
+                <if test="createTime != null" >
+                create_time=VALUES(create_time),
+                </if>
+                <if test="updateTime != null" >
+                update_time=VALUES(update_time),
+                </if>
+                <if test="remark != null and remark != ''" >
+                remark=VALUES(remark),
+                </if>
+                <if test="exeFrequency != null" >
+                exe_frequency=VALUES(exe_frequency),
+                </if>
+        </trim>
+      </insert>
+</mapper>

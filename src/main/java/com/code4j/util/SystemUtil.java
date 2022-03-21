@@ -15,6 +15,8 @@ import java.net.URISyntaxException;
  */
 public class SystemUtil {
     /**
+     * 复制
+     *
      * @param str
      */
     public static void setClipboardString(String str) {
@@ -26,6 +28,11 @@ public class SystemUtil {
         clipboard.setContents(trans, null);
     }
 
+    /**
+     * 粘贴
+     *
+     * @return
+     */
     public static String getClipboardString() {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         Transferable trans = clipboard.getContents(null);
@@ -59,6 +66,7 @@ public class SystemUtil {
             ex.printStackTrace();
         }
     }
+
     public static void restart() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -87,7 +95,8 @@ public class SystemUtil {
         } else if (dataType.equals("INT")
                 || dataType.equals("INTEGER")
                 || dataType.equals("MEDIUMINT")
-                || dataType.equals("TINYINT")) {
+                || dataType.equals("TINYINT")
+                || dataType.equals("SMALLINT")) {
             dataType = "java.lang.Integer";
         } else if (dataType.equals("FLOAT")) {
             dataType = "java.lang.Float";
@@ -97,15 +106,16 @@ public class SystemUtil {
                 || dataType.equals("DECIMAL")) {
             dataType = "java.math.BigDecimal";
         } else if (dataType.equals("DATE")
-                || dataType.equals("DATETIME")
-                || dataType.equals("TIMESTAMP")
                 || dataType.equals("YEAR")
                 || dataType.equals("TIME")) {
             return "java.util.Date";
+        } else if (dataType.equals("TIMESTAMP")
+                || dataType.equals("DATETIME")) {
+            return "java.sql.Timestamp";
         } else if (dataType.equals("BIT")) {
             return "java.lang.Boolean";
         } else if (dataType.equals("BLOB")) {
-            return "Byte[]";
+            return "java.lang.byte[]";
         } else if (dataType.equals("CLOB")) {
             dataType = "java.sql.Clob";
         } else {

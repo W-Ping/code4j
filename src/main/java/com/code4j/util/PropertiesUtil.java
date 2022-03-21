@@ -195,6 +195,10 @@ public class PropertiesUtil {
                             codeConfigInfo.setDoPath(projectCodeConfigInfo.getDoPath());
                             codeConfigInfo.setDoPackageName(projectCodeConfigInfo.getDoPackageName());
                             codeConfigInfo.setProjectName(projectCodeConfigInfo.getProjectName());
+                            codeConfigInfo.setVoSuperClass(projectCodeConfigInfo.getVoSuperClass());
+                            codeConfigInfo.setDoSuperClass(projectCodeConfigInfo.getDoSuperClass());
+                            codeConfigInfo.setMapperSuperClass(projectCodeConfigInfo.getMapperSuperClass());
+                            codeConfigInfo.setServiceSuperClass(projectCodeConfigInfo.getServiceSuperClass());
                             break;
                         }
                     }

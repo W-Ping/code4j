@@ -11,15 +11,16 @@ public enum XmlSqlTemplateEnum {
     /**
      *
      */
-    INSERT("1", "insert ", "insert", "int","object"),
-    INSERT_BATCH("2", "insert batch", "insertBatch", "int","objectList"),
-    DELETE("3", "delete", "deleteByPrimaryKey", "int","object"),
-    UPDATE("4", "update", "updateByPrimaryKeySelective", "int","object"),
-    SELECT("5", "select", "selectByObject", "objectList","object"),
-    SELECT_ONE("6", "select one", "selectByPrimaryKey", "object","object"),
-    SELECT_PAGE("7", "page select", "selectPageByObject", "objectList","object"),
-    INSERT_DUPLICATEKEY("8", "insertOrUpdate", "insertOrUpdateSelective", "int","object"),
-    INSERT_DUPLICATEKEY_BATCH("9", "insert duplicateKey", "insertListDuplicateKey", "int","objectList");
+    INSERT("1", "insert", "insertSelective", "int", "object"),
+    INSERT_BATCH("2", "insert batch", "insertBatch", "int", "objectList"),
+    DELETE("3", "delete", "deleteByPrimaryKey", "int", "pk"),
+    UPDATE("4", "update", "updateByPrimaryKey", "int", "object"),
+    UPDATE_NOT_NULL("41", "update not null", "updateByPrimaryKeySelective", "int", "object"),
+    SELECT("5", "select", "selectByEntity", "objectList", "object"),
+    SELECT_ONE("6", "select one", "selectByPrimaryKey", "object", "pk"),
+    SELECT_PAGE("7", "page select", "selectPageByObject", "objectList", "object"),
+    INSERT_DUPLICATEKEY("8", "insertOrUpdate", "insertOrUpdateSelective", "int", "object"),
+    INSERT_DUPLICATEKEY_BATCH("9", "insert duplicateKey", "insertListDuplicateKey", "int", "objectList");
 
     private String templateId;
     private String templateDesc;
@@ -27,7 +28,7 @@ public enum XmlSqlTemplateEnum {
     private String resultType;
     private String parameterType;
 
-    XmlSqlTemplateEnum(String templateId, String templateDesc, String apiId, String resultType,String parameterType) {
+    XmlSqlTemplateEnum(String templateId, String templateDesc, String apiId, String resultType, String parameterType) {
         this.templateId = templateId;
         this.templateDesc = templateDesc;
         this.apiId = apiId;
@@ -46,6 +47,7 @@ public enum XmlSqlTemplateEnum {
     public static boolean isObjectListResultType(String templateId) {
         return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.resultType.equals("objectList"));
     }
+
     public static boolean isObjectParameterType(String templateId) {
         return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.parameterType.equals("object"));
     }
@@ -54,12 +56,18 @@ public enum XmlSqlTemplateEnum {
      * @param templateId
      * @return
      */
-    public static boolean isPageSelect(String templateId){
-        return templateId!=null && templateId!="" && templateId.equals(SELECT_PAGE.getTemplateId());
+    public static boolean isPageSelect(String templateId) {
+        return templateId != null && templateId != "" && templateId.equals(SELECT_PAGE.getTemplateId());
     }
+
+    public static boolean isParameterPk(String templateId) {
+        return templateId != null && Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.parameterType.equals("pk"));
+    }
+
     public static boolean isObjectListParameterType(String templateId) {
         return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.parameterType.equals("objectList"));
     }
+
     public static XmlSqlTemplateEnum getXmlSqlTemplateEnumById(String templateId) {
         for (final XmlSqlTemplateEnum value : values()) {
             if (value.templateId.equals(templateId)) {

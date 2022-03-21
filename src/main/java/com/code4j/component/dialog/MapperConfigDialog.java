@@ -31,35 +31,36 @@ public class MapperConfigDialog extends BaseDialog {
     @Override
     public void beforeInit() {
         selectCustomJCheckBoxList = new ArrayList<>();
-        this.setPreferredSize(new Dimension(350, 300));
+        this.setPreferredSize(new Dimension(400, 300));
     }
 
     @Override
     protected Component content() {
         Box box = Box.createVerticalBox();
         CommonPanel cp1 = new CommonPanel();
-        CustomJCheckBox cb1 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT.getTemplateDesc(), false, XmlSqlTemplateEnum.INSERT.getTemplateId());
+        CustomJCheckBox cb1 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT.getApiId(), false, XmlSqlTemplateEnum.INSERT.getTemplateId());
 //        CustomJCheckBox cb2 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT_BATCH.getTemplateDesc(), false, XmlSqlTemplateEnum.INSERT_BATCH.getTemplateId());
-        cp1.addList(cb1);
+        CustomJCheckBox cb8 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT_DUPLICATEKEY.getApiId(), false, XmlSqlTemplateEnum.INSERT_DUPLICATEKEY.getTemplateId());
+        cp1.addList(cb1, cb8);
         CommonPanel cp2 = new CommonPanel();
-        CustomJCheckBox cb3 = new CustomJCheckBox(XmlSqlTemplateEnum.UPDATE.getTemplateDesc(), false, XmlSqlTemplateEnum.UPDATE.getTemplateId());
-        CustomJCheckBox cb4 = new CustomJCheckBox(XmlSqlTemplateEnum.DELETE.getTemplateDesc(), false, XmlSqlTemplateEnum.DELETE.getTemplateId());
-        cp2.addList(cb3, cb4);
+        CustomJCheckBox cb3 = new CustomJCheckBox(XmlSqlTemplateEnum.UPDATE.getApiId(), false, XmlSqlTemplateEnum.UPDATE.getTemplateId());
+        CustomJCheckBox cb31 = new CustomJCheckBox(XmlSqlTemplateEnum.UPDATE_NOT_NULL.getApiId(), false, XmlSqlTemplateEnum.UPDATE_NOT_NULL.getTemplateId());
+        cp2.addList(cb3, cb31);
         CommonPanel cp3 = new CommonPanel();
-        CustomJCheckBox cb5 = new CustomJCheckBox(XmlSqlTemplateEnum.SELECT.getTemplateDesc(), false, XmlSqlTemplateEnum.SELECT.getTemplateId());
-        CustomJCheckBox cb6 = new CustomJCheckBox(XmlSqlTemplateEnum.SELECT_ONE.getTemplateDesc(), false, XmlSqlTemplateEnum.SELECT_ONE.getTemplateId());
+        CustomJCheckBox cb5 = new CustomJCheckBox(XmlSqlTemplateEnum.SELECT.getApiId(), false, XmlSqlTemplateEnum.SELECT.getTemplateId());
+        CustomJCheckBox cb6 = new CustomJCheckBox(XmlSqlTemplateEnum.SELECT_ONE.getApiId(), false, XmlSqlTemplateEnum.SELECT_ONE.getTemplateId());
 //        CustomJCheckBox cb7 = new CustomJCheckBox(XmlSqlTemplateEnum.SELECT_PAGE.getTemplateDesc(),
 //                false, XmlSqlTemplateEnum.SELECT_PAGE.getTemplateId());
         cp3.addList(cb5, cb6);
         CommonPanel cp4 = new CommonPanel();
-        CustomJCheckBox cb8 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT_DUPLICATEKEY.getTemplateDesc(), false, XmlSqlTemplateEnum.INSERT_DUPLICATEKEY.getTemplateId());
 //        CustomJCheckBox cb9 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT_DUPLICATEKEY_BATCH.getTemplateDesc(), false, XmlSqlTemplateEnum.INSERT_DUPLICATEKEY_BATCH.getTemplateId());
-        cp4.addList(cb8);
-        selectCustomJCheckBoxList.addAll(Stream.of(cb1, cb3, cb4, cb5, cb6, cb8).collect(Collectors.toList()));
-        box.add(cp4);
+        CustomJCheckBox cb4 = new CustomJCheckBox(XmlSqlTemplateEnum.DELETE.getApiId(), false, XmlSqlTemplateEnum.DELETE.getTemplateId());
+        cp4.addList(cb4);
+        selectCustomJCheckBoxList.addAll(Stream.of(cb1, cb3, cb31, cb4, cb5, cb6, cb8).collect(Collectors.toList()));
         box.add(cp1);
         box.add(cp2);
         box.add(cp3);
+        box.add(cp4);
         return box;
     }
 
@@ -68,16 +69,8 @@ public class MapperConfigDialog extends BaseDialog {
         List<MapperApiParamsInfo> mapperApiParamsInfos = new ArrayList<>();
         for (final CustomJCheckBox customJCheckBox : selectCustomJCheckBoxList) {
             if (customJCheckBox.isSelected()) {
-                MapperApiParamsInfo mapperApiParamsInfo = new MapperApiParamsInfo();
                 XmlSqlTemplateEnum xmlSqlTemplateEnum = XmlSqlTemplateEnum.getXmlSqlTemplateEnumById(customJCheckBox.getId());
-                mapperApiParamsInfo.setTemplateId(customJCheckBox.getId());
-                mapperApiParamsInfo.setApiId(xmlSqlTemplateEnum.getApiId());
-                mapperApiParamsInfo.setParameterTypeIsList(XmlSqlTemplateEnum.isObjectListResultType(customJCheckBox.getId()));
-                if (XmlSqlTemplateEnum.isIntResultType(mapperApiParamsInfo.getTemplateId())) {
-                    mapperApiParamsInfo.setResultType(mapperApiParamsInfo.getResultType());
-                }
-                mapperApiParamsInfo.setPageSelect(XmlSqlTemplateEnum.isPageSelect(customJCheckBox.getId()));
-                mapperApiParamsInfos.add(mapperApiParamsInfo);
+                mapperApiParamsInfos.add(new MapperApiParamsInfo(xmlSqlTemplateEnum));
             }
         }
         if (CollectionUtils.isNotEmpty(mapperApiParamsInfos)) {
