@@ -1,4 +1,4 @@
-package ${(pojo.packageRoot)!""}${(pojo.packageName)!};
+ package ${(pojo.packageRoot)!""}${(pojo.packageName)!};
 
 /**
 * ${(pojo.jdbcTableInfo.remark)!}

@@ -33,7 +33,7 @@ import javax.persistence.Table;
     public <#if model.javaType?contains(".")>${model.javaType?substring(model.javaType?last_index_of(".")+1)}<#else>${model.javaType!}</#if>  get${model.javaProperty?cap_first}() {
         return ${model.javaProperty!};
     }
-    public void set${model.javaProperty?cap_first}(final <#if model.javaType?contains(".")>${model.javaType?substring(model.javaType?last_index_of(".")+1)}<#else>${model.javaType!}</#if>  ${model.javaProperty!}) {
+    public void set${model.javaProperty?cap_first}(fin al <#if model.javaType?contains(".")>${model.javaType?substring(model.javaType?last_index_of(".")+1)}<#else>${model.javaType!}</#if>  ${model.javaProperty!}) {
         this.${model.javaProperty!} = ${model.javaProperty!};
     }
     </#if>

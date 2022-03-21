@@ -1,4 +1,4 @@
-package ${(baseInfo.packageRoot)!}${(baseInfo.packageName)!};
+ package ${(baseInfo.packageRoot)!}${(baseInfo.packageName)!};
 import org.springframework.stereotype.Repository;
 <#if (packages)??><#list packages as model>
 import ${model};
