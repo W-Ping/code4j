@@ -4,10 +4,14 @@ import com.code4j.config.Code4jConstants;
 import com.code4j.config.TemplateTypeEnum;
 import com.code4j.pojo.*;
 import com.code4j.util.FreemarkerUtil;
+import com.code4j.util.SystemUtil;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +26,16 @@ public class FreemarkerTest {
 
     @Before
     public void before() throws IOException {
+    }
+
+    @Test
+    public void testMdFile() throws Exception {
+        InputStream resourceAsStream = FreemarkerTest.class.getClassLoader().getResourceAsStream("README.md");
+        String mdFile = "D:\\代码生成工具\\代码生成工具说明文档.md";
+        String content = SystemUtil.readByStream(resourceAsStream);
+        String html = "D:\\代码生成工具\\代码生成工具说明文档.html";
+        SystemUtil.writeFile(html, content);
+        Desktop.getDesktop().open(new File(html));
     }
 
     @Test

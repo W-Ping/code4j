@@ -87,6 +87,22 @@
             <version>3.0.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>0.18.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.commonmark</groupId>
+            <artifactId>commonmark-ext-gfm-tables</artifactId>
+            <version>0.18.1</version>
+        </dependency>
+        <!--添加markdown标题的依赖-->
+<!--        <dependency>-->
+<!--            <groupId>com.github.houbb</groupId>-->
+<!--            <artifactId>markdown-toc</artifactId>-->
+<!--            <version>1.0.8</version>-->
+<!--        </dependency>-->
     </dependencies>
     <build>
         <finalName>code4j</finalName>
@@ -128,6 +144,11 @@
                             <mainClass>com.code4j.Code4jApplication</mainClass>
                         </manifest>
                     </archive>
+<!--                    <includes>-->
+<!--                        <include>${basedir}/README.md</include>-->
+<!--                        <include>${basedir}/src/main/java/com/**</include>-->
+<!--                        <include>${basedir}/src/main/java/resources/**</include>-->
+<!--                    </includes>-->
                 </configuration>
             </plugin>
             <plugin>

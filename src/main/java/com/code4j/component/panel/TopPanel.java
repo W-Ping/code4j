@@ -6,12 +6,16 @@ import com.code4j.connect.DataSourceTypeEnum;
 import com.code4j.pojo.ProjectCodeConfigInfo;
 import com.code4j.util.CustomDialogUtil;
 import com.code4j.util.PropertiesUtil;
+import com.code4j.util.SystemUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -68,6 +72,21 @@ public class TopPanel extends BasePanel {
         }
         jMenuBar.add(m1);
         jMenuBar.add(m2);
+        JMenu m3 = new JMenu("文档说明");
+        JMenuItem m31 = new JMenuItem("使用教程");
+        m31.addActionListener(e -> {
+            InputStream resourceAsStream = TopPanel.class.getClassLoader().getResourceAsStream("README.md");
+            String content = SystemUtil.readByStream(resourceAsStream);
+            String html = Code4jConstants.SYS_TEMP_PATH + "\\代码生成工具说明文档.html";
+            SystemUtil.writeFile(html, content);
+            try {
+                Desktop.getDesktop().open(new File(html));
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
+        m3.add(m31);
+        jMenuBar.add(m3);
         CommonPanel commonPanel = new CommonPanel();
         commonPanel.add(jMenuBar);
 //        this.setLayout(new FlowLayout(FlowLayout.LEFT));

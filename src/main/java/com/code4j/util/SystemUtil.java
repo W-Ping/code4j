@@ -4,7 +4,7 @@ import com.code4j.config.Code4jConstants;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -14,6 +14,66 @@ import java.net.URISyntaxException;
  * @see
  */
 public class SystemUtil {
+    /**
+     * @param path
+     * @return
+     */
+    public static String readByLines(String path) {
+        try {
+            return readByStream(new FileInputStream(path));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * @param inputStream
+     * @return
+     */
+    public static String readByStream(InputStream inputStream) {
+        if (inputStream == null) {
+            return null;
+        }
+        String content = null;
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
+
+            StringBuffer sb = new StringBuffer();
+            String temp = null;
+            while ((temp = bufferedReader.readLine()) != null) {
+                String s = MarkdownUtil.markdownToHtmlExtensitons(temp);
+                sb.append(s);
+            }
+            content = sb.toString();
+            bufferedReader.close();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
+    }
+
+    /**
+     * @param path
+     * @param content
+     */
+    public static void writeFile(String path, String content) {
+        try {
+            File file = new File(path);
+            if (file.exists()) {
+                file.createNewFile();
+            }
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+            bufferedWriter.write(content);
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 复制
      *
