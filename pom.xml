@@ -89,7 +89,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>code4j-v1</finalName>
+        <finalName>code4j</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

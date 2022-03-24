@@ -45,7 +45,7 @@ public class GenerateCodeAction implements ActionListener {
         this.customJCheckBoxes = customJCheckBoxes;
         this.jdbcTableInfo = jdbcTableInfo;
         this.jdbcSourceInfo = jdbcSourceInfo;
-        this.parentComponent=parentComponent;
+        this.parentComponent = parentComponent;
     }
 
     public void clearData() {
@@ -109,14 +109,16 @@ public class GenerateCodeAction implements ActionListener {
         Map<String, Object> dataMap = new HashMap<>();
         PojoParamsInfo doPojo = (PojoParamsInfo) templateParamsInfoMap.get(TemplateTypeEnum.DO.getTemplateId());
         MapperParamsInfo mapperParamsInfo = (MapperParamsInfo) baseTemplateInfo;
+        List<MapperApiParamsInfo> mapperApiParamsInfos = mapperParamsInfo.getMapperApiParamsInfos();
         dataMap.put("baseInfo", mapperParamsInfo);
-        dataMap.put("packages", getMapperPackages(mapperParamsInfo, doPojo));
-        dataMap.put("apiInfos", mapperParamsInfo.getMapperApiParamsInfos());
+        dataMap.put("packages", getMapperPackages(mapperParamsInfo, doPojo, mapperApiParamsInfos));
+        dataMap.put("apiInfos", mapperApiParamsInfos);
+        //还原选择
+        mapperParamsInfo.setMapperApiParamsInfos(null);
         return dataMap;
     }
 
-    private Set<String> getMapperPackages(MapperParamsInfo mapperParamsInfo, PojoParamsInfo doPojo) {
-        List<MapperApiParamsInfo> mapperApiParamsInfos = mapperParamsInfo.getMapperApiParamsInfos();
+    private Set<String> getMapperPackages(MapperParamsInfo mapperParamsInfo, PojoParamsInfo doPojo, List<MapperApiParamsInfo> mapperApiParamsInfos) {
         Set<String> packages = new HashSet<>();
         SuperPojoInfo superPojoInfo = mapperParamsInfo.getSuperPojoInfo();
         if (superPojoInfo != null) {
@@ -233,7 +235,11 @@ public class GenerateCodeAction implements ActionListener {
             xmlParamsInfo.setResultMapType(StringUtils.isNotBlank(doPojo.getPackageRoot()) ? doPojo.getPackageRoot() + doPojo.getPackagePath() : doPojo.getPackagePath());
         }
         HashMap<String, Object> dataMap = new HashMap<>();
+        List<XmlApiParamsInfo> xmlApiParamsInfos = xmlParamsInfo.getXmlApiParamsInfos();
         dataMap.put("xmlMap", xmlParamsInfo);
+        dataMap.put("xmlApiParamsInfos", xmlApiParamsInfos);
+        //还原选择
+        xmlParamsInfo.setXmlApiParamsInfos(null);
         return dataMap;
     }
 

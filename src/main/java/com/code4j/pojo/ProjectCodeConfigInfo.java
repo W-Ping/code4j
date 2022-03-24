@@ -100,15 +100,15 @@ public class ProjectCodeConfigInfo extends BaseInfo {
 
     public ProjectCodeConfigInfo(String projectName, Integer index, String tableName, boolean isSetDefault) {
         if (isSetDefault) {
-            this.voPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.VO, this.getPackageName(tableName));
+            this.voPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.VO, null);
             this.voPath = Code4jConstants.DEFAULT_PATH;
-            this.doPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.DO, this.getPackageName(tableName));
+            this.doPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.DO, null);
             this.doPath = Code4jConstants.DEFAULT_PATH;
-            this.mapperPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.MAPPER, this.getPackageName(tableName));
+            this.mapperPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.MAPPER, null);
             this.mapperPath = Code4jConstants.DEFAULT_PATH;
-            this.xmlPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.XML, this.getPackageName(tableName));
+            this.xmlPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.XML, null);
             this.xmlPath = Code4jConstants.DEFAULT_XML_PATH;
-            this.serviceApiPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.SERVICE_API, this.getPackageName(tableName));
+            this.serviceApiPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.SERVICE_API, null);
             this.serviceApiPath = Code4jConstants.DEFAULT_PATH;
             this.projectName = projectName;
             this.doSuperClass = Code4jConstants.DO_SUPER_CLASS;

@@ -17,13 +17,13 @@
         </#list>
         </#if>
     </resultMap>
-<#if  (xmlMap.xmlApiParamsInfos)??>
+<#if  (xmlApiParamsInfos)??>
     <sql id="Base_Table_Column" >
             <#list xmlMap.tableColumnInfos as model>
                 ${(model.column)!}<#if model_has_next>,</#if>
             </#list>
     </sql>
-  <#list xmlMap.xmlApiParamsInfos as methodModel>
+  <#list xmlApiParamsInfos as methodModel>
     <#if methodModel.templateId=="5">
     <select id="selectByEntity" resultMap="BaseResultMap" parameterType="${(xmlMap.resultMapType)!}">
         select
