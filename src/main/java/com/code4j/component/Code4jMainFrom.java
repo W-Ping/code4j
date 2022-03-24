@@ -43,7 +43,7 @@ public class Code4jMainFrom extends JFrame {
         this.setResizable(true);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setAlwaysOnTop(true);
+//        this.setAlwaysOnTop(true);
     }
 
     public static Code4jMainFrom.Builder Builder() {

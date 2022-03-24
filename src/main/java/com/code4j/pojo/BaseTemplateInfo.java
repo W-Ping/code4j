@@ -220,7 +220,8 @@ public class BaseTemplateInfo {
      */
     public String getUseDefaultPackageRoot(String fileName) {
         if (StringUtils.isNotBlank(this.defaultPackageName) && StringUtils.isNotBlank(this.packageName)
-                && this.defaultPackageName.equals(this.packageName) && StringUtils.isNotBlank(fileName)) {
+                && this.defaultPackageName.equals(this.packageName) && StringUtils.isNotBlank(fileName)
+        && !this.packageName.startsWith(Code4jConstants.DEFAULT_ROOT_PACKAGE)) {
 
 //            return packageRoot = Code4jConstants.DEFAULT_ROOT_PACKAGE + "." + fileName + ".";
             return packageRoot = Code4jConstants.DEFAULT_ROOT_PACKAGE + ".";
