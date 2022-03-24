@@ -21,8 +21,8 @@ public class Code4jApplication {
         BottomPanel bottomPanel = new BottomPanel(Code4jConstants.BOTTOM_MIN_DEFAULT_SIZE);
         leftPanel.setRightPanel(rightPanel);
         topPanel.setLeftPanel(leftPanel);
-        LayoutDropTargetListener listener = new LayoutDropTargetListener(leftPanel);
-        DropTarget dropTarget = new DropTarget(leftPanel, DnDConstants.ACTION_COPY_OR_MOVE, listener, true);
+//        LayoutDropTargetListener listener = new LayoutDropTargetListener(leftPanel);
+//        DropTarget dropTarget = new DropTarget(leftPanel, DnDConstants.ACTION_COPY_OR_MOVE, listener, true);
         Code4jMainFrom.Builder()
                 .title("代码生成工具")
                 .topPanel(topPanel)

@@ -15,10 +15,12 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PipedReader;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -31,18 +33,19 @@ public class GenerateCodeAction implements ActionListener {
     private Map<String, BaseTemplateInfo> templateParamsInfoMap = new ConcurrentHashMap<>();
     private JdbcTableInfo jdbcTableInfo;
     private JdbcSourceInfo jdbcSourceInfo;
-
+    private Component parentComponent;
     /**
      * 选中需要生成的代码的配置项
      */
     private List<CustomJCheckBox> customJCheckBoxes;
 
-    public GenerateCodeAction(CustomJFileChooserPanel customJFileChooserPanel, JdbcTableInfo jdbcTableInfo, List<CustomJCheckBox> customJCheckBoxes, JdbcSourceInfo jdbcSourceInfo) {
+    public GenerateCodeAction(Component parentComponent, CustomJFileChooserPanel customJFileChooserPanel, JdbcTableInfo jdbcTableInfo, List<CustomJCheckBox> customJCheckBoxes, JdbcSourceInfo jdbcSourceInfo) {
         this.clearData();
         this.customJFileChooserPanel = customJFileChooserPanel;
         this.customJCheckBoxes = customJCheckBoxes;
         this.jdbcTableInfo = jdbcTableInfo;
         this.jdbcSourceInfo = jdbcSourceInfo;
+        this.parentComponent=parentComponent;
     }
 
     public void clearData() {
@@ -51,49 +54,53 @@ public class GenerateCodeAction implements ActionListener {
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-        this.setTemplateParams();
-        String projectPath = customJFileChooserPanel.getSelectValue();
-        if (StringUtils.isBlank(projectPath)) {
-            CustomDialogUtil.showError("项目地址不能为空");
-            return;
-        }
-        if (templateParamsInfoMap == null || templateParamsInfoMap.isEmpty()) {
-            CustomDialogUtil.showError("生成代码配置不能为空");
-            return;
-        }
-        List<GenerateResultInfo> result = new ArrayList<>();
-        for (Map.Entry<String, ? extends BaseTemplateInfo> mp : templateParamsInfoMap.entrySet()) {
-            String templateId = mp.getKey();
-            BaseTemplateInfo baseTemplateInfo = mp.getValue();
-            Map<String, Object> dataMap;
-            if (TemplateTypeEnum.XML.getTemplateId().equals(templateId)) {
-                dataMap = this.convertXmlTemplateData(baseTemplateInfo);
-            } else {
-                if (TemplateTypeEnum.SERVICE_API.getTemplateId().equals(templateId)) {
-                    ServiceParamsInfo serviceParamsInfo = (ServiceParamsInfo) baseTemplateInfo;
-                    InterfaceParamsInfo interfaceParamsInfo = serviceParamsInfo.getInterfaceParamsInfo();
-                    Map<String, Object> interfaceDataMap = this.convertServiceApiPojoTemplateData(interfaceParamsInfo);
-                    String interfacePath = FreemarkerUtil.generateCodeByTemplate(projectPath, interfaceParamsInfo, interfaceDataMap);
-                    System.out.println("interface path:" + interfacePath);
-                    dataMap = convertServicePojoTemplateData(baseTemplateInfo);
-                } else if (TemplateTypeEnum.MAPPER.getTemplateId().equals(templateId)) {
-                    dataMap = this.convertMapperTemplateData(baseTemplateInfo);
-                } else {
-                    dataMap = this.convertPojoTemplateData(baseTemplateInfo);
-                }
+        CustomDialogUtil.confirm(parentComponent, "确认生成代码？", (c) -> {
+            this.setTemplateParams();
+            String projectPath = customJFileChooserPanel.getSelectValue();
+            if (StringUtils.isBlank(projectPath)) {
+                CustomDialogUtil.showError("项目地址不能为空");
+                return null;
             }
-            //表主键
-            JdbcMapJavaInfo tablePrimaryKey = baseTemplateInfo.getTablePrimaryKey();
-            dataMap.put("tablePK", tablePrimaryKey);
-            String codePath = FreemarkerUtil.generateCodeByTemplate(projectPath, mp.getValue(), dataMap);
-            GenerateResultInfo generateResultInfo = new GenerateResultInfo(baseTemplateInfo.getTemplateTypeEnum().getTemplateDesc(), StringUtils.isNotBlank(codePath) ? Code4jConstants.SUCCESS : Code4jConstants.FAIL, codePath);
-            result.add(generateResultInfo);
-            System.out.println("template path:" + codePath);
-            //恢复
-            baseTemplateInfo.setPackageRoot(null);
-        }
-        CustomDialogUtil.showGenerateResultDialog(customJFileChooserPanel, "代码生成结果", result);
+            if (templateParamsInfoMap == null || templateParamsInfoMap.isEmpty()) {
+                CustomDialogUtil.showError("生成代码配置不能为空");
+                return null;
+            }
+            List<GenerateResultInfo> result = new ArrayList<>();
+            for (Map.Entry<String, ? extends BaseTemplateInfo> mp : templateParamsInfoMap.entrySet()) {
+                String templateId = mp.getKey();
+                BaseTemplateInfo baseTemplateInfo = mp.getValue();
+                Map<String, Object> dataMap;
+                if (TemplateTypeEnum.XML.getTemplateId().equals(templateId)) {
+                    dataMap = this.convertXmlTemplateData(baseTemplateInfo);
+                } else {
+                    if (TemplateTypeEnum.SERVICE_API.getTemplateId().equals(templateId)) {
+                        ServiceParamsInfo serviceParamsInfo = (ServiceParamsInfo) baseTemplateInfo;
+                        InterfaceParamsInfo interfaceParamsInfo = serviceParamsInfo.getInterfaceParamsInfo();
+                        Map<String, Object> interfaceDataMap = this.convertServiceApiPojoTemplateData(interfaceParamsInfo);
+                        String interfacePath = FreemarkerUtil.generateCodeByTemplate(projectPath, interfaceParamsInfo, interfaceDataMap);
+                        System.out.println("interface path:" + interfacePath);
+                        dataMap = convertServicePojoTemplateData(baseTemplateInfo);
+                    } else if (TemplateTypeEnum.MAPPER.getTemplateId().equals(templateId)) {
+                        dataMap = this.convertMapperTemplateData(baseTemplateInfo);
+                    } else {
+                        dataMap = this.convertPojoTemplateData(baseTemplateInfo);
+                    }
+                }
+                //表主键
+                JdbcMapJavaInfo tablePrimaryKey = baseTemplateInfo.getTablePrimaryKey();
+                dataMap.put("tablePK", tablePrimaryKey);
+                String codePath = FreemarkerUtil.generateCodeByTemplate(projectPath, mp.getValue(), dataMap);
+                GenerateResultInfo generateResultInfo = new GenerateResultInfo(baseTemplateInfo.getTemplateTypeEnum().getTemplateDesc(), StringUtils.isNotBlank(codePath) ? Code4jConstants.SUCCESS : Code4jConstants.FAIL, codePath);
+                result.add(generateResultInfo);
+                System.out.println("template path:" + codePath);
+                //恢复
+                baseTemplateInfo.setPackageRoot(null);
+            }
+            CustomDialogUtil.showGenerateResultDialog(customJFileChooserPanel, "代码生成结果", result);
+            return null;
+        });
     }
+
     /**
      * @param baseTemplateInfo
      * @return

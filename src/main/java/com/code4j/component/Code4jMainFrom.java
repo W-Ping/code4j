@@ -1,12 +1,12 @@
 package com.code4j.component;
 
-import com.code4j.component.panel.BottomPanel;
-import com.code4j.component.panel.LeftPanel;
-import com.code4j.component.panel.RightPanel;
-import com.code4j.component.panel.TopPanel;
+import com.code4j.component.panel.*;
 import com.code4j.config.Code4jConstants;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 /**
  * @author liu_wp
@@ -31,23 +31,19 @@ public class Code4jMainFrom extends JFrame {
     }
 
     private void init() {
-        Box vBox1 = Box.createVerticalBox();
-        vBox1.add(topPanel);
         Box vBox2 = Box.createHorizontalBox();
         vBox2.add(leftPanel);
         vBox2.add(rightPanel);
-        vBox1.add(vBox2);
-        vBox1.add(bottomPanel);
-//        LayoutReSizeEvent layoutReSizeEvent = new LayoutReSizeEvent();
-//        leftPanel.addMouseListener(layoutReSizeEvent);
-//        leftPanel.addMouseMotionListener(layoutReSizeEvent);
-        add(vBox1);
+        this.add(topPanel, BorderLayout.NORTH);
+        this.add(vBox2, BorderLayout.CENTER);
+        this.add(bottomPanel, BorderLayout.SOUTH);
         this.setPreferredSize(Code4jConstants.FROM_MIN_DEFAULT_SIZE);
         this.setVisible(true);
         this.pack();
-        this.setResizable(false);
+        this.setResizable(true);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setAlwaysOnTop(true);
     }
 
     public static Code4jMainFrom.Builder Builder() {

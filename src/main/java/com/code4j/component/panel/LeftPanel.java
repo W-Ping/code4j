@@ -10,6 +10,7 @@ import com.code4j.util.PropertiesUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;

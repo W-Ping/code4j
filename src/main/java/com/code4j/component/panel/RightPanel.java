@@ -224,7 +224,7 @@ public class RightPanel extends BasePanel {
         customJCheckBoxList.addAll(Stream.of(cb1, cb2, cb5, cb4, cb6).collect(Collectors.toList()));
         CommonPanel btnP = new CommonPanel(new FlowLayout(FlowLayout.RIGHT), new Dimension((int) preferredSize.getWidth() - 10, avgH - 20));
         JButton generate = new JButton(" 生成代码 ");
-        generate.addActionListener(new GenerateCodeAction(p1V, jdbcTableInfo, customJCheckBoxList, jdbcSourceInfo));
+        generate.addActionListener(new GenerateCodeAction(this, p1V, jdbcTableInfo, customJCheckBoxList, jdbcSourceInfo));
         btnP.add(generate);
         ProjectConfigSelect projectConfigSelect = new ProjectConfigSelect(this, tableName, (c, item) -> {
             ((RightPanel) c).loadProjectConfig(item);
@@ -247,6 +247,7 @@ public class RightPanel extends BasePanel {
     public void defaultInit(String tableName) {
         this.loadProjectConfig(new ProjectCodeConfigInfo(tableName));
     }
+
     /**
      * @param info
      */
