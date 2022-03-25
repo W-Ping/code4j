@@ -1,5 +1,6 @@
 # code4j
-#### `JAVA`模板代码生成工具。
+
+**`JAVA`模板代码生成工具**
 
 ![gif](https://user-images.githubusercontent.com/42802329/160065352-f0bd354f-f182-48f6-9a1f-17546eec0a9c.gif)
 
