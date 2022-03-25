@@ -1,6 +1,7 @@
 # code4j
 #### `JAVA`模板代码生成工具。
-![1648102359(1)](https://user-images.githubusercontent.com/42802329/159853606-d344a28e-fbb1-4696-865b-5959b7e9d203.png)
+
+![gif](https://user-images.githubusercontent.com/42802329/160065352-f0bd354f-f182-48f6-9a1f-17546eec0a9c.gif)
 
 ## 环境资源
 * Windows 系统
