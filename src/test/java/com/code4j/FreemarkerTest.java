@@ -5,6 +5,8 @@ import com.code4j.config.TemplateTypeEnum;
 import com.code4j.pojo.*;
 import com.code4j.util.FreemarkerUtil;
 import com.code4j.util.SystemUtil;
+import com.github.houbb.markdown.toc.core.impl.AtxMarkdownToc;
+import com.github.houbb.markdown.toc.vo.TocGen;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,13 +33,22 @@ public class FreemarkerTest {
     @Test
     public void testMdFile() throws Exception {
         InputStream resourceAsStream = FreemarkerTest.class.getClassLoader().getResourceAsStream("README.md");
-        String mdFile = "D:\\代码生成工具\\代码生成工具说明文档.md";
         String content = SystemUtil.readByStream(resourceAsStream);
         String html = "D:\\代码生成工具\\代码生成工具说明文档.html";
         SystemUtil.writeFile(html, content);
         Desktop.getDesktop().open(new File(html));
     }
-
+    @Test
+    public void testMd(){
+        String path = "D:\\代码生成工具\\代码生成工具说明文档.md";
+        TocGen tocGen = AtxMarkdownToc.newInstance().charset("UTF-8").write(true).subTree(true).genTocFile(path);
+        String filePath = tocGen.getFilePath();
+        List<String> lines = new ArrayList<>();
+        List<String> tocLines = tocGen.getTocLines();
+        String html = "D:\\代码生成工具\\代码生成工具说明文档2.html";
+        SystemUtil.writeFile(html,SystemUtil.readByLines(filePath));
+        System.out.println(filePath);
+    }
     @Test
     public void testDoTemplate() {
         String rootPath = "D:\\iris-work\\code4j";

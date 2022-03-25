@@ -98,11 +98,11 @@
             <version>0.18.1</version>
         </dependency>
         <!--添加markdown标题的依赖-->
-<!--        <dependency>-->
-<!--            <groupId>com.github.houbb</groupId>-->
-<!--            <artifactId>markdown-toc</artifactId>-->
-<!--            <version>1.0.8</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>markdown-toc</artifactId>
+            <version>1.1.2</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>code4j</finalName>
@@ -131,24 +131,6 @@
                 <version>${maven-surefire.version}</version>
                 <configuration>
                     <skipTests>true</skipTests>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>com.code4j.Code4jApplication</mainClass>
-                        </manifest>
-                    </archive>
-<!--                    <includes>-->
-<!--                        <include>${basedir}/README.md</include>-->
-<!--                        <include>${basedir}/src/main/java/com/**</include>-->
-<!--                        <include>${basedir}/src/main/java/resources/**</include>-->
-<!--                    </includes>-->
                 </configuration>
             </plugin>
             <plugin>

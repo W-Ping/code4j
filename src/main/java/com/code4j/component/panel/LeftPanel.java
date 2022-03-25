@@ -10,12 +10,12 @@ import com.code4j.util.PropertiesUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -135,7 +135,15 @@ public class LeftPanel extends BasePanel {
                         if (CollectionUtils.isNotEmpty(jdbcTableInfos)) {
                             for (final JdbcTableInfo tableInfo : jdbcTableInfos) {
                                 DefaultMutableTreeNode dbNameNode = new DefaultMutableTreeNode(tableInfo, false);
-                                node.add(dbNameNode);
+                                if (node.getChildCount() > 0) {
+                                    TreeNode lastChild = node.getLastChild();
+                                    JdbcTableInfo jdbcTableInfo = (JdbcTableInfo) ((DefaultMutableTreeNode) lastChild).getUserObject();
+                                    if (!jdbcTableInfo.getTableName().equals(tableInfo.getTableName())) {
+                                        node.add(dbNameNode);
+                                    }
+                                } else {
+                                    node.add(dbNameNode);
+                                }
                             }
                         } else {
                             rightPanel.clearEmpty(jdbcDbInfo.toString() + " 没有表信息");
