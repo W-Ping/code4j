@@ -72,7 +72,7 @@ public class TopPanel extends BasePanel {
         }
         jMenuBar.add(m1);
         jMenuBar.add(m2);
-        JMenu m3 = new JMenu("文档说明");
+        JMenu m3 = new JMenu("帮助文档");
         JMenuItem m31 = new JMenuItem("使用教程");
         m31.addActionListener(e -> {
             InputStream resourceAsStream = TopPanel.class.getClassLoader().getResourceAsStream("README.md");
