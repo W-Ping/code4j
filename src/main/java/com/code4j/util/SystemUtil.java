@@ -74,8 +74,8 @@ public class SystemUtil {
             e.printStackTrace();
         }
     }
-    public static JComponent createContent()
-    {
+
+    public static JComponent createContent() {
 //        JPanel contentPane = new JPanel(new BorderLayout());
 //        JPanel webBrowserPanel = new JPanel(new BorderLayout());
 //        webBrowserPanel.setBorder(BorderFactory.createTitledBorder("Native Web Browser component"));
@@ -169,35 +169,24 @@ public class SystemUtil {
 
     public static String formatDataType(String dataType) {
         dataType = dataType.toUpperCase();
-        if (dataType.equals("CHAR")
-                || dataType.equals("TEXT")
-                || dataType.equals("VARCHAR")
-                || dataType.equals("TINYTEXT")
-                || dataType.equals("LONGTEXT")) {
+        if (dataType.equals("CHAR") || dataType.equals("TEXT") || dataType.equals("VARCHAR") || dataType.equals("TINYTEXT") || dataType.equals("LONGTEXT") || dataType.equals("JSON")) {
             dataType = "java.lang.String";
-        } else if (dataType.equals("BIGINT")) {
+        } else if (dataType.equals("BIGINT") || dataType.equals("INT8")) {
             dataType = "java.lang.Long";
-        } else if (dataType.equals("INT")
-                || dataType.equals("INTEGER")
-                || dataType.equals("MEDIUMINT")
-                || dataType.equals("TINYINT")
-                || dataType.equals("SMALLINT")) {
+        } else if (dataType.equals("INT") || dataType.equals("INTEGER") || dataType.equals("MEDIUMINT") || dataType.equals("TINYINT") || dataType.equals("SMALLINT")
+                || dataType.equals("INT2") || dataType.equals("INT4")) {
             dataType = "java.lang.Integer";
-        } else if (dataType.equals("FLOAT")) {
+        } else if (dataType.equals("FLOAT") || dataType.equals("FLOAT4")) {
             dataType = "java.lang.Float";
-        } else if (dataType.equals("DOUBLE")) {
+        } else if (dataType.equals("DOUBLE") || dataType.equals("FLOAT8")) {
             dataType = "java.lang.Double";
-        } else if (dataType.equals("NUMERIC")
-                || dataType.equals("DECIMAL")) {
+        } else if (dataType.equals("NUMERIC") || dataType.equals("DECIMAL") || dataType.equals("numeric")) {
             dataType = "java.math.BigDecimal";
-        } else if (dataType.equals("DATE")
-                || dataType.equals("YEAR")
-                || dataType.equals("TIME")) {
+        } else if (dataType.equals("DATE") || dataType.equals("YEAR") || dataType.equals("TIME")) {
             return "java.util.Date";
-        } else if (dataType.equals("TIMESTAMP")
-                || dataType.equals("DATETIME")) {
+        } else if (dataType.equals("TIMESTAMP") || dataType.equals("DATETIME")) {
             return "java.sql.Timestamp";
-        } else if (dataType.equals("BIT")) {
+        } else if (dataType.equals("BIT") || dataType.equals("BOOL")) {
             return "java.lang.Boolean";
         } else if (dataType.equals("BLOB")) {
             return "java.lang.byte[]";

@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -32,7 +33,11 @@ public class CustomDialogUtil {
      * @return
      */
     public static DBConfigDialog showDBConfigDialog(final Component parentComponent, final String title, DataSourceTypeEnum dataSourceTypeEnum, JdbcSourceInfo jdbcSourceInfo) {
-        DBConfigDialog dbConfigDialog = new DBConfigDialog(parentComponent, title, jdbcSourceInfo, dataSourceTypeEnum);
+        if (dataSourceTypeEnum != null) {
+            jdbcSourceInfo = Optional.ofNullable(jdbcSourceInfo).orElse(new JdbcSourceInfo());
+            jdbcSourceInfo.setDataSourceTypeEnum(dataSourceTypeEnum);
+        }
+        DBConfigDialog dbConfigDialog = new DBConfigDialog(parentComponent, title, jdbcSourceInfo);
         return dbConfigDialog;
     }
 

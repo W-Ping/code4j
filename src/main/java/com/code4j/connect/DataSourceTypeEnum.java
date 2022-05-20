@@ -18,6 +18,11 @@ public enum DataSourceTypeEnum {
         }
 
         @Override
+        public int defaultPort() {
+            return 3306;
+        }
+
+        @Override
         public String typeName() {
             return "MYSQL";
         }
@@ -40,12 +45,85 @@ public enum DataSourceTypeEnum {
             return conn;
         }
     },
+    POSTGRESQL{
+        @Override
+        public String getDriver() {
+            return "org.postgresql.Driver";
+        }
+
+        @Override
+        public int defaultPort() {
+            return 5432;
+        }
+
+        @Override
+        public String typeName() {
+            return "POSTGRESQL";
+        }
+
+        @Override
+        public String getUrl(final JdbcSourceInfo JDBCSourceInfo) {
+            String url = "jdbc:postgresql://" + JDBCSourceInfo.getConnectHost() + ":" + JDBCSourceInfo.getConnectPort()+"/";
+            return url;
+        }
+
+        @Override
+        public Connection getConnection(final JdbcSourceInfo jdbcSourceInfo) {
+            Connection conn = null;
+            try {
+                Class.forName(this.getDriver());
+                conn = DriverManager.getConnection(this.getUrl(jdbcSourceInfo), jdbcSourceInfo.getUserName(), jdbcSourceInfo.getPassword());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return conn;
+        }
+    },
+    SQLITE{
+        @Override
+        public String getDriver() {
+            return "org.sqlite.JDBC";
+        }
+
+        @Override
+        public int defaultPort() {
+            return -1;
+        }
+
+        @Override
+        public String typeName() {
+            return "SQLITE";
+        }
+
+        @Override
+        public String getUrl(final JdbcSourceInfo JDBCSourceInfo) {
+            String url = "jdbc:sqlite:code4j.db";
+            return url;
+        }
+
+        @Override
+        public Connection getConnection(final JdbcSourceInfo jdbcSourceInfo) {
+            Connection conn = null;
+            try {
+                Class.forName(this.getDriver());
+                conn = DriverManager.getConnection(this.getUrl(jdbcSourceInfo), jdbcSourceInfo.getUserName(), jdbcSourceInfo.getPassword());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return conn;
+        }
+    }
     ;
 
     /**
      * @return
      */
     public abstract String getDriver();
+
+    /**
+     * @return
+     */
+    public abstract int defaultPort();
 
     /**
      * @return
@@ -64,4 +142,5 @@ public enum DataSourceTypeEnum {
         }
         return null;
     }
+
 }

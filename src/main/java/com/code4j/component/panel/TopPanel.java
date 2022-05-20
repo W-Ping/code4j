@@ -37,14 +37,23 @@ public class TopPanel extends BasePanel {
         JMenuBar jMenuBar = new JMenuBar();
         JMenu m1 = new JMenu("数据源");
         JMenuItem item = new JMenuItem("MySQL");
+        JMenuItem item2 = new JMenuItem("PostgerSql");
         item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        item2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         item.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 showDBConfigDialog("新增连接", DataSourceTypeEnum.MYSQL);
             }
         });
+        item2.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                showDBConfigDialog("新增连接", DataSourceTypeEnum.POSTGRESQL);
+            }
+        });
         m1.add(item);
+        m1.add(item2);
         m2 = new JMenu("项目配置");
 
         CustomJMenuItem m2Item = new CustomJMenuItem(Code4jConstants.CONFIG_NAME + "+", null);

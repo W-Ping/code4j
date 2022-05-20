@@ -3,7 +3,6 @@ package com.code4j.component.dialog;
 import com.code4j.component.panel.CommonPanel;
 import com.code4j.component.panel.LeftPanel;
 import com.code4j.component.panel.TopPanel;
-import com.code4j.connect.DataSourceTypeEnum;
 import com.code4j.connect.JDBCService;
 import com.code4j.connect.JdbcServiceFactory;
 import com.code4j.exception.Code4jException;
@@ -32,11 +31,10 @@ public class DBConfigDialog extends BaseDialog {
     private JTextField connectPortField;
     private JTextField nameField;
     private JPasswordField passwordField;
-    private DataSourceTypeEnum dataSourceTypeEnum;
+    private JdbcSourceInfo defaultJdbcSourceInfo;
 
-    public DBConfigDialog(final Component parentComponent, final String title, Object extObj, final DataSourceTypeEnum dataSourceTypeEnum) {
-        super(parentComponent, title, true, extObj,true);
-        this.dataSourceTypeEnum = dataSourceTypeEnum;
+    public DBConfigDialog(final Component parentComponent, final String title, Object extObj) {
+        super(parentComponent, title, true, extObj, true);
     }
 
     private JdbcSourceInfo getDefaultJdbcSourceInfo() {
@@ -51,18 +49,18 @@ public class DBConfigDialog extends BaseDialog {
 
     @Override
     protected Component content() {
-        JdbcSourceInfo jdbcSourceInfo = getDefaultJdbcSourceInfo();
-        String port = String.valueOf(jdbcSourceInfo.getConnectPort() == null ? 3306 : jdbcSourceInfo.getConnectPort()).trim();
+        defaultJdbcSourceInfo = getDefaultJdbcSourceInfo();
+        String port = String.valueOf(defaultJdbcSourceInfo.getConnectPort() == null ? defaultJdbcSourceInfo.getDataSourceTypeEnum().defaultPort() : defaultJdbcSourceInfo.getConnectPort());
         Dimension inputDim = new Dimension(230, 30);
         CommonPanel c1 = new CommonPanel();
         JLabel l1 = new JLabel("连接名称：");
-        connectNameField = new JTextField(jdbcSourceInfo.getConnectName());
+        connectNameField = new JTextField(defaultJdbcSourceInfo.getConnectName());
         connectNameField.setPreferredSize(inputDim);
         c1.add(l1);
         c1.add(connectNameField);
         CommonPanel c2 = new CommonPanel();
         JLabel l2 = new JLabel("连接地址：");
-        connectHostField = new JTextField(jdbcSourceInfo.getConnectHost());
+        connectHostField = new JTextField(defaultJdbcSourceInfo.getConnectHost());
         connectHostField.setPreferredSize(inputDim);
         c2.add(l2);
         c2.add(connectHostField);
@@ -74,13 +72,13 @@ public class DBConfigDialog extends BaseDialog {
         c3.add(connectPortField);
         CommonPanel c4 = new CommonPanel();
         JLabel l4 = new JLabel("     用户名：");
-        nameField = new JTextField(jdbcSourceInfo.getUserName());
+        nameField = new JTextField(defaultJdbcSourceInfo.getUserName());
         nameField.setPreferredSize(inputDim);
         c4.add(l4);
         c4.add(nameField);
         CommonPanel c5 = new CommonPanel();
         JLabel l5 = new JLabel("         密码：");
-        passwordField = new JPasswordField(jdbcSourceInfo.getPassword());
+        passwordField = new JPasswordField(defaultJdbcSourceInfo.getPassword());
         passwordField.setPreferredSize(inputDim);
         c5.add(l5);
         c5.add(passwordField);
@@ -130,7 +128,7 @@ public class DBConfigDialog extends BaseDialog {
         jdbcSourceInfo.setConnectPort(Integer.valueOf(connectPortField.getText()));
         jdbcSourceInfo.setUserName(nameField.getText());
         jdbcSourceInfo.setPassword(new String(passwordField.getPassword()));
-        jdbcSourceInfo.setDataSourceTypeEnum(dataSourceTypeEnum);
+        jdbcSourceInfo.setDataSourceTypeEnum(defaultJdbcSourceInfo.getDataSourceTypeEnum());
         //编辑
         if (extObj != null) {
             jdbcSourceInfo.setCurrTreeNode(((JdbcSourceInfo) extObj).getCurrTreeNode());

@@ -18,4 +18,9 @@ public class MysqlJDBCServiceImpl extends AbstractJDBCService {
     protected DataSourceTypeEnum dataSourceTypeEnum() {
         return DataSourceTypeEnum.MYSQL;
     }
+
+    @Override
+    protected String catalog(String catalog) {
+        return null;
+    }
 }

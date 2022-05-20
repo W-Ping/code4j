@@ -11,7 +11,7 @@ import java.util.List;
  * @date Created in 2020/11/18 18:16
  * @see
  */
-public interface JDBCService {
+public interface JDBCService<T> {
     /**
      * @return
      */
@@ -33,5 +33,24 @@ public interface JDBCService {
      * @return
      */
     List<JdbcMapJavaInfo> getTableColumnInfo(String dbName, String tableName);
+
+
+    /**
+     * @param tableName
+     * @param createSql
+     * @return
+     */
+    boolean createTableIfAbsent(String tableName,String createSql);
+
+    /**
+     * @param obj
+     * @return
+     */
+    boolean insert(T obj);
+
+    /**
+     * @return
+     */
+    List<T> select();
 
 }

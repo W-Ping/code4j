@@ -1,10 +1,7 @@
 package com.code4j.connect;
 
 import com.code4j.exception.Code4jException;
-import com.code4j.pojo.JdbcDbInfo;
-import com.code4j.pojo.JdbcMapJavaInfo;
-import com.code4j.pojo.JdbcSourceInfo;
-import com.code4j.pojo.JdbcTableInfo;
+import com.code4j.pojo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +17,28 @@ import java.util.Set;
  * @date 2020/11/18
  * @see
  */
-public abstract class AbstractJDBCService implements JDBCService {
+public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCService<T> {
     protected static final Logger log = LoggerFactory.getLogger(AbstractJDBCService.class);
     private final JdbcSourceInfo jdbcSourceInfo;
 
     public AbstractJDBCService(JdbcSourceInfo jdbcSourceInfo) {
         checkJdbcDataSource(jdbcSourceInfo);
         this.jdbcSourceInfo = jdbcSourceInfo;
+    }
+
+    @Override
+    public boolean createTableIfAbsent(String tableName, String createSql) {
+        return false;
+    }
+
+    @Override
+    public boolean insert(T obj) {
+        return false;
+    }
+
+    @Override
+    public List<T> select() {
+        return null;
     }
 
     @Override
@@ -81,7 +93,7 @@ public abstract class AbstractJDBCService implements JDBCService {
             connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             DatabaseMetaData metaData = connection.getMetaData();
             //目录名称; 数据库名; 表名称; 表类型;
-            rs = metaData.getTables(dbName, dbName, tableNamePattern(), types());
+            rs = metaData.getTables(connection.getCatalog(), schemaPattern(dbName), tableNamePattern(), types());
             while (rs.next()) {
                 JdbcTableInfo jdbcTableInfo = new JdbcTableInfo();
                 jdbcTableInfo.setDbName(dbName);
@@ -100,8 +112,12 @@ public abstract class AbstractJDBCService implements JDBCService {
         return null;
     }
 
-    protected String catalog() {
-        return null;
+    protected String catalog(String catalog) {
+        return catalog;
+    }
+
+    protected String schemaPattern(String schemaPattern) {
+        return schemaPattern;
     }
 
     protected String tableNamePattern() {
@@ -129,7 +145,7 @@ public abstract class AbstractJDBCService implements JDBCService {
             }
             List<JdbcMapJavaInfo> result = new ArrayList<>();
             DatabaseMetaData meta = connection.getMetaData();
-            rs = meta.getColumns(catalog(), dbName, tableName.trim(), null);
+            rs = meta.getColumns(catalog(connection.getCatalog()), schemaPattern(dbName), tableName.trim(), null);
             Set<String> columnCache = new HashSet<>();
             String pk = getTablePrimaryKeys(dbName, tableName, connection);
             while (rs.next()) {
@@ -158,7 +174,7 @@ public abstract class AbstractJDBCService implements JDBCService {
      * @return
      */
     private String getTablePrimaryKeys(String dbName, String tableName, Connection connection) {
-        try (ResultSet rs = connection.getMetaData().getPrimaryKeys(catalog(), dbName, tableName.trim());) {
+        try (ResultSet rs = connection.getMetaData().getPrimaryKeys(catalog(connection.getCatalog()), schemaPattern(dbName), tableName.trim());) {
             if (rs != null) {
                 while (rs.next()) {
                     return rs.getString("COLUMN_NAME");

@@ -28,7 +28,7 @@ public class JdbcSourceInfo extends BaseInfo {
     /**
      * 连接端口
      */
-    private Integer connectPort = 3306;
+    private Integer connectPort;
     /**
      * 用户名
      */
