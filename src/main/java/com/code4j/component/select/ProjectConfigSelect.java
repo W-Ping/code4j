@@ -1,8 +1,7 @@
 package com.code4j.component.select;
 
-import com.code4j.pojo.JdbcTableInfo;
 import com.code4j.pojo.ProjectCodeConfigInfo;
-import com.code4j.util.PropertiesUtil;
+import com.code4j.util.SQLiteUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.swing.*;
@@ -27,13 +26,14 @@ public class ProjectConfigSelect extends JComboBox {
         this.addPopupMenuListener(new PopupMenuListener() {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                List<ProjectCodeConfigInfo> items = PropertiesUtil.getProjectConfigPropertyValues();
+                List<ProjectCodeConfigInfo> items = SQLiteUtil.select(new ProjectCodeConfigInfo());
+//                List<ProjectCodeConfigInfo> items = PropertiesUtil.getProjectConfigPropertyValues();
                 ProjectCodeConfigInfo selectedItem = (ProjectCodeConfigInfo) projectConfigSelect.getSelectedItem();
                 projectConfigSelect.removeAllItems();
                 projectConfigSelect.addItem(defaultConfig);
                 if (CollectionUtils.isNotEmpty(items)) {
                     for (ProjectCodeConfigInfo item : items) {
-                        if (selectedItem.getIndex().equals(item.getIndex())) {
+                        if (selectedItem.getId() != null && selectedItem.getId().equals(item.getId())) {
                             selectedItem = item;
                         }
                         projectConfigSelect.addItem(item);

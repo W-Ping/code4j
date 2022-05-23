@@ -1,11 +1,12 @@
 package com.code4j;
 
 import com.code4j.component.Code4jMainFrom;
-import com.code4j.component.panel.*;
+import com.code4j.component.panel.BottomPanel;
+import com.code4j.component.panel.LeftPanel;
+import com.code4j.component.panel.RightPanel;
+import com.code4j.component.panel.TopPanel;
 import com.code4j.config.Code4jConstants;
-
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTarget;
+import com.code4j.util.SQLiteUtil;
 
 /**
  * @author liu_wp
@@ -15,6 +16,7 @@ import java.awt.dnd.DropTarget;
 public class Code4jApplication {
 
     public static void main(String[] args) throws Exception {
+        SQLiteUtil.init();
         TopPanel topPanel = new TopPanel(Code4jConstants.TOP_MIN_DEFAULT_SIZE);
         LeftPanel leftPanel = new LeftPanel(Code4jConstants.LEFT_MIN_DEFAULT_SIZE);
         RightPanel rightPanel = new RightPanel(Code4jConstants.RIGHT_MIN_DEFAULT_SIZE);

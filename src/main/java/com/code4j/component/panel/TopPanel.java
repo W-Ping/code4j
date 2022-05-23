@@ -5,7 +5,7 @@ import com.code4j.config.Code4jConstants;
 import com.code4j.connect.DataSourceTypeEnum;
 import com.code4j.pojo.ProjectCodeConfigInfo;
 import com.code4j.util.CustomDialogUtil;
-import com.code4j.util.PropertiesUtil;
+import com.code4j.util.SQLiteUtil;
 import com.code4j.util.SystemUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -69,7 +69,8 @@ public class TopPanel extends BasePanel {
         m2Item.setForeground(Color.BLUE);
         m2.add(m2Item);
         // 加载已添加的项目配置
-        List<ProjectCodeConfigInfo> projectConfigPropertyValues = PropertiesUtil.getProjectConfigPropertyValues();
+        final List<ProjectCodeConfigInfo> projectConfigPropertyValues = SQLiteUtil.select(new ProjectCodeConfigInfo());
+//        List<ProjectCodeConfigInfo> projectConfigPropertyValues = PropertiesUtil.getProjectConfigPropertyValues();
         if (!CollectionUtils.isEmpty(projectConfigPropertyValues)) {
             projectConfigPropertyValues.forEach(v -> {
                 CustomJMenuItem itm = new CustomJMenuItem(v.getProjectName(), v);
@@ -114,7 +115,8 @@ public class TopPanel extends BasePanel {
      *
      */
     public void loadProjectCodeConfig() {
-        List<ProjectCodeConfigInfo> projectConfigPropertyValues = PropertiesUtil.getProjectConfigPropertyValues();
+        List<ProjectCodeConfigInfo> projectConfigPropertyValues = SQLiteUtil.select(new ProjectCodeConfigInfo());
+//        List<ProjectCodeConfigInfo> projectConfigPropertyValues = PropertiesUtil.getProjectConfigPropertyValues();
         JPopupMenu popupMenu = m2.getPopupMenu();
         Component firstComponent = popupMenu.getComponent(0);
         m2.removeAll();

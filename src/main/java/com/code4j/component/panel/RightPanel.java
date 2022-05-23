@@ -226,6 +226,7 @@ public class RightPanel extends BasePanel {
         JButton generate = new JButton(" 生成代码 ");
         generate.addActionListener(new GenerateCodeAction(this, p1V, jdbcTableInfo, customJCheckBoxList, jdbcSourceInfo));
         btnP.add(generate);
+        //项目配置
         ProjectConfigSelect projectConfigSelect = new ProjectConfigSelect(this, tableName, (c, item) -> {
             ((RightPanel) c).loadProjectConfig(item);
         });

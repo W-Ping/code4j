@@ -28,14 +28,5 @@ public class JdbcServiceFactory {
         }
     }
 
-    /**
-     * @return
-     */
-    public static JDBCService getSQLiteJDBCService() {
-        JdbcSourceInfo jdbcSourceInfo = new JdbcSourceInfo();
-        jdbcSourceInfo.setUserName("code4j");
-        jdbcSourceInfo.setPassword("code4jPing123");
-        jdbcSourceInfo.setDataSourceTypeEnum(DataSourceTypeEnum.SQLITE);
-        return  JdbcServiceFactory.getJdbcService(jdbcSourceInfo);
-    }
+
 }

@@ -27,7 +27,7 @@ public class SQLiteJDBCServiceImpl<T extends BaseInfo> extends AbstractJDBCServi
     protected String createTableSql(String tableName, List<DbTableInfo> dbTableInfos) {
         StringBuilder sb = new StringBuilder("CREATE TABLE ");
         sb.append(tableName);
-        sb.append("(");
+        sb.append(" (");
         for (int i = 0; i < dbTableInfos.size(); i++) {
             final DbTableInfo dbTableInfo = dbTableInfos.get(i);
             sb.append(dbTableInfo.getColumn());

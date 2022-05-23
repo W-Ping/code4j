@@ -17,16 +17,16 @@ import java.util.List;
  * @date 2020/11/17
  * @see
  */
-@Table("jdbc_info")
+@Table(value = "jdbc_source_info", uniqueKey = {"connect_host", "connect_port", "source_type"})
 @PropertyKeyIndexId
 public class JdbcSourceInfo extends BaseInfo {
     /**
      * 索引位置
      */
+    @Deprecated
     private Integer index;
 
-    @Column(value = "id",pk = true,auto = true)
-    private Long id;
+
     /**
      * 连接名称
      */
@@ -215,12 +215,5 @@ public class JdbcSourceInfo extends BaseInfo {
     public void setDbName(String dbName) {
         this.dbName = dbName;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    
 }

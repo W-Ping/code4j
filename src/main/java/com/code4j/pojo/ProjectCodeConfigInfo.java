@@ -2,6 +2,7 @@ package com.code4j.pojo;
 
 import com.code4j.annotation.Column;
 import com.code4j.annotation.PropertyKeyIndexId;
+import com.code4j.annotation.Table;
 import com.code4j.config.Code4jConstants;
 import com.code4j.config.TemplateTypeEnum;
 import com.code4j.util.StrUtil;
@@ -13,8 +14,10 @@ import org.apache.commons.lang3.StringUtils;
  * @author lwp
  * @date 2022-03-12
  */
+@Table(value = "project_cfg_info", uniqueKey = {"project_name"})
 @PropertyKeyIndexId
 public class ProjectCodeConfigInfo extends BaseInfo {
+
     /**
      * 项目名称
      */
@@ -99,7 +102,7 @@ public class ProjectCodeConfigInfo extends BaseInfo {
     /**
      * 索引位置
      */
-    @Column("index")
+    @Deprecated
     private Integer index;
 
 
@@ -279,4 +282,5 @@ public class ProjectCodeConfigInfo extends BaseInfo {
     public void setVoSuperClass(String voSuperClass) {
         this.voSuperClass = voSuperClass;
     }
+    
 }

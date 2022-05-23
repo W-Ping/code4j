@@ -6,15 +6,13 @@ import com.code4j.config.Code4jConstants;
 import com.code4j.config.TemplateTypeEnum;
 import com.code4j.pojo.ProjectCodeConfigInfo;
 import com.code4j.util.CustomDialogUtil;
-import com.code4j.util.PropertiesUtil;
-import org.apache.commons.collections4.CollectionUtils;
+import com.code4j.util.SQLiteUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.List;
 
 /**
  * @author lwp
@@ -58,8 +56,7 @@ public class ProjectConfigDialog extends BaseDialog {
 
     @Override
     protected void okClick() {
-        List<ProjectCodeConfigInfo> projectConfigPropertyValues = PropertiesUtil.getProjectConfigPropertyValues();
-        ProjectCodeConfigInfo projectCodeConfigInfo = getProjectCodeConfigInfo(this.extObj, projectConfigPropertyValues);
+        ProjectCodeConfigInfo projectCodeConfigInfo = getProjectCodeConfigInfo(this.extObj);
         if (StringUtils.isBlank(projectCodeConfigInfo.getProjectName())) {
             CustomDialogUtil.showError("项目名称不能为空");
             return;
@@ -68,22 +65,20 @@ public class ProjectConfigDialog extends BaseDialog {
             CustomDialogUtil.showError("项目名称不可用");
             return;
         }
-        if (CollectionUtils.isNotEmpty(projectConfigPropertyValues)) {
-            if ((!this.isUpdate &&
-                    projectConfigPropertyValues.stream().anyMatch(v -> projectCodeConfigInfo.getProjectName().equals(v.getProjectName())))
-                    || this.isUpdate && projectConfigPropertyValues.stream().filter(v -> !v.getIndex().equals(projectCodeConfigInfo.getIndex())).anyMatch(v -> projectCodeConfigInfo.getProjectName().equals(v.getProjectName()))) {
-                CustomDialogUtil.showError("项目名称不能重复");
-                return;
-            }
-        }
-        if (projectCodeConfigInfo.getIndex() == null) {
-            CustomDialogUtil.showError("项目索引ID为空");
-            return;
-        }
-        if (!PropertiesUtil.setProjectConfigPropertyValues(projectCodeConfigInfo, isUpdate)) {
-            CustomDialogUtil.showError("保存配置失败");
+//        final List<ProjectCodeConfigInfo> projectConfigPropertyValues = SQLiteUtil.select(new ProjectCodeConfigInfo());
+//        if (CollectionUtils.isNotEmpty(projectConfigPropertyValues)) {
+//            if ((!this.isUpdate &&
+//                    projectConfigPropertyValues.stream().anyMatch(v -> projectCodeConfigInfo.getProjectName().equals(v.getProjectName())))
+//                    || this.isUpdate && projectConfigPropertyValues.stream().filter(v -> !v.getId().equals(projectCodeConfigInfo.getId())).anyMatch(v -> projectCodeConfigInfo.getProjectName().equals(v.getProjectName()))) {
+//                CustomDialogUtil.showError("项目名称不能重复");
+//                return;
+//            }
+//        }
+        if (!SQLiteUtil.insertOrUpdate(projectCodeConfigInfo)) {
+            CustomDialogUtil.showError("保存配置失败！");
             return;
         } else {
+            CustomDialogUtil.showOk("保存成功！");
             ((TopPanel) parentComponent).loadProjectCodeConfig();
             this.close();
         }
@@ -101,7 +96,7 @@ public class ProjectConfigDialog extends BaseDialog {
                 @Override
                 public void actionPerformed(final ActionEvent e) {
                     CustomDialogUtil.confirm(projectConfigDialog, "确认删除", (c) -> {
-                        if (PropertiesUtil.deleteProjectConfigProperty(projectCodeConfigInfo)) {
+                        if (SQLiteUtil.deleteByPk(projectCodeConfigInfo.getId(), ProjectCodeConfigInfo.class)) {
                             ((TopPanel) parentComponent).loadProjectCodeConfig();
                             projectConfigDialog.close();
                         }
@@ -122,21 +117,14 @@ public class ProjectConfigDialog extends BaseDialog {
 
     /**
      * @param extObj
-     * @param projectConfigPropertyValues
      * @return
      */
-    private ProjectCodeConfigInfo getProjectCodeConfigInfo(Object extObj, List<ProjectCodeConfigInfo> projectConfigPropertyValues) {
+    private ProjectCodeConfigInfo getProjectCodeConfigInfo(Object extObj) {
         ProjectCodeConfigInfo projectCodeConfigInfo;
         if (extObj != null) {
             projectCodeConfigInfo = (ProjectCodeConfigInfo) extObj;
         } else {
             projectCodeConfigInfo = new ProjectCodeConfigInfo();
-            Integer index = 0;
-            if (!CollectionUtils.isEmpty(projectConfigPropertyValues)) {
-                index = projectConfigPropertyValues.get(projectConfigPropertyValues.size() - 1).getIndex();
-                index++;
-            }
-            projectCodeConfigInfo.setIndex(index);
         }
         JTextField pj = (JTextField) projectComponent.getComponent(1);
         projectCodeConfigInfo.setProjectName(pj.getText());

@@ -2,7 +2,7 @@ package com.code4j.component.label;
 
 import com.code4j.pojo.ProjectCodeConfigInfo;
 import com.code4j.util.CustomDialogUtil;
-import com.code4j.util.PropertiesUtil;
+import com.code4j.util.SQLiteUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,7 +35,8 @@ public class ConfigLabel extends JLabel {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            List<ProjectCodeConfigInfo> projectConfigPropertyValues = PropertiesUtil.getProjectConfigPropertyValues();
+            List<ProjectCodeConfigInfo> projectConfigPropertyValues = SQLiteUtil.select(new ProjectCodeConfigInfo());
+//            List<ProjectCodeConfigInfo> projectConfigPropertyValues = PropertiesUtil.getProjectConfigPropertyValues();
             CustomDialogUtil.showSelectProjectConfigDialog(bindCommonPanel, title, projectConfigPropertyValues);
         }
 

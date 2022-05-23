@@ -37,11 +37,13 @@ public interface JDBCService<T> {
 
 
     /**
-     * @param tableName
+     * @param cls
      * @param dbTableInfos
+     * @param forceCreate
      * @return
      */
-    boolean createTableIfAbsent(String tableName, List<DbTableInfo> dbTableInfos,boolean forceCreate);
+    boolean createTableIfAbsent(Class<T> cls, List<DbTableInfo> dbTableInfos,boolean forceCreate);
+
 
     /**
      * @param obj
@@ -49,6 +51,11 @@ public interface JDBCService<T> {
      */
     boolean insert(T obj);
 
+    /**
+     * @param obj
+     * @return
+     */
+    boolean updateByPk(T obj);
     /**
      * @param primaryKey
      * @return

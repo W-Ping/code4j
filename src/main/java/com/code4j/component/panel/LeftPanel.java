@@ -6,7 +6,7 @@ import com.code4j.pojo.JdbcDbInfo;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.pojo.JdbcTableInfo;
 import com.code4j.util.CustomDialogUtil;
-import com.code4j.util.PropertiesUtil;
+import com.code4j.util.SQLiteUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.swing.*;
@@ -81,7 +81,7 @@ public class LeftPanel extends BasePanel {
      * @param jdbcPropertyArr
      */
     public void showDbTree(JdbcSourceInfo... jdbcPropertyArr) {
-        List<JdbcSourceInfo> jdbcPropertyValues = PropertiesUtil.getJdbcPropertyValues();
+        List<JdbcSourceInfo> jdbcPropertyValues = SQLiteUtil.select(new JdbcSourceInfo());
         if (jdbcPropertyArr != null && jdbcPropertyArr.length > 0) {
             List<JdbcSourceInfo> newJdbcPropertyList = Stream.of(jdbcPropertyArr).collect(Collectors.toList());
             jdbcPropertyValues = Stream.of(jdbcPropertyValues, newJdbcPropertyList).flatMap(Collection::stream).distinct().collect(Collectors.toList());
@@ -221,7 +221,8 @@ public class LeftPanel extends BasePanel {
         if (res == JOptionPane.YES_OPTION) {
             ((DefaultTreeModel) tree.getModel()).removeNodeFromParent(deleNode);
             ((DefaultTreeModel) tree.getModel()).reload();
-            if (!PropertiesUtil.deleteJdbcProperty(jdbcSourceInfo)) {
+            if (!SQLiteUtil.deleteByPk(jdbcSourceInfo.getId(),JdbcSourceInfo.class)) {
+//            if (!PropertiesUtil.deleteJdbcProperty(jdbcSourceInfo)) {
                 CustomDialogUtil.showError("删除连接失败");
                 return;
             }
@@ -232,7 +233,8 @@ public class LeftPanel extends BasePanel {
      * @param jdbcSourceInfo
      */
     public void editTreeNode(JdbcSourceInfo jdbcSourceInfo) {
-        if (!PropertiesUtil.setJdbcPropertyValues(jdbcSourceInfo)) {
+        if (!SQLiteUtil.insertOrUpdate(jdbcSourceInfo)) {
+//        if (!PropertiesUtil.setJdbcPropertyValues(jdbcSourceInfo)) {
             CustomDialogUtil.showError("保存数据连接失败");
             return;
         }

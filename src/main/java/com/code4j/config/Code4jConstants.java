@@ -9,10 +9,10 @@ import java.io.File;
  * @see
  */
 public class Code4jConstants {
-    public static String APP_VERSION = "V1.0.0";
-    public static String SUCCESS = "success";
-    public static String FAIL = "fail";
-    public static String APPLICATION_JAR="code4j-v1.jar";
+    public final static String APP_VERSION = "V1.0.0";
+    public final static String SUCCESS = "success";
+    public final static String FAIL = "fail";
+    public final static String APPLICATION_JAR = "code4j-v1.jar";
     public static Dimension FROM_MIN_DEFAULT_SIZE = new Dimension(1250, 650);
     public static Dimension TOP_MIN_DEFAULT_SIZE = new Dimension(1250, 25);
     public static Dimension LEFT_MIN_DEFAULT_SIZE = new Dimension(200, 530);
@@ -51,12 +51,12 @@ public class Code4jConstants {
 
     public static final String TEMPLATE_PATH = "src/main/java/com/code4j/templates";
 
-    public static final String MAPPER_SUPER_CLASS="com.ks.skeleton.dao.itf.IBaseDao";
-    public static final String DO_SUPER_CLASS="com.ks.skeleton.entity.base.BaseEntity";
-    public static final String VO_SUPER_CLASS="com.ebx.skeleton.dto.response.BaseVo";
-    public static final String SERVICE_SUPER_CLASS="com.ks.framework.service.BaseService";
+    public static final String MAPPER_SUPER_CLASS = "com.ks.skeleton.dao.itf.IBaseDao";
+    public static final String DO_SUPER_CLASS = "com.ks.skeleton.entity.base.BaseEntity";
+    public static final String VO_SUPER_CLASS = "com.ebx.skeleton.dto.response.BaseVo";
+    public static final String SERVICE_SUPER_CLASS = "com.ks.framework.service.BaseService";
 
-    public static final  String CONFIG_NAME="新建项目配置";
+    public static final String CONFIG_NAME = "新建项目配置";
 
     /**
      * 选择的项目地址

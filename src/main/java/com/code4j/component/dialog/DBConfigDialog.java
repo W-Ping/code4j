@@ -9,8 +9,6 @@ import com.code4j.exception.Code4jException;
 import com.code4j.pojo.JdbcDbInfo;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.util.CustomDialogUtil;
-import com.code4j.util.PropertiesUtil;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -123,11 +121,13 @@ public class DBConfigDialog extends BaseDialog {
     private void getConnectInfo(boolean isSave) {
         this.checkParams();
         JdbcSourceInfo jdbcSourceInfo = new JdbcSourceInfo();
+        jdbcSourceInfo.setId(defaultJdbcSourceInfo.getId());
         jdbcSourceInfo.setConnectName(connectNameField.getText());
         jdbcSourceInfo.setConnectHost(connectHostField.getText());
         jdbcSourceInfo.setConnectPort(Integer.valueOf(connectPortField.getText()));
         jdbcSourceInfo.setUserName(nameField.getText());
         jdbcSourceInfo.setPassword(new String(passwordField.getPassword()));
+        jdbcSourceInfo.setSourceType(defaultJdbcSourceInfo.getDataSourceTypeEnum().typeName());
         jdbcSourceInfo.setDataSourceTypeEnum(defaultJdbcSourceInfo.getDataSourceTypeEnum());
         //编辑
         if (extObj != null) {
@@ -141,18 +141,19 @@ public class DBConfigDialog extends BaseDialog {
         }
         if (isSave) {
             //新增
-            if (extObj == null) {
-                List<JdbcSourceInfo> jdbcPropertyValues = PropertiesUtil.getJdbcPropertyValues();
-                if (CollectionUtils.isEmpty(jdbcPropertyValues)) {
-                    jdbcSourceInfo.setIndex(0);
-                } else {
-                    //最后一条
-                    Integer index = jdbcPropertyValues.get(jdbcPropertyValues.size() - 1).getIndex();
-                    jdbcSourceInfo.setIndex(++index);
-                }
-            } else {
-                jdbcSourceInfo.setIndex(((JdbcSourceInfo) extObj).getIndex());
-            }
+//            if (extObj == null) {
+//                final List<JdbcSourceInfo> jdbcPropertyValues = jdbcService.select(new JdbcSourceInfo());
+////                List<JdbcSourceInfo> jdbcPropertyValues = PropertiesUtil.getJdbcPropertyValues();
+//                if (CollectionUtils.isEmpty(jdbcPropertyValues)) {
+//                    jdbcSourceInfo.setIndex(0);
+//                } else {
+//                    //最后一条
+//                    Integer index = jdbcPropertyValues.get(jdbcPropertyValues.size() - 1).getIndex();
+//                    jdbcSourceInfo.setIndex(++index);
+//                }
+//            } else {
+//                jdbcSourceInfo.setIndex(((JdbcSourceInfo) extObj).getIndex());
+//            }
             List<JdbcDbInfo> jdbcDbInfos = jdbcService.getAllJdbcDbInfo();
             if (parentComponent instanceof TopPanel || parentComponent instanceof LeftPanel) {
                 LeftPanel leftPanel;
