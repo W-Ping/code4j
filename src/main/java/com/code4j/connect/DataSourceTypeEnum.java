@@ -1,6 +1,7 @@
 package com.code4j.connect;
 
 import com.code4j.pojo.JdbcSourceInfo;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -29,7 +30,7 @@ public enum DataSourceTypeEnum {
 
         @Override
         public String getUrl(final JdbcSourceInfo JDBCSourceInfo) {
-            String url = "jdbc:mysql://" + JDBCSourceInfo.getConnectHost() + ":" + JDBCSourceInfo.getConnectPort()+"?useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai";
+            String url = "jdbc:mysql://" + JDBCSourceInfo.getConnectHost() + ":" + JDBCSourceInfo.getConnectPort() + "?useOldAliasMetadataBehavior=true&serverTimezone=Asia/Shanghai";
             return url;
         }
 
@@ -45,7 +46,7 @@ public enum DataSourceTypeEnum {
             return conn;
         }
     },
-    POSTGRESQL{
+    POSTGRESQL {
         @Override
         public String getDriver() {
             return "org.postgresql.Driver";
@@ -63,7 +64,7 @@ public enum DataSourceTypeEnum {
 
         @Override
         public String getUrl(final JdbcSourceInfo JDBCSourceInfo) {
-            String url = "jdbc:postgresql://" + JDBCSourceInfo.getConnectHost() + ":" + JDBCSourceInfo.getConnectPort()+"/";
+            String url = "jdbc:postgresql://" + JDBCSourceInfo.getConnectHost() + ":" + JDBCSourceInfo.getConnectPort() + "/";
             return url;
         }
 
@@ -79,7 +80,7 @@ public enum DataSourceTypeEnum {
             return conn;
         }
     },
-    SQLITE{
+    SQLITE {
         @Override
         public String getDriver() {
             return "org.sqlite.JDBC";
@@ -97,7 +98,8 @@ public enum DataSourceTypeEnum {
 
         @Override
         public String getUrl(final JdbcSourceInfo JDBCSourceInfo) {
-            String url = "jdbc:sqlite:code4j.db";
+            String dbName = StringUtils.isNotBlank(JDBCSourceInfo.getDbName()) ? JDBCSourceInfo.getDbName() : "code4j";
+            String url = "jdbc:sqlite:" + dbName + ".db";
             return url;
         }
 
@@ -112,8 +114,7 @@ public enum DataSourceTypeEnum {
             }
             return conn;
         }
-    }
-    ;
+    };
 
     /**
      * @return

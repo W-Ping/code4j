@@ -1,8 +1,10 @@
 package com.code4j.pojo;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.code4j.annotation.Column;
 import com.code4j.annotation.IgnoreReflection;
 import com.code4j.annotation.PropertyKeyIndexId;
+import com.code4j.annotation.Table;
 import com.code4j.connect.DataSourceTypeEnum;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -15,32 +17,47 @@ import java.util.List;
  * @date 2020/11/17
  * @see
  */
+@Table("jdbc_info")
 @PropertyKeyIndexId
 public class JdbcSourceInfo extends BaseInfo {
     /**
+     * 索引位置
+     */
+    private Integer index;
+
+    @Column(value = "id",pk = true,auto = true)
+    private Long id;
+    /**
      * 连接名称
      */
+    @Column("connect_name")
     private String connectName;
     /**
      * 连接地址（域名或IP）
      */
+    @Column("connect_host")
     private String connectHost;
     /**
      * 连接端口
      */
+    @Column("connect_port")
     private Integer connectPort;
     /**
      * 用户名
      */
+    @Column("user_name")
     private String userName;
     /**
      * 用户密码
      */
+    @Column("password")
     private String password;
+    @Column("source_type")
+    private String sourceType;
+    private String dbName;
 
     private String creator = "code4j";
 
-    private String sourceType = "MYSQL";
     @IgnoreReflection
     private DataSourceTypeEnum dataSourceTypeEnum;
     @IgnoreReflection
@@ -48,10 +65,7 @@ public class JdbcSourceInfo extends BaseInfo {
     @IgnoreReflection
     @JSONField(deserialize = false, serialize = false)
     private DefaultMutableTreeNode currTreeNode;
-    /**
-     * 索引位置
-     */
-    private Integer index;
+
 
     @Override
     public JdbcSourceInfo clone() {
@@ -192,5 +206,21 @@ public class JdbcSourceInfo extends BaseInfo {
 
     public void setIndex(final Integer index) {
         this.index = index;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

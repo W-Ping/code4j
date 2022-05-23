@@ -1,5 +1,6 @@
 package com.code4j.connect;
 
+import com.code4j.pojo.DbTableInfo;
 import com.code4j.pojo.JdbcDbInfo;
 import com.code4j.pojo.JdbcMapJavaInfo;
 import com.code4j.pojo.JdbcTableInfo;
@@ -37,10 +38,10 @@ public interface JDBCService<T> {
 
     /**
      * @param tableName
-     * @param createSql
+     * @param dbTableInfos
      * @return
      */
-    boolean createTableIfAbsent(String tableName,String createSql);
+    boolean createTableIfAbsent(String tableName, List<DbTableInfo> dbTableInfos,boolean forceCreate);
 
     /**
      * @param obj
@@ -49,8 +50,20 @@ public interface JDBCService<T> {
     boolean insert(T obj);
 
     /**
+     * @param primaryKey
      * @return
      */
-    List<T> select();
+    boolean deleteByPk(Long primaryKey,Class<T> cls);
+
+    /**
+     * @return
+     */
+    List<T> select(T obj);
+
+    /**
+     * @param tableName
+     * @return
+     */
+    boolean checkTableIsExist(String tableName);
 
 }

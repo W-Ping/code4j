@@ -1,5 +1,6 @@
 package com.code4j.pojo;
 
+import com.code4j.annotation.Column;
 import com.code4j.annotation.PropertyKeyIndexId;
 import com.code4j.config.Code4jConstants;
 import com.code4j.config.TemplateTypeEnum;
@@ -17,72 +18,88 @@ public class ProjectCodeConfigInfo extends BaseInfo {
     /**
      * 项目名称
      */
+    @Column("project_name")
     private String projectName;
     /**
      * 包名称
      */
+    @Column("vo_project_name")
     private String voPackageName;
 
     /**
      * vo 父类
      */
+    @Column("vo_super_class")
     private String voSuperClass;
     /**
      * 路径
      */
+    @Column("vo_path")
     private String voPath;
     /**
      * 包名称
      */
+    @Column("do_package_name")
     private String doPackageName;
 
     /**
      * 路径
      */
+    @Column("do_path")
     private String doPath;
 
     /**
      * do 父类
      */
+    @Column("do_super_class")
     private String doSuperClass;
     /**
      * 包名称
      */
+    @Column("xml_package_name")
     private String xmlPackageName;
 
     /**
      * 路径
      */
+    @Column("xml_path")
     private String xmlPath;
     /**
      * 包名称
      */
+    @Column("mapper_package_name")
     private String mapperPackageName;
     /**
      * mapper 父类
      */
+    @Column("mapper_super_class")
     private String mapperSuperClass;
     /**
      * 路径
      */
+    @Column("mapper_path")
     private String mapperPath;
     /**
      * 包名称
      */
+    @Column("service_api_package_name")
     private String serviceApiPackageName;
 
     /**
      * 路径
      */
+    @Column("service_api_path")
     private String serviceApiPath;
     /**
      * mapper 父类
      */
+    @Column("service_super_path")
     private String serviceSuperClass;
 
     /**
      * 索引位置
      */
+    @Column("index")
     private Integer index;
 
 
