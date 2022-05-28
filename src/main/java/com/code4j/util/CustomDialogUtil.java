@@ -5,6 +5,7 @@ import com.code4j.config.TemplateTypeEnum;
 import com.code4j.enums.DataSourceTypeEnum;
 import com.code4j.pojo.GenerateResultInfo;
 import com.code4j.pojo.JdbcSourceInfo;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import sun.awt.AppContext;
 
 import javax.swing.*;
@@ -13,7 +14,9 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimerTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -102,15 +105,6 @@ public class CustomDialogUtil {
         return generateResultDialog;
     }
 
-    /**
-     * @param parentComponent
-     * @param title
-     * @param extObj
-     * @return
-     */
-    public static SelectProjectConfigDialog showSelectProjectConfigDialog(final Component parentComponent, String title, Object extObj) {
-        return new SelectProjectConfigDialog(parentComponent, title, true, extObj);
-    }
 
     /**
      * @param parentComponent
@@ -134,16 +128,15 @@ public class CustomDialogUtil {
         final JOptionPane op = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE);
         final JDialog dialog = op.createDialog(null, "成功");
         if (autoClose) {
-            java.util.Timer timer = new java.util.Timer();
-            timer.schedule(new TimerTask() {
-                public void run() {
-                    dialog.setVisible(false);
-                    dialog.dispose();
-                    if (consumer != null) {
-                        consumer.accept(true);
-                    }
+            ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
+                    new BasicThreadFactory.Builder().namingPattern("dialog-schedule-pool-%d").daemon(true).build());
+            executorService.scheduleAtFixedRate(() -> {
+                dialog.setVisible(false);
+                dialog.dispose();
+                if (consumer != null) {
+                    consumer.accept(true);
                 }
-            }, 800);
+            }, 800, 800, TimeUnit.MILLISECONDS);
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             dialog.setAlwaysOnTop(true);
             dialog.setModal(false);
@@ -179,20 +172,20 @@ public class CustomDialogUtil {
         return sharedOwnerFrame;
     }
 
-    public static Frame setShareFrame(String key) {
-        Frame sharedFrame = (Frame) AppContext.getAppContext().get(key);
-        if (sharedFrame == null) {
-            CustomerSharedOwnerFrame sharedOwnerFrame = new CustomerSharedOwnerFrame();
-            AppContext.getAppContext().put(key, sharedOwnerFrame);
-        }
-        return sharedFrame;
-    }
+//    public static Frame setShareFrame(String key) {
+//        Frame sharedFrame = (Frame) AppContext.getAppContext().get(key);
+//        if (sharedFrame == null) {
+//            CustomerSharedOwnerFrame sharedOwnerFrame = new CustomerSharedOwnerFrame();
+//            AppContext.getAppContext().put(key, sharedOwnerFrame);
+//        }
+//        return sharedFrame;
+//    }
 
-    static Object appContextGet(Object key) {
+    public static Object appContextGet(Object key) {
         return AppContext.getAppContext().get(key);
     }
 
-    static class CustomerSharedOwnerFrame extends Frame implements WindowListener {
+    public static class CustomerSharedOwnerFrame extends Frame implements WindowListener {
         @Override
         public void addNotify() {
             super.addNotify();
@@ -254,11 +247,6 @@ public class CustomDialogUtil {
 
         @Override
         public void windowDeactivated(WindowEvent e) {
-        }
-
-        @Override
-        public void show() {
-            // This frame can never be shown
         }
 
         @Override

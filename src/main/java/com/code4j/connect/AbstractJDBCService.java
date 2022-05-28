@@ -244,14 +244,14 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             sql.append(" ");
             sql.append(columns);
             sql.append(columnValues);
-//            log.debug("数据新增SQL:{}", sql);
+            log.debug("数据新增SQL:{}", sql);
             statement = connection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
             statement.executeUpdate();
             resultSet = statement.getGeneratedKeys();
             final Field field = getPrimaryKeyField(declaredFields);
             while (resultSet != null && resultSet.next()) {
                 final long pk = resultSet.getLong(1);
-//                log.debug("数据新增返回主键：{}", pk);
+                log.debug("数据新增返回主键：{}", pk);
                 field.set(obj, pk);
             }
             return true;
