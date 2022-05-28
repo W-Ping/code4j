@@ -75,6 +75,9 @@ public class JdbcMapJavaInfo {
     }
 
     private String toJdbcType(String jdbcType) {
+        if (jdbcType == null) {
+            return null;
+        }
         if (jdbcType.equalsIgnoreCase("INT")) {
             return "INTEGER";
         } else if (jdbcType.equalsIgnoreCase("DATETIME")) {

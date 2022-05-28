@@ -59,7 +59,6 @@ public class DragAndDrop extends JFrame implements DropTargetListener {
                     this.cmdLabel.setText("你拖入的文件是：" + f.getAbsolutePath());
                 }
                 dtde.dropComplete(true);
-                // this.updateUI();
             } else {
                 dtde.rejectDrop();
             }
