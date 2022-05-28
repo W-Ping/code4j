@@ -32,6 +32,7 @@ public class BottomPanel extends BasePanel {
         this.setBorder(matteBorder);
         CommonPanel commonPanel = new CommonPanel();
         commonPanel.add(new JLabel("当前版本：" + Code4jConstants.APP_VERSION));
+//        this.setLayout(new FlowLayout(FlowLayout.RIGHT));
         this.setLayout(new BorderLayout());
         this.add(commonPanel, BorderLayout.EAST);
     }

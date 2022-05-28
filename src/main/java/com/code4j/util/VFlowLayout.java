@@ -126,7 +126,13 @@ public class VFlowLayout  extends FlowLayout  {
         this.vfill = vfill;
     }
 
-    @Override
+    /**
+     * Returns the preferred dimensions given the components in the target
+     * container.
+     *
+     * @param target
+     *            the component to lay out
+     */
     public Dimension preferredLayoutSize(Container target)
     {
         Dimension tarsiz = new Dimension(0, 0);
@@ -156,7 +162,13 @@ public class VFlowLayout  extends FlowLayout  {
         return tarsiz;
     }
 
-    @Override
+    /**
+     * Returns the minimum size needed to layout the target container.
+     *
+     * @param target
+     *            the component to lay out.
+     * @return the minimum layout dimension.
+     */
     public Dimension minimumLayoutSize(Container target)
     {
         Dimension tarsiz = new Dimension(0, 0);
@@ -275,7 +287,12 @@ public class VFlowLayout  extends FlowLayout  {
         }
     }
 
-    @Override
+    /**
+     * Lays out the container.
+     *
+     * @param target
+     *            the container to lay out.
+     */
     public void layoutContainer(Container target)
     {
         Insets insets = target.getInsets();

@@ -1,13 +1,12 @@
 # code4j
 #### `JAVA`模板代码生成工具。
-### 源码地址：[码云](https://gitee.com/LW_Ping/code4j.git)
+
 ![gif](https://user-images.githubusercontent.com/42802329/160065352-f0bd354f-f182-48f6-9a1f-17546eec0a9c.gif)
 
 ## 环境资源
 * Windows 系统
 * JDK8+ 
-* MySQL数据库
-* PostgreSQL数据库
+* Mysql数据库
 
 ## 工具说明
 * entity 配置：此对象与数据库表结构一一对应
