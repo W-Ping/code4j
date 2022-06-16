@@ -14,6 +14,10 @@ public class MapperParamsInfo extends BaseTemplateInfo {
      */
     private List<MapperApiParamsInfo> mapperApiParamsInfos;
 
+    public MapperParamsInfo(List<JdbcMapJavaInfo> tableColumnInfos) {
+        super(tableColumnInfos);
+    }
+
     public SuperPojoInfo getSuperPojoInfo() {
         return superPojoInfo;
     }

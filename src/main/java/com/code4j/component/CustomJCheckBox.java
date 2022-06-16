@@ -16,8 +16,13 @@ public class CustomJCheckBox extends JCheckBox {
     private JComponent bindComponent;
 
     public CustomJCheckBox(String text, boolean isSelect, String id) {
+        this(text, isSelect, id, null);
+    }
+
+    public CustomJCheckBox(String text, boolean isSelect, String id, Object bindObject) {
         super(text, isSelect);
         this.id = id;
+        this.bindObject = bindObject;
     }
 
     public String getId() {
