@@ -23,12 +23,16 @@ public class Code4jConstants {
     /**
      * 数据连接配置文件
      */
+    @Deprecated
     public final static String DEFAULT_DB_CONFIG_FILE_NAME = "code4j_db.properties";
+    @Deprecated
     public final static String DEFAULT_DB_CONFIG_KEY_PREFIX = "dataSource";
     /**
      * 项目配置文件
      */
+    @Deprecated
     public final static String DEFAULT_PROJECT_CONFIG_FILE_NAME = "code4j_config.properties";
+    @Deprecated
     public final static String DEFAULT_DB_PROJECT_CONFIG_KEY_PREFIX = "PRConfig";
 
     public final static String DEFAULT_ROOT_PACKAGE = "com";
@@ -36,26 +40,26 @@ public class Code4jConstants {
     public final static String SYS_TEMP_PATH = System.getProperty("java.io.tmpdir");
 
     public final static String DO_SUFFIX = "Entity";
-    public final static String VO_SUFFIX = "Vo";
-    public final static String MAPPER_SUFFIX = "Dao";
+    public final static String VO_SUFFIX = "VO";
+    public final static String MAPPER_SUFFIX = "Mapper";
     public final static String XML_SUFFIX = "Mapper";
     public final static String SERVICE_SUFFIX = "Service";
 
 
     public final static String DEFAULT_PATH = "src/main/java";
     public final static String DEFAULT_XML_PATH = "src/main/resources";
-    public final static String DEFAULT_MAPPER_PACKAGE = "com.ebx.queen.dao";
+    public final static String DEFAULT_MAPPER_PACKAGE = "com.code4j.mapper";
     public final static String DEFAULT_SQL_XML_PACKAGE = "mapping.mysql";
-    public final static String DEFAULT_VO_PACKAGE = "com.ebx.skeleton.dto.response";
-    public final static String DEFAULT_DO_PACKAGE = "com.ebx.skeleton.entity";
-    public final static String DEFAULT_SERVICE_PACKAGE = "com.ebx.skeleton.interfaces";
+    public final static String DEFAULT_VO_PACKAGE = "com.code4j.pojo.vo ";
+    public final static String DEFAULT_DO_PACKAGE = "com.code4j.pojo.entity";
+    public final static String DEFAULT_SERVICE_PACKAGE = "com.code4j.service";
 
     public static final String TEMPLATE_PATH = "src/main/java/com/code4j/templates";
 
-    public static final String MAPPER_SUPER_CLASS = "com.ks.skeleton.dao.itf.IBaseDao";
-    public static final String DO_SUPER_CLASS = "com.ks.skeleton.entity.base.BaseEntity";
-    public static final String VO_SUPER_CLASS = "com.ebx.skeleton.dto.response.BaseVo";
-    public static final String SERVICE_SUPER_CLASS = "com.ks.framework.service.BaseService";
+    public static final String MAPPER_SUPER_CLASS = "com.code4j.base.IBaseMapper";
+    public static final String DO_SUPER_CLASS = "com.code4j.pojo.base.BaseEntity";
+    public static final String VO_SUPER_CLASS = "com.code4j.pojo.base.BaseVO";
+    public static final String SERVICE_SUPER_CLASS = "com.code4j.service.BaseService";
 
     public static final String CONFIG_NAME = "新建";
     public static Color selectionBackground = new Color(0x3992EA);
@@ -67,4 +71,6 @@ public class Code4jConstants {
 
     public static final String SQLITE_DEFAULT_NAME="code4j_sb";
     public static final String SQLITE_DEFAULT_PWD="code4j_sb@";
+    public static final String SQLITE_DEFAULT_DB="code4j";
+
 }

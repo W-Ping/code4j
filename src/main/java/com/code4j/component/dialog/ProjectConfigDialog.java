@@ -70,7 +70,7 @@ public class ProjectConfigDialog extends BaseDialog {
             return;
         } else {
             CustomDialogUtil.showOk("保存成功！", true, (bol) -> {
-                ((TopPanel) parentComponent).loadProjectCodeConfig();
+                ((TopPanel) parentComponent).loadProjectCodeConfig("save");
                 this.close();
             });
         }
@@ -89,7 +89,7 @@ public class ProjectConfigDialog extends BaseDialog {
                 public void actionPerformed(final ActionEvent e) {
                     CustomDialogUtil.confirm(projectConfigDialog, "确认删除", (c) -> {
                         if (SQLiteUtil.deleteByPk(projectCodeConfigInfo.getId(), ProjectCodeConfigInfo.class)) {
-                            ((TopPanel) parentComponent).loadProjectCodeConfig();
+                            ((TopPanel) parentComponent).loadProjectCodeConfig("delete");
                             projectConfigDialog.close();
                         }
                         return null;

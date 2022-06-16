@@ -100,7 +100,7 @@ public enum DataSourceTypeEnum {
 
         @Override
         public String getUrl(final JdbcSourceInfo JDBCSourceInfo) {
-            String dbName = StringUtils.isNotBlank(JDBCSourceInfo.getDbName()) ? JDBCSourceInfo.getDbName() : "code4j";
+            String dbName = StringUtils.isNotBlank(JDBCSourceInfo.getDbName()) ? JDBCSourceInfo.getDbName() : Code4jConstants.SQLITE_DEFAULT_DB;
             String url = "jdbc:sqlite:" + dbName + ".db";
             return url;
         }

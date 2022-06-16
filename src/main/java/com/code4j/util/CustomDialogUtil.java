@@ -133,6 +133,9 @@ public class CustomDialogUtil {
             executorService.scheduleAtFixedRate(() -> {
                 dialog.setVisible(false);
                 dialog.dispose();
+                if (!executorService.isShutdown()) {
+                    executorService.shutdown();
+                }
                 if (consumer != null) {
                     consumer.accept(true);
                 }
@@ -141,6 +144,7 @@ public class CustomDialogUtil {
             dialog.setAlwaysOnTop(true);
             dialog.setModal(false);
             dialog.setVisible(true);
+
         } else {
             JOptionPane.showMessageDialog(null, message, "成功", JOptionPane.INFORMATION_MESSAGE, null);
         }

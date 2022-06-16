@@ -113,7 +113,7 @@ public class TopPanel extends BasePanel {
     /**
      *
      */
-    public void loadProjectCodeConfig() {
+    public void loadProjectCodeConfig(String option) {
         List<ProjectCodeConfigInfo> projectConfigPropertyValues = SQLiteUtil.select(new ProjectCodeConfigInfo());
         JPopupMenu popupMenu = pcfMenu.getPopupMenu();
         Component firstComponent = popupMenu.getComponent(0);

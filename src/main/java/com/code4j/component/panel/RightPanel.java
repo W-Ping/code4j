@@ -103,7 +103,13 @@ public class RightPanel extends BasePanel {
         projectP.setBorder(BorderFactory.createTitledBorder(lineBorder, "项目配置（" + jdbcTableInfo.getDbName() + "." + tableName + "）"));
         JLabel p1 = new JLabel("项目地址：");
         CustomJFileChooserPanel p1V = new CustomJFileChooserPanel(this, false, JFileChooser.DIRECTORIES_ONLY);
-
+        CustomJCheckBox lombokCb=new CustomJCheckBox("lombok",true,"lombok");
+        CustomJCheckBox mybatisplusCb=new CustomJCheckBox("mybatis-plus",true,"mybatisplus");
+        //项目配置
+        ProjectConfigSelect projectConfigSelect = new ProjectConfigSelect(this, tableName, (c, item) -> {
+            ((RightPanel) c).loadProjectConfig(item);
+        });
+        projectP.addList(p1, p1V, projectConfigSelect,lombokCb,mybatisplusCb);
         //----------------------------------------------DO 配置---------------------------------------------
         CommonPanel daoP = new CommonPanel(new FlowLayout(FlowLayout.LEFT),null,tableColumnInfos);
         daoP.setBorder(BorderFactory.createTitledBorder(lineBorder, TemplateTypeEnum.DO.getTemplateDesc()));
@@ -168,11 +174,7 @@ public class RightPanel extends BasePanel {
         JButton generate = new JButton(" 生成代码 ");
         generate.addActionListener(new GenerateCodeAction(this, p1V, jdbcTableInfo, customJCheckBoxList, jdbcSourceInfo));
         btnP.add(generate);
-        //项目配置
-        ProjectConfigSelect projectConfigSelect = new ProjectConfigSelect(this, tableName, (c, item) -> {
-            ((RightPanel) c).loadProjectConfig(item);
-        });
-        projectP.addList(p1, p1V, projectConfigSelect);
+
 
         //布局
         Box box = Box.createVerticalBox();
@@ -227,12 +229,6 @@ public class RightPanel extends BasePanel {
         return StrUtil.underlineToCamelFirstToUpper(str) + prefix;
     }
 
-    private String getPackageName(String str) {
-        if (str.startsWith("t_")) {
-            str = StrUtil.subFirstStr(str, "t_");
-        }
-        return StrUtil.underlineToCamelToLower(str);
-    }
 
     public ProjectCodeConfigInfo getProjectCodeConfigInfo() {
         return projectCodeConfigInfo;
