@@ -57,7 +57,6 @@ public class SystemUtil {
         String content = null;
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
-
             StringBuffer sb = new StringBuffer();
             String temp = null;
             while ((temp = bufferedReader.readLine()) != null) {
@@ -82,8 +81,9 @@ public class SystemUtil {
         try {
             File file = new File(path);
             if (file.exists()) {
-                file.createNewFile();
+                file.delete();
             }
+            file.createNewFile();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
             bufferedWriter.write(content);
             bufferedWriter.flush();
