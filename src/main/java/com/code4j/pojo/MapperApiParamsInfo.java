@@ -1,6 +1,6 @@
 package com.code4j.pojo;
 
-import com.code4j.config.XmlSqlTemplateEnum;
+import com.code4j.enums.XmlSqlTemplateEnum;
 
 /**
  * @author liu_wp
@@ -23,8 +23,6 @@ public class MapperApiParamsInfo {
         return apiId;
     }
 
-    public MapperApiParamsInfo() {
-    }
 
     public MapperApiParamsInfo(XmlSqlTemplateEnum xmlSqlTemplateEnum) {
         this.xmlSqlTemplateEnum = xmlSqlTemplateEnum;

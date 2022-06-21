@@ -4,7 +4,7 @@ import com.code4j.annotation.Column;
 import com.code4j.annotation.PropertyKeyIndexId;
 import com.code4j.annotation.Table;
 import com.code4j.config.Code4jConstants;
-import com.code4j.config.TemplateTypeEnum;
+import com.code4j.enums.TemplateTypeEnum;
 import com.code4j.util.StrUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -116,6 +116,22 @@ public class ProjectCodeConfigInfo extends BaseInfo {
     private String serviceImplSuperClass;
 
     /**
+     * controller 包名称
+     */
+    @Column("contr_package_name")
+    private String contrPackageName;
+
+    /**
+     * controller 路径
+     */
+    @Column("contr_path")
+    private String contrPath;
+    /**
+     * controller 父类
+     */
+    @Column("contr_super_class")
+    private String contrSuperClass;
+    /**
      * 索引位置
      */
     @Deprecated
@@ -154,6 +170,9 @@ public class ProjectCodeConfigInfo extends BaseInfo {
             this.serviceSuperClass = Code4jConstants.SERVICE_SUPER_CLASS;
             this.serviceImplSuperClass = Code4jConstants.SERVICE_SUPER_IMPL_CLASS;
             this.mapperSuperClass = Code4jConstants.MAPPER_SUPER_CLASS;
+            this.contrPath = Code4jConstants.DEFAULT_PATH;
+            this.contrPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.CONTROLLER,null);
+            this.contrSuperClass = Code4jConstants.CONTROLLER_SUPER_CLASS;
             this.index = index;
         }
     }
@@ -324,5 +343,29 @@ public class ProjectCodeConfigInfo extends BaseInfo {
 
     public void setServiceImplSuperClass(String serviceImplSuperClass) {
         this.serviceImplSuperClass = serviceImplSuperClass;
+    }
+
+    public String getContrSuperClass() {
+        return contrSuperClass;
+    }
+
+    public void setContrSuperClass(String contrSuperClass) {
+        this.contrSuperClass = contrSuperClass;
+    }
+
+    public String getContrPackageName() {
+        return contrPackageName;
+    }
+
+    public void setContrPackageName(String contrPackageName) {
+        this.contrPackageName = contrPackageName;
+    }
+
+    public String getContrPath() {
+        return contrPath;
+    }
+
+    public void setContrPath(String contrPath) {
+        this.contrPath = contrPath;
     }
 }

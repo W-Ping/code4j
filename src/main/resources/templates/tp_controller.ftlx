@@ -1,0 +1,42 @@
+package ${(baseInfo.packageRoot)!""}${(baseInfo.packageName)!};
+
+import org.springframework.web.bind.annotation.*
+<#if (packages)??>
+    <#list packages as model>
+import ${model};
+    </#list>
+</#if>
+/**
+ * ${(baseInfo.jdbcTableInfo.remark)!} Controller类
+ *
+ * @author ${(baseInfo.author)!}
+ * @date Created in ${.now}
+ */
+<#if isSwagger==true>
+@Api(tags = "${baseInfo.jdbcTableInfo.remark}")
+</#if>
+@RestController
+@RequestMapping("${baseInfo.rootRequestMapping}")
+<#if (baseInfo.superPojoInfo)??>
+public class ${(baseInfo.pojoName)!} extends ${(baseInfo.superPojoInfo.pojoName)!} {
+<#else>
+public class ${(baseInfo.pojoName)!}{
+</#if>
+
+<#if (apiInfos)??>
+    <#list apiInfos as model>
+      /**
+       * ${model.apiDesc}
+       *
+       * @return ${model.resultType?no_esc}
+       */
+     <#if isSwagger==true>
+     @ApiOperation(value = "${model.apiDesc}")
+     </#if>
+     @RequestMapping(value = "${model.requestMapping}",method = ${model.method})
+     public  ${model.resultType?no_esc}  ${model.apiId}(<#if (model.parameterInfos)??><#list model.parameterInfos as pm>${pm.annotations?no_esc} ${pm.parameterType?no_esc} ${pm.parameterName} </#list></#if>){
+        return null;
+     }
+    </#list>
+</#if>
+}

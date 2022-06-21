@@ -1,4 +1,4 @@
-package com.code4j.config;
+package com.code4j.enums;
 
 import java.util.Arrays;
 

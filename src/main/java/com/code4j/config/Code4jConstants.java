@@ -44,6 +44,7 @@ public class Code4jConstants {
     public final static String MAPPER_SUFFIX = "Mapper";
     public final static String XML_SUFFIX = "Mapper";
     public final static String SERVICE_SUFFIX = "Service";
+    public final static String CONTROLLER_SUFFIX = "Controller";
 
 
     public final static String DEFAULT_PATH = "src/main/java";
@@ -55,12 +56,17 @@ public class Code4jConstants {
     public final static String DEFAULT_SERVICE_PACKAGE = "com.code4j.service";
     public final static String DEFAULT_SERVICE_IMPL_PACKAGE = "com.code4j.service.impl";
 
+    public final static String DEFAULT_CONTROLLER_PACKAGE = "com.code4j.controller";
+    public final static String DEFAULT_PAGEINFO_PACKAGE = "com.code4j.PageInfo";
+
     public static final String TEMPLATE_PATH = "src/main/java/com/code4j/templates";
 
     public static final String MAPPER_SUPER_CLASS = "com.code4j.base.IBaseMapper";
     public static final String DO_SUPER_CLASS = "com.code4j.pojo.base.BaseEntity";
     public static final String VO_SUPER_CLASS = "com.code4j.pojo.base.BaseVO";
     public static final String SERVICE_SUPER_CLASS = "com.code4j.service.IBaseService";
+
+    public static final String CONTROLLER_SUPER_CLASS = "com.code4j.controller.BaseController";
 
     public static final String SERVICE_SUPER_IMPL_CLASS = "com.code4j.service.impl.BaseService";
 

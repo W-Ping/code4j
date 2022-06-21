@@ -1,5 +1,7 @@
 package com.code4j.component;
 
+import com.code4j.enums.XmlSqlTemplateEnum;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +14,7 @@ import java.util.function.BiConsumer;
  */
 public class CustomJCheckBox extends JCheckBox {
     /**
-     * 对应模板ID {@link  com.code4j.config.XmlSqlTemplateEnum}
+     * 对应模板ID {@link  XmlSqlTemplateEnum}
      */
     private String id;
     private Object bindObject;

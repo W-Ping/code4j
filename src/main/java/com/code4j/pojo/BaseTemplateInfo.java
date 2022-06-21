@@ -1,7 +1,7 @@
 package com.code4j.pojo;
 
 import com.code4j.config.Code4jConstants;
-import com.code4j.config.TemplateTypeEnum;
+import com.code4j.enums.TemplateTypeEnum;
 import com.code4j.util.StrUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -246,6 +246,8 @@ public class BaseTemplateInfo {
             sb.append(Code4jConstants.DEFAULT_SERVICE_PACKAGE);
         } else if (TemplateTypeEnum.SERVICE.equals(templateTypeEnum)) {
             sb.append(Code4jConstants.DEFAULT_SERVICE_IMPL_PACKAGE);
+        }else if (TemplateTypeEnum.CONTROLLER.equals(templateTypeEnum)) {
+            sb.append(Code4jConstants.DEFAULT_CONTROLLER_PACKAGE);
         }
         if (StringUtils.isNotBlank(packageName)) {
             sb.append(".");

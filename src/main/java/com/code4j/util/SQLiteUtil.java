@@ -83,7 +83,10 @@ public class SQLiteUtil {
         DbTableInfo c16 = new DbTableInfo("service_impl_package_name", "VARCHAR(100)", "包名称", false, false);
         DbTableInfo c17 = new DbTableInfo("service_impl_path", "VARCHAR(100)", "路径", false, false);
         DbTableInfo c18 = new DbTableInfo("service_impl_super_path", "VARCHAR(100)", "父类", false, false);
-        List<DbTableInfo> tableInfoList = Arrays.asList(c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18);
+        DbTableInfo c19 = new DbTableInfo("contr_package_name", "VARCHAR(100)", "包名称", false, false);
+        DbTableInfo c20 = new DbTableInfo("contr_path", "VARCHAR(100)", "路径", false, false);
+        DbTableInfo c21 = new DbTableInfo("contr_super_path", "VARCHAR(100)", "父类", false, false);
+        List<DbTableInfo> tableInfoList = Arrays.asList(c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21);
         return sqLiteJDBCService.createTableIfAbsent(ProjectCodeConfigInfo.class, tableInfoList, forceCreate);
     }
 

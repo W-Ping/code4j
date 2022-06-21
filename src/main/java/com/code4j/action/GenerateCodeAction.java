@@ -4,8 +4,9 @@ import com.code4j.component.CustomJCheckBox;
 import com.code4j.component.CustomJTextField;
 import com.code4j.component.panel.CustomJFileChooserPanel;
 import com.code4j.config.Code4jConstants;
-import com.code4j.config.TemplateTypeEnum;
-import com.code4j.config.XmlSqlTemplateEnum;
+import com.code4j.enums.ControllerApiTemplateEnum;
+import com.code4j.enums.TemplateTypeEnum;
+import com.code4j.enums.XmlSqlTemplateEnum;
 import com.code4j.exception.Code4jException;
 import com.code4j.pojo.*;
 import com.code4j.util.CustomDialogUtil;
@@ -89,6 +90,8 @@ public class GenerateCodeAction implements ActionListener {
                         dataMap = convertServicePojoTemplateData(baseTemplateInfo);
                     } else if (TemplateTypeEnum.MAPPER.getTemplateId().equals(templateId)) {
                         dataMap = this.convertMapperTemplateData(baseTemplateInfo);
+                    } else if (TemplateTypeEnum.CONTROLLER.getTemplateId().equals(templateId)) {
+                        dataMap = this.convertControllerTemplateData(baseTemplateInfo);
                     } else {
                         dataMap = this.convertPojoTemplateData(baseTemplateInfo);
                     }
@@ -109,6 +112,98 @@ public class GenerateCodeAction implements ActionListener {
     }
 
     /**
+     * Controller 模板数据
+     *
+     * @param baseTemplateInfo
+     * @return
+     */
+    private Map<String, Object> convertControllerTemplateData(BaseTemplateInfo baseTemplateInfo) {
+        Map<String, Object> dataMap = new HashMap<>(4);
+        ControllerParamsInfo controllerParamsInfo = (ControllerParamsInfo) baseTemplateInfo;
+        PojoParamsInfo doPojo = (PojoParamsInfo) templateParamsInfoMap.get(TemplateTypeEnum.DO.getTemplateId());
+        PojoParamsInfo voPojo = (PojoParamsInfo) templateParamsInfoMap.get(TemplateTypeEnum.VO.getTemplateId());
+        final List<ControllerApiParamsInfo> controllerApiParamsInfos = controllerParamsInfo.getControllerApiParamsInfos();
+        final Set<String> packages = this.getControllerPackages(controllerParamsInfo, doPojo, voPojo, controllerApiParamsInfos);
+        final Set<String> superPojoInfoPackages = this.getSuperPojoInfoPackages(controllerParamsInfo.getSuperPojoInfo(), doPojo, controllerParamsInfo, mybatisPlus.isSelected(), null);
+        if (!CollectionUtils.isEmpty(superPojoInfoPackages)) {
+            packages.addAll(superPojoInfoPackages);
+        }
+        dataMap.put("baseInfo", controllerParamsInfo);
+        dataMap.put("packages", packages);
+        dataMap.put("apiInfos", controllerApiParamsInfos);
+        dataMap.put("isSwagger", swagger.isSelected());
+        //还原选择
+//        controllerParamsInfo.setControllerApiParamsInfos(null);
+        return dataMap;
+    }
+
+    /**
+     * Controller 引用的包路径
+     *
+     * @param controllerParamsInfo
+     * @param doPojo
+     * @param voPojo
+     * @param controllerApiParamsInfos
+     * @return
+     */
+    private Set<String> getControllerPackages(ControllerParamsInfo controllerParamsInfo, PojoParamsInfo doPojo, PojoParamsInfo voPojo, List<ControllerApiParamsInfo> controllerApiParamsInfos) {
+        Set<String> packages = new HashSet<>();
+        if (!CollectionUtils.isEmpty(controllerApiParamsInfos)) {
+            JdbcMapJavaInfo tablePrimaryKey = controllerParamsInfo.getTablePrimaryKey();
+            for (ControllerApiParamsInfo info : controllerApiParamsInfos) {
+                if (ControllerApiTemplateEnum.isObjectListResultType(info.getTemplateId())) {
+                    packages.add("java.util.List");
+                    info.setResultType(String.format("R<List<%s>>", voPojo != null ? voPojo.getPojoName() : "Object"));
+                } else if (ControllerApiTemplateEnum.isObjectResultType(info.getTemplateId())) {
+                    info.setResultType(String.format("R<%s>", voPojo != null ? voPojo.getPojoName() : "Object"));
+                } else if (ControllerApiTemplateEnum.isBooleanResultType(info.getTemplateId())) {
+                    info.setResultType("R<Boolean>");
+                } else if (ControllerApiTemplateEnum.isPageResultType(info.getTemplateId())) {
+                    info.setResultType(String.format("R<Page<%s>>", voPojo != null ? voPojo.getPojoName() : "Object"));
+                    if (mybatisPlus.isSelected()) {
+                        packages.add("com.baomidou.mybatisplus.extension.plugins.pagination.Page");
+                    } else {
+                        //自定义分页插件路径 实际项目中需替换
+                        packages.add(Code4jConstants.DEFAULT_PAGEINFO_PACKAGE);
+                    }
+                }
+                if (ControllerApiTemplateEnum.isIdPathVariable(info.getControllerApiTemplateEnum())) {
+                    final Set<ControllerApiParamsInfo.ParameterInfo> parameterInfos = Optional.ofNullable(info.getParameterInfos()).orElse(new HashSet<>());
+                    ControllerApiParamsInfo.ParameterInfo parameterInfo = new ControllerApiParamsInfo.ParameterInfo();
+                    parameterInfo.setParameterName("id");
+                    parameterInfo.setAnnotations(String.format("@PathVariable(value =\"%s\" )", parameterInfo.getParameterName()));
+                    parameterInfo.setParameterType(tablePrimaryKey != null ? this.getShortPkJdbcType(tablePrimaryKey.getJavaType()) : "long");
+                    parameterInfos.add(parameterInfo);
+                    info.setParameterInfos(parameterInfos);
+                }
+                if (ControllerApiTemplateEnum.isRequestBody(info.getControllerApiTemplateEnum())) {
+                    final Set<ControllerApiParamsInfo.ParameterInfo> parameterInfos = Optional.ofNullable(info.getParameterInfos()).orElse(new HashSet<>());
+                    ControllerApiParamsInfo.ParameterInfo parameterInfo = new ControllerApiParamsInfo.ParameterInfo();
+                    parameterInfo.setAnnotations("@Validated @RequestBody");
+                    packages.add("org.springframework.validation.annotation.Validated");
+                    //优先使用voPojo
+                    if (voPojo != null) {
+                        parameterInfo.setParameterType(voPojo.getPojoName());
+                        parameterInfo.setParameterName(StrUtil.underlineToCamelToLower(voPojo.getPojoName()));
+                        packages.add(voPojo.getPackagePath());
+                    } else {
+                        parameterInfo.setParameterType(doPojo != null ? doPojo.getPojoName() : "Object");
+                        parameterInfo.setParameterName(doPojo != null ? StrUtil.underlineToCamelToLower(doPojo.getPojoName()) : "object");
+                        if (doPojo != null) {
+                            packages.add(doPojo.getPackagePath());
+                        }
+                    }
+                    parameterInfos.add(parameterInfo);
+                    info.setParameterInfos(parameterInfos);
+                }
+            }
+        }
+        return packages;
+    }
+
+    /**
+     * Mapper 模板数据
+     *
      * @param baseTemplateInfo
      * @return
      */
@@ -118,13 +213,21 @@ public class GenerateCodeAction implements ActionListener {
         MapperParamsInfo mapperParamsInfo = (MapperParamsInfo) baseTemplateInfo;
         List<MapperApiParamsInfo> mapperApiParamsInfos = mapperParamsInfo.getMapperApiParamsInfos();
         dataMap.put("baseInfo", mapperParamsInfo);
-        dataMap.put("packages", getMapperPackages(mapperParamsInfo, doPojo, mapperApiParamsInfos));
+        dataMap.put("packages", this.getMapperPackages(mapperParamsInfo, doPojo, mapperApiParamsInfos));
         dataMap.put("apiInfos", mybatisPlus.isSelected() ? null : mapperApiParamsInfos);
         //还原选择
-        mapperParamsInfo.setMapperApiParamsInfos(null);
+//        mapperParamsInfo.setMapperApiParamsInfos(null);
         return dataMap;
     }
 
+    /**
+     * Mapper 模板引用包路径
+     *
+     * @param mapperParamsInfo
+     * @param doPojo
+     * @param mapperApiParamsInfos
+     * @return
+     */
     private Set<String> getMapperPackages(MapperParamsInfo mapperParamsInfo, PojoParamsInfo doPojo, List<MapperApiParamsInfo> mapperApiParamsInfos) {
         Set<String> packages = new HashSet<>();
         SuperPojoInfo superPojoInfo = mapperParamsInfo.getSuperPojoInfo();
@@ -137,7 +240,13 @@ public class GenerateCodeAction implements ActionListener {
             packages.add(tablePrimaryKey.getJavaType());
         }
         if (CollectionUtils.isNotEmpty(mapperApiParamsInfos) && !mybatisPlus.isSelected()) {
-            String resultTypePath = getTypePath(doPojo.getPackageRoot(), doPojo.getPackageName(), doPojo.getPojoName());
+            String resultTypePath = null;
+            if (doPojo != null) {
+                resultTypePath = this.getTypePath(doPojo.getPackageRoot(), doPojo.getPackageName(), doPojo.getPojoName());
+            } else {
+                resultTypePath = "Object";
+            }
+            //mapper 接口 需引入的包路径
             for (final MapperApiParamsInfo mapperApiParamsInfo : mapperApiParamsInfos) {
                 //方法返回结果类型
                 if (XmlSqlTemplateEnum.isObjectListResultType(mapperApiParamsInfo.getTemplateId())) {
@@ -157,12 +266,12 @@ public class GenerateCodeAction implements ActionListener {
                 }
                 //方法参数类型
                 if (XmlSqlTemplateEnum.isObjectListParameterType(mapperApiParamsInfo.getTemplateId())) {
-                    mapperApiParamsInfo.setParameterType(doPojo.getPojoName());
+                    mapperApiParamsInfo.setParameterType(doPojo != null ? doPojo.getPojoName() : "Object");
                 } else if (XmlSqlTemplateEnum.isObjectParameterType(mapperApiParamsInfo.getTemplateId())) {
-                    mapperApiParamsInfo.setParameterType(doPojo.getPojoName());
+                    mapperApiParamsInfo.setParameterType(doPojo != null ? doPojo.getPojoName() : "Object");
                 } else if (XmlSqlTemplateEnum.isParameterPk(mapperApiParamsInfo.getTemplateId()) && tablePrimaryKey != null) {
                     if (tablePrimaryKey.getJdbcType() != null) {
-                        mapperApiParamsInfo.setParameterType(getShortPkJdbcType(tablePrimaryKey.getJavaType()));
+                        mapperApiParamsInfo.setParameterType(this.getShortPkJdbcType(tablePrimaryKey.getJavaType()));
                         packages.add(tablePrimaryKey.getJavaType());
                     }
                 }
@@ -182,6 +291,8 @@ public class GenerateCodeAction implements ActionListener {
     }
 
     /**
+     * Pojo（Entity,VO） 模板数据
+     *
      * @param baseTemplateInfo
      * @return
      */
@@ -197,6 +308,8 @@ public class GenerateCodeAction implements ActionListener {
     }
 
     /**
+     * Service  模板数据
+     *
      * @param baseTemplateInfo
      * @return
      */
@@ -218,6 +331,33 @@ public class GenerateCodeAction implements ActionListener {
     }
 
     /**
+     * Service 引用包路径
+     *
+     * @param serviceParamsInfo
+     * @return
+     */
+    private Set<String> serviceColumnPackages(ServiceParamsInfo serviceParamsInfo) {
+        Set<String> packages = new HashSet<>();
+        InterfaceParamsInfo interfaceParamsInfo = serviceParamsInfo.getInterfaceParamsInfo();
+        StringBuilder sb = new StringBuilder();
+        if (StringUtils.isNotBlank(interfaceParamsInfo.getPackageRoot())) {
+            sb.append(interfaceParamsInfo.getPackageRoot());
+            sb.append(".");
+        }
+        sb.append(interfaceParamsInfo.getPackageName());
+        sb.append(".");
+        sb.append(interfaceParamsInfo.getPojoName());
+        packages.add(sb.toString());
+        SuperPojoInfo superPojoInfo = serviceParamsInfo.getSuperPojoInfo();
+        if (superPojoInfo != null) {
+            packages.add(superPojoInfo.getPackageName());
+        }
+        return packages;
+    }
+
+    /**
+     * Service Api 模板数据
+     *
      * @param baseTemplateInfo
      * @return
      */
@@ -234,6 +374,8 @@ public class GenerateCodeAction implements ActionListener {
     }
 
     /**
+     * 获取父类引用包路径
+     *
      * @param superPojoInfo
      * @param doPojo
      * @param baseTemplateInfo
@@ -258,8 +400,12 @@ public class GenerateCodeAction implements ActionListener {
             }
         } else {
             if (isMybatisPlus) {
-                String pojoName = doPojo != null ? doPojo.getPojoName() : "XXXEntity";
-                String packageName = doPojo != null ? doPojo.getPackageName() : Code4jConstants.DEFAULT_DO_PACKAGE;
+                String pojoName = null;
+                String packageName = null;
+                if (superPojoInfo.isGenericFlag()) {
+                    pojoName = doPojo != null ? doPojo.getPojoName() : "XXXEntity";
+                    packageName = doPojo != null ? doPojo.getPackageName() : Code4jConstants.DEFAULT_DO_PACKAGE;
+                }
                 if (baseTemplateInfo instanceof InterfaceParamsInfo) {
                     //默认使用mybatisplus IService
                     superPojoInfo = new SuperPojoInfo("IService", pojoName, packageName);
@@ -286,6 +432,8 @@ public class GenerateCodeAction implements ActionListener {
     }
 
     /**
+     * xml 模板数据
+     *
      * @param baseTemplateInfo
      * @return
      */
@@ -294,11 +442,10 @@ public class GenerateCodeAction implements ActionListener {
         BaseTemplateInfo mapperPojo = templateParamsInfoMap.get(TemplateTypeEnum.MAPPER.getTemplateId());
         XmlParamsInfo xmlParamsInfo = (XmlParamsInfo) baseTemplateInfo;
         if (mapperPojo != null) {
-            MapperParamsInfo mapperParamsInfo = (MapperParamsInfo) mapperPojo;
             xmlParamsInfo.setNamespace(StringUtils.isNotBlank(mapperPojo.getPackageRoot()) ? mapperPojo.getPackageRoot() + mapperPojo.getPackagePath() : mapperPojo.getPackagePath());
-            if (mapperParamsInfo.getSuperPojoInfo() != null) {
-                xmlParamsInfo.defaultXmlApiParamsInfos();
-            }
+//            MapperParamsInfo mapperParamsInfo = (MapperParamsInfo) mapperPojo;
+            // mapper 选择了自定义接口 需要生成对应的SQL
+//            xmlParamsInfo.defaultXmlApiParamsInfos(mapperParamsInfo.getMapperApiParamsInfos());
         }
         if (doPojo != null) {
             xmlParamsInfo.setTableColumnInfos(doPojo.getTableColumnInfos());
@@ -310,7 +457,7 @@ public class GenerateCodeAction implements ActionListener {
         dataMap.put("xmlMap", xmlParamsInfo);
         dataMap.put("xmlApiParamsInfos", mybatisPlus.isSelected() ? null : xmlApiParamsInfos);
         //还原选择
-        xmlParamsInfo.setXmlApiParamsInfos(null);
+//        xmlParamsInfo.setXmlApiParamsInfos(null);
         return dataMap;
     }
 
@@ -339,28 +486,6 @@ public class GenerateCodeAction implements ActionListener {
         return packageList;
     }
 
-    /**
-     * @param serviceParamsInfo
-     * @return
-     */
-    private Set<String> serviceColumnPackages(ServiceParamsInfo serviceParamsInfo) {
-        Set<String> packages = new HashSet<>();
-        InterfaceParamsInfo interfaceParamsInfo = serviceParamsInfo.getInterfaceParamsInfo();
-        StringBuilder sb = new StringBuilder();
-        if (StringUtils.isNotBlank(interfaceParamsInfo.getPackageRoot())) {
-            sb.append(interfaceParamsInfo.getPackageRoot());
-            sb.append(".");
-        }
-        sb.append(interfaceParamsInfo.getPackageName());
-        sb.append(".");
-        sb.append(interfaceParamsInfo.getPojoName());
-        packages.add(sb.toString());
-        SuperPojoInfo superPojoInfo = serviceParamsInfo.getSuperPojoInfo();
-        if (superPojoInfo != null) {
-            packages.add(superPojoInfo.getPackageName());
-        }
-        return packages;
-    }
 
     /**
      * @param baseTemplateInfo
@@ -409,7 +534,7 @@ public class GenerateCodeAction implements ActionListener {
                     interfaceParamsInfo.setPackageRoot(interfaceParamsInfo.getUseDefaultPackageRoot(customJFileChooserPanel.getFileName()));
                     interfaceParamsInfo.setAuthor(jdbcSourceInfo.getCreator());
                     interfaceParamsInfo.setJdbcTableInfo(jdbcTableInfo);
-                    interfaceParamsInfo.setSuperPojoInfo(this.getSuperPojoName(apiSuperPath.getText().trim()));
+                    interfaceParamsInfo.setSuperPojoInfo(this.getSuperPojoName(apiSuperPath.getText().trim(), true));
                     TemplateInfo interfaceTp = new TemplateInfo(customJCheckBox.getId());
                     interfaceParamsInfo.setTemplateInfo(interfaceTp);
                     this.checkTemplate(interfaceParamsInfo);
@@ -444,7 +569,7 @@ public class GenerateCodeAction implements ActionListener {
                         serviceParamsInfo.setPackageRoot(null);
                     }
                     //父类
-                    final SuperPojoInfo superPojoName = this.getSuperPojoName(implSuper);
+                    final SuperPojoInfo superPojoName = this.getSuperPojoName(implSuper, true);
                     serviceParamsInfo.setSuperPojoInfo(superPojoName);
                     serviceParamsInfo.setPojoDesc(templateTypeEnum.getTemplateDesc());
                     serviceParamsInfo.setAuthor(jdbcSourceInfo.getCreator());
@@ -464,10 +589,9 @@ public class GenerateCodeAction implements ActionListener {
                     //获取路径
                     CustomJTextField pojoPathT = modelBoxInfo.getPojoPathField();
                     if (TemplateTypeEnum.XML.getTemplateId().equals(customJCheckBox.getId())) {
+                        //xml模板 参数
                         XmlParamsInfo xmlParamsInfo = (XmlParamsInfo) modelBoxInfo.getBindObject();
                         List<JdbcMapJavaInfo> jdbcMapJavaInfos = xmlParamsInfo.getTableColumnInfos();
-                        //xml模板 参数
-//                        XmlParamsInfo xmlParamsInfo = (XmlParamsInfo) commonPanel.getBindObject();
                         xmlParamsInfo.setPojoType(customJCheckBox.getId());
                         xmlParamsInfo.setPojoName(packNameT.getText());
                         xmlParamsInfo.setPackageName(packageT.getText());
@@ -477,7 +601,6 @@ public class GenerateCodeAction implements ActionListener {
                         xmlParamsInfo.setPojoDesc(TemplateTypeEnum.XML.getTemplateDesc());
                         TemplateInfo templateInfo = new TemplateInfo(customJCheckBox.getId());
                         xmlParamsInfo.setTemplateInfo(templateInfo);
-                        xmlParamsInfo.setTableColumnInfos(jdbcMapJavaInfos);
                         xmlParamsInfo.setPackageRoot(xmlParamsInfo.getUseDefaultPackageRoot(customJFileChooserPanel.getFileName()));
                         xmlParamsInfo.setTemplateTypeEnum(templateTypeEnum);
                         this.checkTemplate(xmlParamsInfo);
@@ -496,11 +619,10 @@ public class GenerateCodeAction implements ActionListener {
                     } else {
                         //获取父类
                         CustomJTextField superPathT = modelBoxInfo.getSuperPathField();
-//                        CustomJTextField superPathT = (CustomJTextField) ((CommonPanel) commonPanel.getComponent(3)).getComponent(1);
                         if (TemplateTypeEnum.MAPPER.getTemplateId().equals(customJCheckBox.getId())) {
                             //mapper模板 参数
                             MapperParamsInfo mapperParamsInfo = (MapperParamsInfo) modelBoxInfo.getBindObject();
-                            mapperParamsInfo.setSuperPojoInfo(this.getSuperPojoName(superPathT.getText().trim()));
+                            mapperParamsInfo.setSuperPojoInfo(this.getSuperPojoName(superPathT.getText().trim(), true));
                             mapperParamsInfo.setPojoDesc(templateTypeEnum.getTemplateDesc());
                             mapperParamsInfo.setPojoType(customJCheckBox.getId());
                             mapperParamsInfo.setPackageName(packageT.getText());
@@ -515,11 +637,29 @@ public class GenerateCodeAction implements ActionListener {
                             mapperParamsInfo.setPackageRoot(mapperParamsInfo.getUseDefaultPackageRoot(customJFileChooserPanel.getFileName()));
                             this.checkTemplate(mapperParamsInfo);
                             templateParamsInfoMap.put(customJCheckBox.getId(), mapperParamsInfo);
+                        } else if (TemplateTypeEnum.CONTROLLER.getTemplateId().equals(customJCheckBox.getId())) {
+                            ControllerParamsInfo controllerParamsInfo = (ControllerParamsInfo) modelBoxInfo.getBindObject();
+                            controllerParamsInfo.setAuthor(jdbcSourceInfo.getCreator());
+                            controllerParamsInfo.setJdbcTableInfo(jdbcTableInfo);
+                            controllerParamsInfo.setPojoDesc(templateTypeEnum.getTemplateDesc());
+                            controllerParamsInfo.setPojoType(customJCheckBox.getId());
+                            controllerParamsInfo.setPackageName(packageT.getText());
+                            controllerParamsInfo.setPojoName(packNameT.getText());
+                            controllerParamsInfo.setPojoPath(pojoPathT.getText());
+                            controllerParamsInfo.setTemplateTypeEnum(templateTypeEnum);
+                            TemplateInfo templateInfo = new TemplateInfo(customJCheckBox.getId());
+                            final String tableName = jdbcTableInfo.getTableName();
+                            controllerParamsInfo.setRootRequestMapping("/" + StrUtil.underlineToCamelToLower(tableName));
+                            controllerParamsInfo.setTemplateInfo(templateInfo);
+                            controllerParamsInfo.setDefaultPackageName(PojoParamsInfo.getDefaultPackageName(templateTypeEnum, StrUtil.underlineToCamelToLower(jdbcTableInfo.getTableName())));
+                            controllerParamsInfo.setPackageRoot(controllerParamsInfo.getUseDefaultPackageRoot(customJFileChooserPanel.getFileName()));
+                            controllerParamsInfo.setSuperPojoInfo(this.getSuperPojoName(superPathT.getText().trim(), false));
+                            templateParamsInfoMap.put(customJCheckBox.getId(), controllerParamsInfo);
                         } else {
                             List<JdbcMapJavaInfo> jdbcMapJavaInfos = (List<JdbcMapJavaInfo>) modelBoxInfo.getBindObject();
                             //do、vo模板参数
                             PojoParamsInfo pojoParamsInfo = new PojoParamsInfo();
-                            pojoParamsInfo.setSuperPojoInfo(this.getSuperPojoName(superPathT.getText().trim()));
+                            pojoParamsInfo.setSuperPojoInfo(this.getSuperPojoName(superPathT.getText().trim(), true));
                             pojoParamsInfo.setPojoDesc(templateTypeEnum.getTemplateDesc());
                             pojoParamsInfo.setPojoType(customJCheckBox.getId());
                             pojoParamsInfo.setPackageName(packageT.getText());
@@ -559,9 +699,10 @@ public class GenerateCodeAction implements ActionListener {
 
     /**
      * @param superPojo
+     * @param genericFlag
      * @return
      */
-    private SuperPojoInfo getSuperPojoName(String superPojo) {
+    private SuperPojoInfo getSuperPojoName(String superPojo, boolean genericFlag) {
         if (StringUtils.isNotBlank(superPojo)) {
             SuperPojoInfo superPojoInfo = new SuperPojoInfo();
             if (superPojo.indexOf(".") > 0) {
@@ -571,7 +712,7 @@ public class GenerateCodeAction implements ActionListener {
                 superPojoInfo.setPojoName(superPojo);
             }
             superPojoInfo.setPackageName(superPojo);
-            superPojoInfo.setGenericFlag(true);
+            superPojoInfo.setGenericFlag(genericFlag);
             return superPojoInfo;
         }
         return null;

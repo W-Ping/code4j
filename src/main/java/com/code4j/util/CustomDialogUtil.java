@@ -1,7 +1,7 @@
 package com.code4j.util;
 
 import com.code4j.component.dialog.*;
-import com.code4j.config.TemplateTypeEnum;
+import com.code4j.enums.TemplateTypeEnum;
 import com.code4j.enums.DataSourceTypeEnum;
 import com.code4j.pojo.GenerateResultInfo;
 import com.code4j.pojo.JdbcSourceInfo;
@@ -92,6 +92,17 @@ public class CustomDialogUtil {
     public static ServiceApiConfigDialog showServiceApiConfigDialog(final Component parentComponent, final String title, TemplateTypeEnum templateTypeEnum) {
         ServiceApiConfigDialog serviceApiConfigDialog = new ServiceApiConfigDialog(parentComponent, title, true, templateTypeEnum);
         return serviceApiConfigDialog;
+    }
+
+    /**
+     * @param parentComponent
+     * @param title
+     * @param templateTypeEnum
+     * @return
+     */
+    public static ControllerApiConfigDialog showControllerApiConfigDialog(final Component parentComponent, final String title, TemplateTypeEnum templateTypeEnum) {
+        ControllerApiConfigDialog controllerApiConfigDialog = new ControllerApiConfigDialog(parentComponent, title, true, templateTypeEnum);
+        return controllerApiConfigDialog;
     }
 
     /**

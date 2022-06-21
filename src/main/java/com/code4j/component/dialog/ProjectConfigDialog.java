@@ -3,7 +3,7 @@ package com.code4j.component.dialog;
 import com.code4j.component.panel.CommonPanel;
 import com.code4j.component.panel.TopPanel;
 import com.code4j.config.Code4jConstants;
-import com.code4j.config.TemplateTypeEnum;
+import com.code4j.enums.TemplateTypeEnum;
 import com.code4j.pojo.ProjectCodeConfigInfo;
 import com.code4j.util.CustomDialogUtil;
 import com.code4j.util.SQLiteUtil;

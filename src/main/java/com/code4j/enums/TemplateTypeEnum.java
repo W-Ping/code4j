@@ -1,4 +1,4 @@
-package com.code4j.config;
+package com.code4j.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,15 +13,15 @@ public enum TemplateTypeEnum {
     /**
      *
      */
-    DO("DO", "tp_do.ftlx", ".java", "entity 配置"),
+    DO("DO", "tp_do.ftlx", ".java", "Entity 配置"),
     /**
      *
      */
-    VO("VO", "tp_vo.ftlx", ".java", "vo 配置"),
+    VO("VO", "tp_vo.ftlx", ".java", "VO 配置"),
     /**
      *
      */
-    XML("XML", "tp_xml.ftlx", ".xml", "xml 配置"),
+    XML("XML", "tp_xml.ftlx", ".xml", "Xml 配置"),
     /**
      *
      */
@@ -29,11 +29,16 @@ public enum TemplateTypeEnum {
     /**
      *
      */
-    SERVICE_API("SERVICE_API", "tp_service_api.ftlx", ".java", "service API 配置"),
+    SERVICE_API("SERVICE_API", "tp_service_api.ftlx", ".java", "Service Api 配置"),
     /**
      *
      */
-    SERVICE("SERVICE", "tp_service.ftlx", ".java", "service Impl 配置"),
+    SERVICE("SERVICE", "tp_service.ftlx", ".java", "Service Impl 配置"),
+
+    /**
+     *
+     */
+    CONTROLLER("CONTROLLER", "tp_controller.ftlx", ".java", "Controller 配置"),
     ;
     private String templateId;
     private String templateName;

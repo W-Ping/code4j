@@ -1,4 +1,4 @@
-package com.code4j.config;
+package com.code4j.enums;
 
 /**
  * @author liu_wp
@@ -6,6 +6,9 @@ package com.code4j.config;
  * @see
  */
 public enum ServiceApiTemplateEnum {
+    /**
+     *
+     */
     INSERT("1", "insert"),
     INSERT_BATCH("2", "insert batch"),
     DELETE("3", "delete"),
