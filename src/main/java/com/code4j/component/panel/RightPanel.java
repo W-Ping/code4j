@@ -3,7 +3,7 @@ package com.code4j.component.panel;
 import com.code4j.action.GenerateCodeAction;
 import com.code4j.component.CustomJCheckBox;
 import com.code4j.component.CustomJTextField;
-import com.code4j.component.dialog.MapperConfigDialog;
+import com.code4j.component.button.CustomJButton;
 import com.code4j.component.label.TemplateClickLabel;
 import com.code4j.component.select.ProjectConfigSelect;
 import com.code4j.config.Code4jConstants;
@@ -30,32 +30,35 @@ public class RightPanel extends BasePanel {
     /**
      * 垂直布局容器总数量
      */
-    private final static int V_CONTAINERS_COUNT = 8;
+    private final static int V_CONTAINERS_COUNT = 9;
     private final static Dimension INPUT_DIMENSION = new Dimension(200, 30);
     private final static Dimension PACKAGE_DIMENSION = new Dimension(200, 30);
     private final static Dimension PATH_DIMENSION = new Dimension(120, 30);
-    private List<CustomJCheckBox> customJCheckBoxList = new ArrayList<>();
+    private final List<CustomJCheckBox> customJCheckBoxList = new ArrayList<>();
     private ProjectCodeConfigInfo projectCodeConfigInfo;
 
-    private JTextField doPackName;
-    private JTextField doPackPath;
+    private CustomJTextField doPackName;
+    private CustomJTextField doPackPath;
 
-    private JTextField voPackName;
-    private JTextField voPackPath;
+    private CustomJTextField voPackName;
+    private CustomJTextField voPackPath;
 
-    private JTextField xmlPackName;
-    private JTextField xmlPackPath;
+    private CustomJTextField xmlPackName;
+    private CustomJTextField xmlPackPath;
 
-    private JTextField mapperPackName;
-    private JTextField mapperPackPath;
+    private CustomJTextField mapperPackName;
+    private CustomJTextField mapperPackPath;
 
-    private JTextField serviceApiPackName;
-    private JTextField serviceApiPackPath;
+    private CustomJTextField serviceApiPackName;
+    private CustomJTextField serviceApiPackPath;
 
-    private JTextField voSpText;
-    private JTextField serviceSpText;
-    private JTextField mapperSpText;
-    private JTextField doSpText;
+    private CustomJTextField serviceImplPackName;
+    private CustomJTextField serviceImplPackPath;
+    private CustomJTextField voSpText;
+    private CustomJTextField serviceSpText;
+    private CustomJTextField serviceImplSpText;
+    private CustomJTextField mapperSpText;
+    private CustomJTextField doSpText;
 
     public RightPanel(final Dimension dimension) {
         super(new FlowLayout(FlowLayout.LEFT), dimension);
@@ -103,31 +106,33 @@ public class RightPanel extends BasePanel {
         projectP.setBorder(BorderFactory.createTitledBorder(lineBorder, "项目配置（" + jdbcTableInfo.getDbName() + "." + tableName + "）"));
         JLabel p1 = new JLabel("项目地址：");
         CustomJFileChooserPanel p1V = new CustomJFileChooserPanel(this, false, JFileChooser.DIRECTORIES_ONLY);
-        CustomJCheckBox lombokCb=new CustomJCheckBox("lombok",true,"lombok");
-        CustomJCheckBox mybatisplusCb=new CustomJCheckBox("mybatis-plus",true,"mybatisplus");
+        CustomJCheckBox lombokCb = new CustomJCheckBox("lombok", true, "lombok");
+        CustomJCheckBox swaggerCb = new CustomJCheckBox("swagger", true, "swagger");
+        CustomJCheckBox mybatisplusCb = new CustomJCheckBox("mybatis-plus", true, "mybatisplus");
+
         //项目配置
         ProjectConfigSelect projectConfigSelect = new ProjectConfigSelect(this, tableName, (c, item) -> {
             ((RightPanel) c).loadProjectConfig(item);
         });
-        projectP.addList(p1, p1V, projectConfigSelect,lombokCb,mybatisplusCb);
+        projectP.addList(p1, p1V, projectConfigSelect, lombokCb, swaggerCb, mybatisplusCb);
         //----------------------------------------------DO 配置---------------------------------------------
-        CommonPanel daoP = new CommonPanel(new FlowLayout(FlowLayout.LEFT),null,tableColumnInfos);
+        CommonPanel daoP = new CommonPanel(new FlowLayout(FlowLayout.LEFT), null, tableColumnInfos);
         daoP.setBorder(BorderFactory.createTitledBorder(lineBorder, TemplateTypeEnum.DO.getTemplateDesc()));
         CommonPanel dp1 = new CommonPanel(new JLabel("名称："), new CustomJTextField(this.getPojoName(tableName, Code4jConstants.DO_SUFFIX), INPUT_DIMENSION));
         CommonPanel dp2 = new CommonPanel(new JLabel("包名："), doPackName = new CustomJTextField(null, PACKAGE_DIMENSION));
         CommonPanel dp3 = new CommonPanel(new JLabel("路径："), doPackPath = new CustomJTextField(null, PATH_DIMENSION));
         CommonPanel sp = new CommonPanel(new JLabel("父类："), doSpText = new CustomJTextField(Code4jConstants.DO_SUPER_CLASS, INPUT_DIMENSION));
-        CommonPanel dp4 = new CommonPanel(new TemplateClickLabel("字段配置", jdbcTableInfo.getTableName() + " " + TemplateTypeEnum.DO.getTemplateDesc(), TemplateTypeEnum.DO, daoP));
+        CommonPanel dp4 = new CommonPanel(new TemplateClickLabel("字段配置", jdbcTableInfo.getTableName() + " " + TemplateTypeEnum.DO.getTemplateDesc(), TemplateTypeEnum.DO, daoP, true));
         daoP.addList(dp1, dp2, dp3, sp, dp4);
 
         //----------------------------------------------vo 配置---------------------------------------------
-        CommonPanel voP = new CommonPanel(new FlowLayout(FlowLayout.LEFT), avgW,tableColumnInfos);
+        CommonPanel voP = new CommonPanel(new FlowLayout(FlowLayout.LEFT), avgW, tableColumnInfos);
         voP.setBorder(BorderFactory.createTitledBorder(lineBorder, TemplateTypeEnum.VO.getTemplateDesc()));
         CommonPanel vp1 = new CommonPanel(new JLabel("名称："), new CustomJTextField(this.getPojoName(tableName, Code4jConstants.VO_SUFFIX), INPUT_DIMENSION));
         CommonPanel vp2 = new CommonPanel(new JLabel("包名："), voPackName = new CustomJTextField(null, PACKAGE_DIMENSION));
         CommonPanel vp3 = new CommonPanel(new JLabel("路径："), voPackPath = new CustomJTextField(null, PATH_DIMENSION));
         CommonPanel voSp = new CommonPanel(new JLabel("父类："), voSpText = new CustomJTextField(null, INPUT_DIMENSION));
-        CommonPanel vp4 = new CommonPanel(new TemplateClickLabel("字段配置", jdbcTableInfo.getTableName() + " " + TemplateTypeEnum.VO.getTemplateDesc(), TemplateTypeEnum.DO, voP));
+        CommonPanel vp4 = new CommonPanel(new TemplateClickLabel("字段配置", jdbcTableInfo.getTableName() + " " + TemplateTypeEnum.VO.getTemplateDesc(), TemplateTypeEnum.DO, voP, true));
         voP.addList(vp1, vp2, vp3, voSp, vp4);
 
         //----------------------------------------------service 配置---------------------------------------------
@@ -139,6 +144,15 @@ public class RightPanel extends BasePanel {
         CommonPanel serviceSp = new CommonPanel(new JLabel("父类："), serviceSpText = new CustomJTextField(null, INPUT_DIMENSION));
         serviceP.addList(serviceP1, serviceP2, serviceP3, serviceSp);
 
+        //----------------------------------------------service 配置---------------------------------------------
+        CommonPanel serviceImpl = new CommonPanel(new FlowLayout(FlowLayout.LEFT), avgW);
+        serviceImpl.setBorder(BorderFactory.createTitledBorder(lineBorder, TemplateTypeEnum.SERVICE.getTemplateDesc()));
+        CommonPanel serviceImpl1 = new CommonPanel(new JLabel("名称："), new CustomJTextField(this.getPojoName(tableName, Code4jConstants.SERVICE_SUFFIX) + "Impl", INPUT_DIMENSION));
+        CommonPanel serviceImpl2 = new CommonPanel(new JLabel("包名："), serviceImplPackName = new CustomJTextField(null, PACKAGE_DIMENSION));
+        CommonPanel serviceImpl3 = new CommonPanel(new JLabel("路径："), serviceImplPackPath = new CustomJTextField(Code4jConstants.DEFAULT_PATH, PATH_DIMENSION));
+        CommonPanel serviceImpl4 = new CommonPanel(new JLabel("父类："), serviceImplSpText = new CustomJTextField(null, INPUT_DIMENSION));
+        serviceImpl.addList(serviceImpl1, serviceImpl2, serviceImpl3, serviceImpl4);
+
         //----------------------------------------------mapper 配置---------------------------------------------
         CommonPanel mapperP = new CommonPanel(new FlowLayout(FlowLayout.LEFT), avgW, new MapperParamsInfo(tableColumnInfos));
         mapperP.setBorder(BorderFactory.createTitledBorder(lineBorder, TemplateTypeEnum.MAPPER.getTemplateDesc()));
@@ -146,44 +160,52 @@ public class RightPanel extends BasePanel {
         CommonPanel mapperP2 = new CommonPanel(new JLabel("包名："), mapperPackName = new CustomJTextField(null, PACKAGE_DIMENSION));
         CommonPanel mapperP3 = new CommonPanel(new JLabel("路径："), mapperPackPath = new CustomJTextField(null, PATH_DIMENSION));
         CommonPanel mapperSp = new CommonPanel(new JLabel("父类："), mapperSpText = new CustomJTextField(Code4jConstants.MAPPER_SUPER_CLASS, INPUT_DIMENSION));
-        TemplateClickLabel<MapperConfigDialog> mapperP4 = new TemplateClickLabel("配 置", jdbcTableInfo.getTableName() + " " + TemplateTypeEnum.MAPPER.getTemplateDesc(), TemplateTypeEnum.MAPPER, mapperP);
+        TemplateClickLabel mapperP4 = new TemplateClickLabel("配 置", jdbcTableInfo.getTableName() + " " + TemplateTypeEnum.MAPPER.getTemplateDesc(), TemplateTypeEnum.MAPPER, mapperP, !mybatisplusCb.isSelected());
         mapperP.addList(mapperP1, mapperP2, mapperP3, mapperSp, mapperP4);
 
         //----------------------------------------------xml 配置---------------------------------------------
-        CommonPanel xmlP = new CommonPanel(new FlowLayout(FlowLayout.LEFT), avgW,new XmlParamsInfo(tableColumnInfos));
+        CommonPanel xmlP = new CommonPanel(new FlowLayout(FlowLayout.LEFT), avgW, new XmlParamsInfo(tableColumnInfos));
         xmlP.setBorder(BorderFactory.createTitledBorder(lineBorder, TemplateTypeEnum.XML.getTemplateDesc()));
         CommonPanel xml1P = new CommonPanel(new JLabel("名称："), new CustomJTextField(this.getPojoName(tableName, Code4jConstants.XML_SUFFIX), INPUT_DIMENSION));
         CommonPanel xml2P = new CommonPanel(new JLabel("包名："), xmlPackName = new CustomJTextField(null, PACKAGE_DIMENSION));
         CommonPanel xml3P = new CommonPanel(new JLabel("路径："), xmlPackPath = new CustomJTextField(null, PATH_DIMENSION));
-        TemplateClickLabel xml4v = new TemplateClickLabel("XML配置", jdbcTableInfo.getTableName() + " " + TemplateTypeEnum.XML.getTemplateDesc(), TemplateTypeEnum.XML, xmlP);
+        TemplateClickLabel xml4v = new TemplateClickLabel("XML配置", jdbcTableInfo.getTableName() + " " + TemplateTypeEnum.XML.getTemplateDesc(), TemplateTypeEnum.XML, xmlP, !mybatisplusCb.isSelected());
         xmlP.addList(xml1P, xml2P, xml3P, xml4v);
 
         //----------------------------------------------CheckBox 配置---------------------------------------------
         CommonPanel optionP = new CommonPanel(new FlowLayout(FlowLayout.LEFT), avgW);
-        CustomJCheckBox cb1 = new CustomJCheckBox(TemplateTypeEnum.DO.getTemplateDesc(), true, TemplateTypeEnum.DO.getTemplateId(), daoP);
-        CustomJCheckBox cb2 = new CustomJCheckBox(TemplateTypeEnum.VO.getTemplateDesc(), true, TemplateTypeEnum.VO.getTemplateId(), voP);
-        CustomJCheckBox cb4 = new CustomJCheckBox(TemplateTypeEnum.XML.getTemplateDesc(), true, TemplateTypeEnum.XML.getTemplateId(), xmlP);
-        CustomJCheckBox cb5 = new CustomJCheckBox(TemplateTypeEnum.MAPPER.getTemplateDesc(), true, TemplateTypeEnum.MAPPER.getTemplateId(), mapperP);
-        CustomJCheckBox cb6 = new CustomJCheckBox(TemplateTypeEnum.SERVICE_API.getTemplateDesc(), false, TemplateTypeEnum.SERVICE_API.getTemplateId(), serviceP);
+        CustomJCheckBox cb1 = new CustomJCheckBox(TemplateTypeEnum.DO.getTemplateDesc(), true, TemplateTypeEnum.DO.getTemplateId(), this.convertModelBox(daoP, true));
+        CustomJCheckBox cb2 = new CustomJCheckBox(TemplateTypeEnum.VO.getTemplateDesc(), true, TemplateTypeEnum.VO.getTemplateId(), this.convertModelBox(voP, true));
+        CustomJCheckBox cb4 = new CustomJCheckBox(TemplateTypeEnum.XML.getTemplateDesc(), true, TemplateTypeEnum.XML.getTemplateId(), this.convertModelBox(xmlP, false));
+        CustomJCheckBox cb5 = new CustomJCheckBox(TemplateTypeEnum.MAPPER.getTemplateDesc(), true, TemplateTypeEnum.MAPPER.getTemplateId(), this.convertModelBox(mapperP, true));
+        CustomJCheckBox cb6 = new CustomJCheckBox(TemplateTypeEnum.SERVICE_API.getTemplateDesc(), false, TemplateTypeEnum.SERVICE_API.getTemplateId(), new ServiceModelBox(this.convertModelBox(serviceP, true), this.convertModelBox(serviceImpl, true)));
         optionP.addList(cb1, cb2, cb5, cb4, cb6);
 
         //添加绑定要生成代码的容器 有序添加 0：do配置；1：vo配置；2：mapper配置；3：service api配置
         customJCheckBoxList.addAll(Stream.of(cb1, cb2, cb5, cb4, cb6).collect(Collectors.toList()));
+        //mybatispuls 插件 关联mapperP4 和xml4v
+        mybatisplusCb.addActionListener(new CustomJCheckBox.CustomJCheckBoxSelectedAction((v, c) -> {
+            for (JComponent jComponent : c) {
+                jComponent.setVisible(false);
+            }
+        }, (v, c) -> {
+            for (JComponent jComponent : c) {
+                jComponent.setVisible(true);
+            }
+        }, mapperP4, xml4v));
 
         CommonPanel btnP = new CommonPanel(new FlowLayout(FlowLayout.RIGHT), new Dimension((int) preferredSize.getWidth() - 10, avgH - 20));
-        JButton generate = new JButton(" 生成代码 ");
-        generate.addActionListener(new GenerateCodeAction(this, p1V, jdbcTableInfo, customJCheckBoxList, jdbcSourceInfo));
+        CustomJButton generate = new CustomJButton(" 生成代码 ", new GenerateCodeAction(this, p1V, jdbcTableInfo, customJCheckBoxList, jdbcSourceInfo, lombokCb, mybatisplusCb, swaggerCb));
         btnP.add(generate);
-
-
         //布局
         Box box = Box.createVerticalBox();
         box.add(projectP);
         box.add(daoP);
         box.add(voP);
-        box.add(serviceP);
         box.add(mapperP);
         box.add(xmlP);
+        box.add(serviceP);
+        box.add(serviceImpl);
         box.add(optionP);
         box.add(btnP);
         this.add(box);
@@ -193,6 +215,26 @@ public class RightPanel extends BasePanel {
 
     public void defaultInit(String tableName) {
         this.loadProjectConfig(new ProjectCodeConfigInfo(tableName));
+    }
+
+    /**
+     * @param commonPanel
+     * @return
+     */
+    private ModelBoxInfo convertModelBox(CommonPanel commonPanel, boolean haveSuperClass) {
+        //获取名称
+        CustomJTextField packNameT = (CustomJTextField) ((CommonPanel) commonPanel.getComponent(0)).getComponent(1);
+        //获取包名
+        CustomJTextField packageT = (CustomJTextField) ((CommonPanel) commonPanel.getComponent(1)).getComponent(1);
+        //获取路径
+        CustomJTextField pojoPathT = (CustomJTextField) ((CommonPanel) commonPanel.getComponent(2)).getComponent(1);
+        //获取父类路径
+        CustomJTextField superPathT = null;
+        if (haveSuperClass) {
+            superPathT = (CustomJTextField) ((CommonPanel) commonPanel.getComponent(3)).getComponent(1);
+        }
+
+        return new ModelBoxInfo(packNameT, packageT, pojoPathT, superPathT, commonPanel.getBindObject());
     }
 
     /**
@@ -209,16 +251,15 @@ public class RightPanel extends BasePanel {
             xmlPackPath.setText(info.getXmlPath());
             mapperPackName.setText(info.getMapperPackageName());
             mapperPackPath.setText(info.getMapperPath());
+            serviceImplPackName.setText(info.getServiceImplPackageName());
+            serviceImplPackPath.setText(info.getServiceImplPath());
             serviceApiPackName.setText(info.getServiceApiPackageName());
             serviceApiPackPath.setText(info.getServiceApiPath());
             doSpText.setText(info.getDoSuperClass());
             voSpText.setText(info.getVoSuperClass());
             mapperSpText.setText(info.getMapperSuperClass());
             serviceSpText.setText(info.getServiceSuperClass());
-            doSpText.setToolTipText("父类全路径");
-            voSpText.setToolTipText("父类全路径");
-            serviceSpText.setToolTipText("父类全路径");
-            mapperSpText.setToolTipText("父类全路径");
+            serviceImplSpText.setText(info.getServiceImplSuperClass());
         }
     }
 

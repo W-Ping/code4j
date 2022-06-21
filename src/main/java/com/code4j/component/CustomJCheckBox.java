@@ -1,6 +1,9 @@
 package com.code4j.component;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.function.BiConsumer;
 
 /**
  * @author liu_wp
@@ -15,14 +18,14 @@ public class CustomJCheckBox extends JCheckBox {
     private Object bindObject;
     private JComponent bindComponent;
 
-    public CustomJCheckBox(String text, boolean isSelect, String id) {
-        this(text, isSelect, id, null);
-    }
-
     public CustomJCheckBox(String text, boolean isSelect, String id, Object bindObject) {
         super(text, isSelect);
         this.id = id;
         this.bindObject = bindObject;
+    }
+
+    public CustomJCheckBox(String text, boolean isSelect, String id) {
+        this(text, isSelect, id, null);
     }
 
     public String getId() {
@@ -47,5 +50,30 @@ public class CustomJCheckBox extends JCheckBox {
 
     public void setBindComponent(final JComponent bindComponent) {
         this.bindComponent = bindComponent;
+    }
+
+    public static class CustomJCheckBoxSelectedAction implements ActionListener {
+        private BiConsumer<Object, JComponent[]> selected;
+        private BiConsumer<Object, JComponent[]> unSelected;
+        private JComponent[] jComponents;
+
+        public CustomJCheckBoxSelectedAction(BiConsumer<Object, JComponent[]> selected, BiConsumer<Object, JComponent[]> unSelected, JComponent... jComponents) {
+            this.selected = selected;
+            this.unSelected = unSelected;
+            this.jComponents = jComponents;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            AbstractButton abstractButton = (AbstractButton) e.getSource();
+            CustomJCheckBox customJCheckBox = (CustomJCheckBox) abstractButton;
+            if (abstractButton.getModel().isSelected()) {
+                if (selected != null) {
+                    selected.accept(customJCheckBox.getBindObject(), jComponents);
+                }
+            } else {
+                unSelected.accept(customJCheckBox.getBindObject(), jComponents);
+            }
+        }
     }
 }

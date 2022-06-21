@@ -83,21 +83,37 @@ public class ProjectCodeConfigInfo extends BaseInfo {
     @Column("mapper_path")
     private String mapperPath;
     /**
-     * 包名称
+     * service api 包名称
      */
     @Column("service_api_package_name")
     private String serviceApiPackageName;
 
     /**
-     * 路径
+     * service api 路径
      */
     @Column("service_api_path")
     private String serviceApiPath;
     /**
-     * mapper 父类
+     * service api 父类
      */
     @Column("service_super_path")
     private String serviceSuperClass;
+    /**
+     * service impl 包名称
+     */
+    @Column("service_impl_package_name")
+    private String serviceImplPackageName;
+
+    /**
+     * service impl 路径
+     */
+    @Column("service_impl_path")
+    private String serviceImplPath;
+    /**
+     * service impl 父类
+     */
+    @Column("service_impl_super_path")
+    private String serviceImplSuperClass;
 
     /**
      * 索引位置
@@ -129,11 +145,14 @@ public class ProjectCodeConfigInfo extends BaseInfo {
             this.xmlPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.XML, null);
             this.xmlPath = Code4jConstants.DEFAULT_XML_PATH;
             this.serviceApiPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.SERVICE_API, null);
+            this.serviceImplPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.SERVICE, null);
             this.serviceApiPath = Code4jConstants.DEFAULT_PATH;
+            this.serviceImplPath = Code4jConstants.DEFAULT_PATH;
             this.projectName = projectName;
             this.doSuperClass = Code4jConstants.DO_SUPER_CLASS;
             this.voSuperClass = Code4jConstants.VO_SUPER_CLASS;
             this.serviceSuperClass = Code4jConstants.SERVICE_SUPER_CLASS;
+            this.serviceImplSuperClass = Code4jConstants.SERVICE_SUPER_IMPL_CLASS;
             this.mapperSuperClass = Code4jConstants.MAPPER_SUPER_CLASS;
             this.index = index;
         }
@@ -282,5 +301,28 @@ public class ProjectCodeConfigInfo extends BaseInfo {
     public void setVoSuperClass(String voSuperClass) {
         this.voSuperClass = voSuperClass;
     }
-    
+
+    public String getServiceImplPackageName() {
+        return serviceImplPackageName;
+    }
+
+    public void setServiceImplPackageName(String serviceImplPackageName) {
+        this.serviceImplPackageName = serviceImplPackageName;
+    }
+
+    public String getServiceImplPath() {
+        return serviceImplPath;
+    }
+
+    public void setServiceImplPath(String serviceImplPath) {
+        this.serviceImplPath = serviceImplPath;
+    }
+
+    public String getServiceImplSuperClass() {
+        return serviceImplSuperClass;
+    }
+
+    public void setServiceImplSuperClass(String serviceImplSuperClass) {
+        this.serviceImplSuperClass = serviceImplSuperClass;
+    }
 }

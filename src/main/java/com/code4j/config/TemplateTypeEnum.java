@@ -25,7 +25,7 @@ public enum TemplateTypeEnum {
     /**
      *
      */
-    MAPPER("MAPPER", "tp_mapper.ftlx", ".java", "dao 配置"),
+    MAPPER("MAPPER", "tp_mapper.ftlx", ".java", "Mapper 配置"),
     /**
      *
      */
@@ -33,7 +33,7 @@ public enum TemplateTypeEnum {
     /**
      *
      */
-    SERVICE("SERVICE", "tp_service.ftlx", ".java", "service API 配置"),
+    SERVICE("SERVICE", "tp_service.ftlx", ".java", "service Impl 配置"),
     ;
     private String templateId;
     private String templateName;

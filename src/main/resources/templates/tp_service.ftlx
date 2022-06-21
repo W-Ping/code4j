@@ -7,13 +7,14 @@ import ${model};
 </#list>
 </#if>
 /**
-* ${(pojo.jdbcTableInfo.remark)!}
-* @author ${(pojo.author)!}
-* @date Created in ${.now}
-*/
-@Service
+ * ${(pojo.jdbcTableInfo.remark)!} 接口实现类
+ *
+ * @author ${(pojo.author)!}
+ * @date Created in ${.now}
+ */
+@Service("${(pojo.pojoName)!}")
 <#if (pojo.superPojoInfo)??>
-public class ${(pojo.pojoName)!} extends ${(pojo.superPojoInfo.pojoName)!} implements ${(pojo.interfaceParamsInfo.pojoName)!}{
+public class ${(pojo.pojoName)!} extends ${(pojo.superPojoInfo.pojoName)!}<#if isMybatisPlus==true><${pojo.superPojoInfo.genericMapperName},${pojo.superPojoInfo.genericPojoName}></#if> implements ${(pojo.interfaceParamsInfo.pojoName)!}{
 <#else>
 public class ${(pojo.pojoName)!} implements ${(pojo.interfaceParamsInfo.pojoName)!}{
 </#if>

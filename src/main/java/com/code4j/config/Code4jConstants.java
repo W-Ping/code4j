@@ -14,11 +14,11 @@ public class Code4jConstants {
     public final static String FAIL = "fail";
     public final static String APPLICATION_JAR = "code4j-v1.jar";
     public final static String SYS_ICON = "images/sys_icon.png";
-    public static Dimension FROM_MIN_DEFAULT_SIZE = new Dimension(1250, 650);
-    public static Dimension TOP_MIN_DEFAULT_SIZE = new Dimension(1250, 25);
-    public static Dimension LEFT_MIN_DEFAULT_SIZE = new Dimension(200, 530);
-    public static Dimension RIGHT_MIN_DEFAULT_SIZE = new Dimension(1030, 530);
-    public static Dimension BOTTOM_MIN_DEFAULT_SIZE = new Dimension(1250, 25);
+    public static Dimension FROM_MIN_DEFAULT_SIZE = new Dimension(1260, 750);
+    public static Dimension TOP_MIN_DEFAULT_SIZE = new Dimension(1260, 25);
+    public static Dimension LEFT_MIN_DEFAULT_SIZE = new Dimension(200, 700);
+    public static Dimension RIGHT_MIN_DEFAULT_SIZE = new Dimension(1040, 700);
+    public static Dimension BOTTOM_MIN_DEFAULT_SIZE = new Dimension(1260, 25);
 
     /**
      * 数据连接配置文件
@@ -50,16 +50,19 @@ public class Code4jConstants {
     public final static String DEFAULT_XML_PATH = "src/main/resources";
     public final static String DEFAULT_MAPPER_PACKAGE = "com.code4j.mapper";
     public final static String DEFAULT_SQL_XML_PACKAGE = "mapping.mysql";
-    public final static String DEFAULT_VO_PACKAGE = "com.code4j.pojo.vo ";
+    public final static String DEFAULT_VO_PACKAGE = "com.code4j.pojo.vo";
     public final static String DEFAULT_DO_PACKAGE = "com.code4j.pojo.entity";
     public final static String DEFAULT_SERVICE_PACKAGE = "com.code4j.service";
+    public final static String DEFAULT_SERVICE_IMPL_PACKAGE = "com.code4j.service.impl";
 
     public static final String TEMPLATE_PATH = "src/main/java/com/code4j/templates";
 
     public static final String MAPPER_SUPER_CLASS = "com.code4j.base.IBaseMapper";
     public static final String DO_SUPER_CLASS = "com.code4j.pojo.base.BaseEntity";
     public static final String VO_SUPER_CLASS = "com.code4j.pojo.base.BaseVO";
-    public static final String SERVICE_SUPER_CLASS = "com.code4j.service.BaseService";
+    public static final String SERVICE_SUPER_CLASS = "com.code4j.service.IBaseService";
+
+    public static final String SERVICE_SUPER_IMPL_CLASS = "com.code4j.service.impl.BaseService";
 
     public static final String CONFIG_NAME = "新建";
     public static Color selectionBackground = new Color(0x3992EA);

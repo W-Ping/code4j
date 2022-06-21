@@ -63,8 +63,11 @@ public class BaseTemplateInfo {
      */
     private String primaryKey;
 
-
     public BaseTemplateInfo() {
+    }
+
+    public BaseTemplateInfo(String pojoName) {
+        this.pojoName = pojoName;
     }
 
     public BaseTemplateInfo(List<JdbcMapJavaInfo> tableColumnInfos) {
@@ -221,7 +224,7 @@ public class BaseTemplateInfo {
     public String getUseDefaultPackageRoot(String fileName) {
         if (StringUtils.isNotBlank(this.defaultPackageName) && StringUtils.isNotBlank(this.packageName)
                 && this.defaultPackageName.equals(this.packageName) && StringUtils.isNotBlank(fileName)
-        && !this.packageName.startsWith(Code4jConstants.DEFAULT_ROOT_PACKAGE)) {
+                && !this.packageName.startsWith(Code4jConstants.DEFAULT_ROOT_PACKAGE)) {
 
 //            return packageRoot = Code4jConstants.DEFAULT_ROOT_PACKAGE + "." + fileName + ".";
             return packageRoot = Code4jConstants.DEFAULT_ROOT_PACKAGE + ".";
@@ -241,6 +244,8 @@ public class BaseTemplateInfo {
             sb.append(Code4jConstants.DEFAULT_DO_PACKAGE);
         } else if (TemplateTypeEnum.SERVICE_API.equals(templateTypeEnum)) {
             sb.append(Code4jConstants.DEFAULT_SERVICE_PACKAGE);
+        } else if (TemplateTypeEnum.SERVICE.equals(templateTypeEnum)) {
+            sb.append(Code4jConstants.DEFAULT_SERVICE_IMPL_PACKAGE);
         }
         if (StringUtils.isNotBlank(packageName)) {
             sb.append(".");
@@ -264,4 +269,5 @@ public class BaseTemplateInfo {
     public void setPrimaryKey(String primaryKey) {
         this.primaryKey = primaryKey;
     }
+
 }

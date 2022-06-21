@@ -5,7 +5,8 @@ import ${model};
 </#list>
 </#if>
 /**
- * ${(baseInfo.jdbcTableInfo.remark)!}
+ * ${(baseInfo.jdbcTableInfo.remark)!} Mapper类
+ *
  * @author ${(baseInfo.author)!}
  * @date Created in ${.now}
  */

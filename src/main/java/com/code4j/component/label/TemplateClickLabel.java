@@ -24,7 +24,7 @@ public class TemplateClickLabel<T extends BaseDialog> extends JLabel {
      * @param title
      * @param templateTypeEnum
      */
-    public TemplateClickLabel(String text, String title, TemplateTypeEnum templateTypeEnum, CommonPanel bindCommonPanel) {
+    public TemplateClickLabel(String text, String title, TemplateTypeEnum templateTypeEnum, CommonPanel bindCommonPanel, boolean Visible) {
         super(text);
         this.bindCommonPanel = bindCommonPanel;
         this.setForeground(Color.BLUE);
@@ -56,7 +56,7 @@ public class TemplateClickLabel<T extends BaseDialog> extends JLabel {
 
             }
         });
-        setVisible(true);
+        this.setVisible(Visible);
     }
 
     public CommonPanel getBindCommonPanel() {

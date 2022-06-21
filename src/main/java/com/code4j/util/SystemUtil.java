@@ -93,6 +93,23 @@ public class SystemUtil {
         }
     }
 
+    public static void open(String outDir) {
+        try {
+            String osName = System.getProperty("os.name");
+            if (osName != null) {
+                if (osName.contains("Mac")) {
+                    Runtime.getRuntime().exec("open " + outDir);
+                } else if (osName.contains("Windows")) {
+                    Runtime.getRuntime().exec("cmd /c start " + outDir);
+                } else {
+                    log.debug("文件输出目录:" + outDir);
+                }
+            }
+        } catch (IOException var3) {
+            var3.printStackTrace();
+        }
+    }
+
     public static JComponent createContent() {
 //        JPanel contentPane = new JPanel(new BorderLayout());
 //        JPanel webBrowserPanel = new JPanel(new BorderLayout());

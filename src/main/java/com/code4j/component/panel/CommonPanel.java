@@ -10,7 +10,6 @@ import java.awt.*;
 public class CommonPanel extends BasePanel {
 
     private Object bindObject;
-
     public CommonPanel() {
         super();
     }

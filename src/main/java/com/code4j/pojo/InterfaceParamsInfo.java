@@ -6,4 +6,13 @@ package com.code4j.pojo;
  * @see
  */
 public class InterfaceParamsInfo extends BaseTemplateInfo {
+    private SuperPojoInfo superPojoInfo;
+
+    public SuperPojoInfo getSuperPojoInfo() {
+        return superPojoInfo;
+    }
+
+    public void setSuperPojoInfo(SuperPojoInfo superPojoInfo) {
+        this.superPojoInfo = superPojoInfo;
+    }
 }

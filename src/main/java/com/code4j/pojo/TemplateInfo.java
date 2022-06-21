@@ -12,10 +12,16 @@ public class TemplateInfo {
     private String templatePath;
     private String templateId;
 
+    public TemplateInfo(String templateId, String templatePath) {
+        this.templateId = templateId;
+        this.templatePath = StringUtils.isNotBlank(templatePath) ? templatePath : Code4jConstants.TEMPLATE_PATH;
+    }
+
+    public TemplateInfo(String templateId) {
+        this(templateId, null);
+    }
+
     public String getTemplatePath() {
-        if (StringUtils.isBlank(templatePath)) {
-            return templatePath = Code4jConstants.TEMPLATE_PATH;
-        }
         return templatePath;
     }
 

@@ -1,10 +1,18 @@
 package ${(pojo.packageRoot)!""}${(pojo.packageName)!};
-
+<#if (packages)??><#list packages as model>
+import ${model};
+</#list>
+</#if>
 /**
-* ${(pojo.jdbcTableInfo.remark)!}
-* @author ${(pojo.author)!}
-* @date Created in ${.now}
-*/
+ * ${(pojo.jdbcTableInfo.remark)!} 接口
+ *
+ * @author ${(pojo.author)!}
+ * @date Created in ${.now}
+ */
+<#if isMybatisPlus==true>
+public interface ${(pojo.pojoName)!} extends ${pojo.superPojoInfo.pojoName}<#if pojo.superPojoInfo.genericPojoName??><${pojo.superPojoInfo.genericPojoName}></#if>{
+    <#else>
 public interface ${(pojo.pojoName)!}{
+</#if>
 
 }
