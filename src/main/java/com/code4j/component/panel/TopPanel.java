@@ -1,8 +1,9 @@
 package com.code4j.component.panel;
 
+import com.code4j.component.menu.CustomBasicMenuItemUI;
 import com.code4j.component.menu.CustomJMenuItem;
 import com.code4j.config.Code4jConstants;
-import com.code4j.connect.DataSourceTypeEnum;
+import com.code4j.enums.DataSourceTypeEnum;
 import com.code4j.pojo.ProjectCodeConfigInfo;
 import com.code4j.util.CustomDialogUtil;
 import com.code4j.util.SQLiteUtil;
@@ -26,18 +27,16 @@ import java.util.List;
  * @see
  */
 public class TopPanel extends BasePanel {
-    /**
-     *
-     */
-    private LeftPanel leftPanel;
-    private JMenu m2;
 
-    public TopPanel(final Dimension dimension) {
-        super(dimension);
+    private JMenu pcfMenu;
+
+    public TopPanel(final Dimension dimension, BasePanel leftPanel) {
+        super(null, dimension, leftPanel);
         JMenuBar jMenuBar = new JMenuBar();
-        JMenu m1 = new JMenu("数据源");
-        JMenuItem item = new JMenuItem("MySQL");
-        JMenuItem item2 = new JMenuItem("PostgerSql");
+        JMenu linkMenu = new JMenu("连接");
+        linkMenu.setIcon(new ImageIcon(ClassLoader.getSystemResource("images/add_link.png")));
+        CustomJMenuItem item = new CustomJMenuItem(DataSourceTypeEnum.MYSQL.typeName(), DataSourceTypeEnum.MYSQL.typeName() + "_close", new CustomBasicMenuItemUI(Code4jConstants.selectionBackground, Code4jConstants.selectionForeground));
+        CustomJMenuItem item2 = new CustomJMenuItem(DataSourceTypeEnum.POSTGRESQL.typeName(), DataSourceTypeEnum.POSTGRESQL.typeName() + "_close", new CustomBasicMenuItemUI(Code4jConstants.selectionBackground, Code4jConstants.selectionForeground));
         item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         item2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         item.addActionListener(new AbstractAction() {
@@ -52,39 +51,37 @@ public class TopPanel extends BasePanel {
                 showDBConfigDialog("新增连接", DataSourceTypeEnum.POSTGRESQL);
             }
         });
-        m1.add(item);
-        m1.add(item2);
-        m2 = new JMenu("项目配置");
-
-        CustomJMenuItem m2Item = new CustomJMenuItem(Code4jConstants.CONFIG_NAME + "+", null);
+        linkMenu.add(item);
+        linkMenu.add(item2);
+        pcfMenu = new JMenu("自定义配置");
+        pcfMenu.setIcon(new ImageIcon(ClassLoader.getSystemResource("images/config.png")));
+        CustomJMenuItem m2Item = new CustomJMenuItem(Code4jConstants.CONFIG_NAME, "add", new CustomBasicMenuItemUI(Code4jConstants.selectionBackground, Code4jConstants.selectionForeground));
         m2Item.addActionListener((e) -> {
-            showProjectConfigDialog("新增项目配置", null, false);
+            showProjectConfigDialog("新增自定义配置", null, false);
         });
         MatteBorder matteBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.black);
         m2Item.setBorder(matteBorder);
-        m2Item.setToolTipText(Code4jConstants.CONFIG_NAME);
+        m2Item.setForeground(new Color(0x0077FF));
         Font font = new Font(Font.DIALOG, Font.CENTER_BASELINE, 14);
         m2Item.setFont(font);
-        m2Item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        m2Item.setForeground(Color.BLUE);
-        m2.add(m2Item);
+        pcfMenu.add(m2Item);
         // 加载已添加的项目配置
         final List<ProjectCodeConfigInfo> projectConfigPropertyValues = SQLiteUtil.select(new ProjectCodeConfigInfo());
-//        List<ProjectCodeConfigInfo> projectConfigPropertyValues = PropertiesUtil.getProjectConfigPropertyValues();
+        log.info(">>>>>> load project config count {}", projectConfigPropertyValues == null ? 0 : projectConfigPropertyValues.size());
         if (!CollectionUtils.isEmpty(projectConfigPropertyValues)) {
             projectConfigPropertyValues.forEach(v -> {
-                CustomJMenuItem itm = new CustomJMenuItem(v.getProjectName(), v);
+                CustomJMenuItem itm = new CustomJMenuItem(v.getProjectName(), "tp", v, new CustomBasicMenuItemUI(Code4jConstants.selectionBackground, Code4jConstants.selectionForeground));
                 itm.addActionListener(e -> {
-                    showProjectConfigDialog("编辑项目配置", itm.getData(), true);
+                    showProjectConfigDialog("编辑自定义配置", itm.getData(), true);
                 });
-                m2.add(itm);
+                pcfMenu.add(itm);
             });
         }
-        jMenuBar.add(m1);
-        jMenuBar.add(m2);
-        JMenu m3 = new JMenu("帮助文档");
-        JMenuItem m31 = new JMenuItem("使用教程");
-        m31.addActionListener(e -> {
+
+        JMenu helpMenu = new JMenu("帮助文档");
+        helpMenu.setIcon(new ImageIcon(ClassLoader.getSystemResource("images/help.png")));
+        CustomJMenuItem tutorial = new CustomJMenuItem("使用教程", "tutorial", new CustomBasicMenuItemUI(Code4jConstants.selectionBackground, Code4jConstants.selectionForeground));
+        tutorial.addActionListener(e -> {
             InputStream resourceAsStream = TopPanel.class.getClassLoader().getResourceAsStream("README.md");
             String content = SystemUtil.readByStream(resourceAsStream);
             String html = Code4jConstants.SYS_TEMP_PATH + "\\代码生成工具说明文档.html";
@@ -95,8 +92,11 @@ public class TopPanel extends BasePanel {
                 ioException.printStackTrace();
             }
         });
-        m3.add(m31);
-        jMenuBar.add(m3);
+        helpMenu.add(tutorial);
+
+        jMenuBar.add(linkMenu);
+        jMenuBar.add(pcfMenu);
+        jMenuBar.add(helpMenu);
         CommonPanel commonPanel = new CommonPanel();
         commonPanel.add(jMenuBar);
 //        this.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -106,7 +106,6 @@ public class TopPanel extends BasePanel {
 
     @Override
     protected void init() {
-//        setBackground(Color.LIGHT_GRAY);
         MatteBorder matteBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray);
         this.setBorder(matteBorder);
     }
@@ -114,23 +113,23 @@ public class TopPanel extends BasePanel {
     /**
      *
      */
-    public void loadProjectCodeConfig() {
+    public void loadProjectCodeConfig(String option) {
         List<ProjectCodeConfigInfo> projectConfigPropertyValues = SQLiteUtil.select(new ProjectCodeConfigInfo());
-//        List<ProjectCodeConfigInfo> projectConfigPropertyValues = PropertiesUtil.getProjectConfigPropertyValues();
-        JPopupMenu popupMenu = m2.getPopupMenu();
+        JPopupMenu popupMenu = pcfMenu.getPopupMenu();
         Component firstComponent = popupMenu.getComponent(0);
-        m2.removeAll();
-        m2.add(firstComponent);
+        pcfMenu.removeAll();
+        pcfMenu.add(firstComponent);
         if (CollectionUtils.isNotEmpty(projectConfigPropertyValues)) {
             projectConfigPropertyValues.forEach(v -> {
-                CustomJMenuItem itm = new CustomJMenuItem(v.getProjectName(), v);
+                CustomJMenuItem itm = new CustomJMenuItem(v.getProjectName(), "tp", v, new CustomBasicMenuItemUI(Code4jConstants.selectionBackground, Code4jConstants.selectionForeground));
                 itm.addActionListener(e -> {
                     showProjectConfigDialog("编辑项目配置", itm.getData(), true);
                 });
-                m2.add(itm);
+                pcfMenu.add(itm);
             });
         }
     }
+
 
     /**
      * @param title
@@ -149,11 +148,4 @@ public class TopPanel extends BasePanel {
         CustomDialogUtil.showProjectConfigDialog(this, title, extObj, isUpdate);
     }
 
-    public LeftPanel getLeftPanel() {
-        return leftPanel;
-    }
-
-    public void setLeftPanel(final LeftPanel leftPanel) {
-        this.leftPanel = leftPanel;
-    }
 }

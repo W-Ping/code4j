@@ -2,6 +2,8 @@ package com.code4j.component.dialog;
 
 import com.code4j.component.panel.CommonPanel;
 import com.code4j.util.CustomDialogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
  * @see
  */
 public abstract class BaseDialog extends JDialog {
+    protected static final Logger log = LoggerFactory.getLogger(BaseDialog.class);
     private String title;
     protected Component parentComponent;
     protected Component contentPanel;

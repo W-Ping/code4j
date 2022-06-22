@@ -27,7 +27,6 @@ public class ProjectConfigSelect extends JComboBox {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                 List<ProjectCodeConfigInfo> items = SQLiteUtil.select(new ProjectCodeConfigInfo());
-//                List<ProjectCodeConfigInfo> items = PropertiesUtil.getProjectConfigPropertyValues();
                 ProjectCodeConfigInfo selectedItem = (ProjectCodeConfigInfo) projectConfigSelect.getSelectedItem();
                 projectConfigSelect.removeAllItems();
                 projectConfigSelect.addItem(defaultConfig);

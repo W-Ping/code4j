@@ -31,8 +31,10 @@ public class BottomPanel extends BasePanel {
         MatteBorder matteBorder = BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray);
         this.setBorder(matteBorder);
         CommonPanel commonPanel = new CommonPanel();
-        commonPanel.add(new JLabel("当前版本：" + Code4jConstants.APP_VERSION));
-//        this.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        final JLabel jLabel = new JLabel("当前版本：" + Code4jConstants.APP_VERSION);
+        Font font = new Font(Font.MONOSPACED, Font.CENTER_BASELINE, 10);
+        jLabel.setFont(font);
+        commonPanel.add(jLabel);
         this.setLayout(new BorderLayout());
         this.add(commonPanel, BorderLayout.EAST);
     }

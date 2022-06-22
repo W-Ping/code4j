@@ -1,7 +1,7 @@
 package com.code4j;
 
 import com.code4j.config.Code4jConstants;
-import com.code4j.config.TemplateTypeEnum;
+import com.code4j.enums.TemplateTypeEnum;
 import com.code4j.pojo.*;
 import com.code4j.util.FreemarkerUtil;
 import com.code4j.util.SystemUtil;
@@ -84,8 +84,7 @@ public class FreemarkerTest {
         tableColumnInfos.add(j1);
         tableColumnInfos.add(j2);
         tableColumnInfos.add(j3);
-        TemplateInfo templateInfo = new TemplateInfo();
-        templateInfo.setTemplateId(TemplateTypeEnum.DO.getTemplateId());
+        TemplateInfo templateInfo = new TemplateInfo(TemplateTypeEnum.DO.getTemplateId());
         templateInfo.setTemplatePath(Code4jConstants.TEMPLATE_PATH);
         pojoParamsInfo.setTemplateInfo(templateInfo);
         HashMap<String, Object> dataMap = new HashMap<>();
@@ -127,8 +126,7 @@ public class FreemarkerTest {
         tableColumnInfos.add(j1);
         tableColumnInfos.add(j2);
         tableColumnInfos.add(j3);
-        TemplateInfo templateInfo = new TemplateInfo();
-        templateInfo.setTemplateId(TemplateTypeEnum.VO.getTemplateId());
+        TemplateInfo templateInfo = new TemplateInfo(TemplateTypeEnum.VO.getTemplateId());
         templateInfo.setTemplatePath(Code4jConstants.TEMPLATE_PATH);
         pojoParamsInfo.setTemplateInfo(templateInfo);
         HashMap<String, Object> dataMap = new HashMap<>();
@@ -151,8 +149,7 @@ public class FreemarkerTest {
         jdbcTableInfo.setRemark("测试表");
         pojoParamsInfo.setAuthor("刘伟平");
         pojoParamsInfo.setJdbcTableInfo(jdbcTableInfo);
-        TemplateInfo templateInfo = new TemplateInfo();
-        templateInfo.setTemplateId(TemplateTypeEnum.MAPPER.getTemplateId());
+        TemplateInfo templateInfo = new TemplateInfo(TemplateTypeEnum.MAPPER.getTemplateId());
         templateInfo.setTemplatePath(Code4jConstants.TEMPLATE_PATH);
         pojoParamsInfo.setTemplateInfo(templateInfo);
         HashMap<String, Object> dataMap = new HashMap<>();
@@ -195,8 +192,7 @@ public class FreemarkerTest {
         tableColumnInfos.add(j1);
         tableColumnInfos.add(j2);
         tableColumnInfos.add(j3);
-        TemplateInfo templateInfo = new TemplateInfo();
-        templateInfo.setTemplateId(TemplateTypeEnum.XML.getTemplateId());
+        TemplateInfo templateInfo = new TemplateInfo(TemplateTypeEnum.XML.getTemplateId());
         templateInfo.setTemplatePath(Code4jConstants.TEMPLATE_PATH);
 
         XmlParamsInfo xmlParamsInfo = new XmlParamsInfo(tableColumnInfos);

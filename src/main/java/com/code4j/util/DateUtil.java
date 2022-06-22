@@ -2,10 +2,7 @@ package com.code4j.util;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -39,6 +36,17 @@ public class DateUtil {
             return instant.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern(format));
         }
         return null;
+    }
+
+    /**
+     * @param dateStr
+     * @return
+     */
+    public static Date str2Date(String dateStr) {
+        final LocalDateTime localDateTime = date2LocalDateTime(dateStr, null);
+        final ZoneId zoneId = ZoneOffset.systemDefault();
+        final Instant instant = localDateTime.atZone(zoneId).toInstant();
+        return Date.from(instant);
     }
 
     /**
@@ -84,5 +92,5 @@ public class DateUtil {
         Date date = new Date(dateTime);
         return dateFormatter(date, formatter);
     }
-    
+
 }

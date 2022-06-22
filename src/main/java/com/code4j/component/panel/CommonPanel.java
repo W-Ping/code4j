@@ -10,7 +10,6 @@ import java.awt.*;
 public class CommonPanel extends BasePanel {
 
     private Object bindObject;
-
     public CommonPanel() {
         super();
     }
@@ -29,9 +28,12 @@ public class CommonPanel extends BasePanel {
     }
 
     public CommonPanel(final LayoutManager layout, final Dimension dimension) {
-        super(layout, dimension);
+        this(layout, dimension,null);
     }
-
+    public CommonPanel(final LayoutManager layout, final Dimension dimension,Object bindObject) {
+        super(layout, dimension);
+        this.bindObject=bindObject;
+    }
     @Override
     protected void init() {
 

@@ -2,7 +2,7 @@ package com.code4j.component.dialog;
 
 import com.code4j.component.CustomJCheckBox;
 import com.code4j.component.panel.CommonPanel;
-import com.code4j.config.ServiceApiTemplateEnum;
+import com.code4j.enums.ServiceApiTemplateEnum;
 import com.code4j.util.CustomDialogUtil;
 
 import javax.swing.*;
@@ -64,6 +64,7 @@ public class ServiceApiConfigDialog extends BaseDialog {
     @Override
     protected void okClick() {
         CustomDialogUtil.showError("功能待开发！");
+        //TODO
         this.close();
     }
 }

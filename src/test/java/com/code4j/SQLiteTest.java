@@ -1,6 +1,6 @@
 package com.code4j;
 
-import com.code4j.connect.DataSourceTypeEnum;
+import com.code4j.enums.DataSourceTypeEnum;
 import com.code4j.connect.JDBCService;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.pojo.ProjectCodeConfigInfo;
@@ -26,6 +26,13 @@ public class SQLiteTest {
         final JDBCService sqLiteJDBCService = SQLiteUtil.getSingleton();
         final boolean test = sqLiteJDBCService.test();
         Assert.assertTrue(test);
+    }
+
+    @Test
+    public void init() {
+        final boolean isSuccess1 = SQLiteUtil.createJDBCSourceTable(true);
+        final boolean isSuccess2 = SQLiteUtil.createProjectCodeConfigTable(true);
+        Assert.assertTrue(isSuccess1 && isSuccess2);
     }
 
     @Test

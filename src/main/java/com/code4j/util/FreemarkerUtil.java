@@ -1,6 +1,6 @@
 package com.code4j.util;
 
-import com.code4j.config.TemplateTypeEnum;
+import com.code4j.enums.TemplateTypeEnum;
 import com.code4j.pojo.BaseTemplateInfo;
 import com.code4j.pojo.TemplateInfo;
 import freemarker.template.Configuration;

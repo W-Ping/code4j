@@ -1,7 +1,7 @@
 package com.code4j.connect.sqllite;
 
 import com.code4j.connect.AbstractJDBCService;
-import com.code4j.connect.DataSourceTypeEnum;
+import com.code4j.enums.DataSourceTypeEnum;
 import com.code4j.pojo.BaseInfo;
 import com.code4j.pojo.DbTableInfo;
 import com.code4j.pojo.JdbcSourceInfo;

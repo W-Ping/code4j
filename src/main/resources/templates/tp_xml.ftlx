@@ -9,15 +9,15 @@
         <#if (xmlMap.tableColumnInfos)??><#list xmlMap.tableColumnInfos as model>
             <#if model.ignore==false>
                 <#if model.primaryKey>
-                <id column="${(model.column)!}" property="${(model.javaProperty)!}" jdbcType="${(model.jdbcType)!}"></id>
-                    <#else>
-                <result column="${(model.column)!}" property="${(model.javaProperty)!}" jdbcType="${(model.jdbcType)!}"></result>
+        <id column="${(model.column)!}" property="${(model.javaProperty)!}" jdbcType="${(model.jdbcType)!}"></id>
+                <#else>
+        <result column="${(model.column)!}" property="${(model.javaProperty)!}" jdbcType="${(model.jdbcType)!}"></result>
                 </#if>
             </#if>
         </#list>
         </#if>
     </resultMap>
-<#if  (xmlApiParamsInfos)??>
+<#if  (xmlApiParamsInfos?? && xmlApiParamsInfos?size>0)>
     <sql id="Base_Table_Column" >
             <#list xmlMap.tableColumnInfos as model>
                 ${(model.column)!}<#if model_has_next>,</#if>

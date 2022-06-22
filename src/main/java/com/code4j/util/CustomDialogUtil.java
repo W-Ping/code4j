@@ -1,10 +1,11 @@
 package com.code4j.util;
 
 import com.code4j.component.dialog.*;
-import com.code4j.config.TemplateTypeEnum;
-import com.code4j.connect.DataSourceTypeEnum;
+import com.code4j.enums.TemplateTypeEnum;
+import com.code4j.enums.DataSourceTypeEnum;
 import com.code4j.pojo.GenerateResultInfo;
 import com.code4j.pojo.JdbcSourceInfo;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import sun.awt.AppContext;
 
 import javax.swing.*;
@@ -13,6 +14,10 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -37,7 +42,7 @@ public class CustomDialogUtil {
             jdbcSourceInfo = Optional.ofNullable(jdbcSourceInfo).orElse(new JdbcSourceInfo());
             jdbcSourceInfo.setDataSourceTypeEnum(dataSourceTypeEnum);
         }
-        DBConfigDialog dbConfigDialog = new DBConfigDialog(parentComponent, title, jdbcSourceInfo);
+        DBConfigDialog dbConfigDialog = new DBConfigDialog(parentComponent, title + "【" + jdbcSourceInfo.getDataSourceTypeEnum().typeName() + "】", jdbcSourceInfo);
         return dbConfigDialog;
     }
 
@@ -92,6 +97,17 @@ public class CustomDialogUtil {
     /**
      * @param parentComponent
      * @param title
+     * @param templateTypeEnum
+     * @return
+     */
+    public static ControllerApiConfigDialog showControllerApiConfigDialog(final Component parentComponent, final String title, TemplateTypeEnum templateTypeEnum) {
+        ControllerApiConfigDialog controllerApiConfigDialog = new ControllerApiConfigDialog(parentComponent, title, true, templateTypeEnum);
+        return controllerApiConfigDialog;
+    }
+
+    /**
+     * @param parentComponent
+     * @param title
      * @param generateResultInfos
      * @return
      */
@@ -100,15 +116,6 @@ public class CustomDialogUtil {
         return generateResultDialog;
     }
 
-    /**
-     * @param parentComponent
-     * @param title
-     * @param extObj
-     * @return
-     */
-    public static SelectProjectConfigDialog showSelectProjectConfigDialog(final Component parentComponent, String title, Object extObj) {
-        return new SelectProjectConfigDialog(parentComponent, title, true, extObj);
-    }
 
     /**
      * @param parentComponent
@@ -128,10 +135,32 @@ public class CustomDialogUtil {
         JOptionPane.showMessageDialog(null, message, "错误", JOptionPane.ERROR_MESSAGE);
     }
 
-    public static void showOk(String message) {
-        JOptionPane.showMessageDialog(null, message, "成功", JOptionPane.INFORMATION_MESSAGE, null);
-    }
+    public static void showOk(String message, boolean autoClose, Consumer<Boolean> consumer) {
+        final JOptionPane op = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE);
+        final JDialog dialog = op.createDialog(null, "成功");
+        if (autoClose) {
+            ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
+                    new BasicThreadFactory.Builder().namingPattern("dialog-schedule-pool-%d").daemon(true).build());
+            executorService.scheduleAtFixedRate(() -> {
+                dialog.setVisible(false);
+                dialog.dispose();
+                if (!executorService.isShutdown()) {
+                    executorService.shutdown();
+                }
+                if (consumer != null) {
+                    consumer.accept(true);
+                }
+            }, 800, 800, TimeUnit.MILLISECONDS);
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            dialog.setAlwaysOnTop(true);
+            dialog.setModal(false);
+            dialog.setVisible(true);
 
+        } else {
+            JOptionPane.showMessageDialog(null, message, "成功", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+
+    }
 
     static void appContextPut(Object key, Object value) {
         AppContext.getAppContext().put(key, value);
@@ -158,20 +187,20 @@ public class CustomDialogUtil {
         return sharedOwnerFrame;
     }
 
-    public static Frame setShareFrame(String key) {
-        Frame sharedFrame = (Frame) AppContext.getAppContext().get(key);
-        if (sharedFrame == null) {
-            CustomerSharedOwnerFrame sharedOwnerFrame = new CustomerSharedOwnerFrame();
-            AppContext.getAppContext().put(key, sharedOwnerFrame);
-        }
-        return sharedFrame;
-    }
+//    public static Frame setShareFrame(String key) {
+//        Frame sharedFrame = (Frame) AppContext.getAppContext().get(key);
+//        if (sharedFrame == null) {
+//            CustomerSharedOwnerFrame sharedOwnerFrame = new CustomerSharedOwnerFrame();
+//            AppContext.getAppContext().put(key, sharedOwnerFrame);
+//        }
+//        return sharedFrame;
+//    }
 
-    static Object appContextGet(Object key) {
+    public static Object appContextGet(Object key) {
         return AppContext.getAppContext().get(key);
     }
 
-    static class CustomerSharedOwnerFrame extends Frame implements WindowListener {
+    public static class CustomerSharedOwnerFrame extends Frame implements WindowListener {
         @Override
         public void addNotify() {
             super.addNotify();
@@ -233,11 +262,6 @@ public class CustomDialogUtil {
 
         @Override
         public void windowDeactivated(WindowEvent e) {
-        }
-
-        @Override
-        public void show() {
-            // This frame can never be shown
         }
 
         @Override

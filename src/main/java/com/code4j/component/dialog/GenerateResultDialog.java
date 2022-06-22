@@ -65,6 +65,20 @@ public class GenerateResultDialog extends BaseDialog {
                     }
                 });
                 c3.add(copy);
+                JLabel open = new JLabel(" 打开");
+                open.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        //单击选中
+                        if (e.getClickCount() == 1) {
+                            String pathText = path.getText();
+                            SystemUtil.open(pathText);
+                        }
+                    }
+                });
+                open.setForeground(Color.BLUE);
+                open.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                c3.add(open);
                 c3.setBorder(bottomBorder);
                 box3.add(c3);
             }

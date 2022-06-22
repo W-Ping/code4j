@@ -2,8 +2,10 @@ package com.code4j.connect;
 
 import com.code4j.annotation.Column;
 import com.code4j.annotation.Table;
+import com.code4j.enums.DataSourceTypeEnum;
 import com.code4j.exception.Code4jException;
 import com.code4j.pojo.*;
+import com.code4j.util.StrUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCService<T> {
     protected static final Logger log = LoggerFactory.getLogger(AbstractJDBCService.class);
-    private final JdbcSourceInfo jdbcSourceInfo;
+    protected JdbcSourceInfo jdbcSourceInfo;
 
     public AbstractJDBCService(JdbcSourceInfo jdbcSourceInfo) {
         checkJdbcDataSource(jdbcSourceInfo);
@@ -48,8 +50,10 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
         try {
             connection = getConnection();
             statement = connection.createStatement();
+            log.info(">>>>>> drop table if exists {}", tableName);
             statement.execute("DROP TABLE IF EXISTS " + tableName);
             statement.execute(this.createTableSql(tableName, dbTableInfos));
+            log.info(">>>>>> create table {}", tableName);
             final String[] uniqueKey = annotation.uniqueKey();
             if (uniqueKey != null && uniqueKey.length > 0) {
                 StringBuilder uk = new StringBuilder();
@@ -65,7 +69,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             }
             return true;
         } catch (Exception e) {
-            log.error("数据库连接失败！{}", e.getMessage());
+            log.error("错误！创建表失败【{}】", e.getMessage());
         } finally {
             close(connection, statement, null);
         }
@@ -113,17 +117,99 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             sb.append(")");
         }
         sb.append(")");
-        System.out.println(sb.toString());
+        log.debug("创建表SQL：{}", sb);
         return sb.toString();
+    }
+
+    /**
+     * @param obj
+     * @return
+     */
+    @Override
+    public boolean checkUniqueKey(T obj, boolean exclude) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            Class<? extends BaseInfo> aClass = obj.getClass();
+            Table tbAnnotation = aClass.getAnnotation(Table.class);
+            final String tableName = tbAnnotation.value();
+            final String[] uniqueKeys = tbAnnotation.uniqueKey();
+            if (uniqueKeys == null && uniqueKeys.length <= 0) {
+                return true;
+            }
+            connection = getConnection();
+            StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM ");
+            sql.append(tableName);
+            sql.append(" WHERE ");
+            List<Object> objects = new ArrayList<>();
+            for (int i = 0; i < uniqueKeys.length; i++) {
+                String uniqueKey = uniqueKeys[i];
+                sql.append(uniqueKey);
+                final String filedName = StrUtil.underlineToCamel(uniqueKey);
+                final Field field = aClass.getDeclaredField(filedName);
+                field.setAccessible(true);
+                if (field == null) {
+                    continue;
+                }
+                final Object value = field.get(obj);
+                if (value == null) {
+                    return false;
+                }
+                objects.add(value);
+                sql.append(" = ?");
+                if (i != uniqueKeys.length - 1) {
+                    sql.append(" AND ");
+                }
+            }
+            if (exclude) {
+                final Field primaryKeyField = getPrimaryKeyField(FieldUtils.getAllFields(aClass));
+                if (primaryKeyField != null) {
+                    final Object val = primaryKeyField.get(obj);
+                    if (val != null) {
+                        sql.append(" AND ");
+                        sql.append(primaryKeyField.getName());
+                        sql.append(" <> ?");
+                        objects.add(val);
+                    }
+                }
+            }
+            log.debug("校验数据唯一性SQL:{}", sql);
+            statement = connection.prepareStatement(sql.toString());
+            for (int i = 0; i < objects.size(); i++) {
+                Object val = objects.get(i);
+                if (val instanceof String) {
+                    statement.setString(i + 1, val.toString());
+                } else if (val instanceof Integer) {
+                    statement.setInt(i + 1, Integer.valueOf(val.toString()));
+                } else if (val instanceof Long) {
+                    statement.setLong(i + 1, Long.valueOf(val.toString()));
+                } else if (val instanceof BigDecimal) {
+                    statement.setBigDecimal(i + 1, new BigDecimal(val.toString()));
+                } else {
+                    statement.setObject(i + 1, val);
+                }
+            }
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                final int count = resultSet.getInt(1);
+                return count <= 0;
+            }
+        } catch (Exception e) {
+            log.error("错误！校验数据唯一性失败【{}】", e.getMessage());
+        } finally {
+            close(connection, statement, resultSet);
+        }
+        return false;
     }
 
     @Override
     public boolean insert(T obj) {
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
         try {
             connection = getConnection();
-            statement = connection.createStatement();
             Class<? extends BaseInfo> aClass = obj.getClass();
             Field[] declaredFields = FieldUtils.getAllFields(aClass);
             Table tbAnnotation = aClass.getAnnotation(Table.class);
@@ -158,13 +244,21 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             sql.append(" ");
             sql.append(columns);
             sql.append(columnValues);
-            System.out.println(sql.toString());
-            statement.executeUpdate(sql.toString());
+            log.debug("数据新增SQL:{}", sql);
+            statement = connection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
+            statement.executeUpdate();
+            resultSet = statement.getGeneratedKeys();
+            final Field field = getPrimaryKeyField(declaredFields);
+            while (resultSet != null && resultSet.next()) {
+                final long pk = resultSet.getLong(1);
+                log.debug("数据新增返回主键：{}", pk);
+                field.set(obj, pk);
+            }
             return true;
         } catch (Exception e) {
-            log.error("数据库连接失败！{}", e.getMessage());
+            log.error("错误！数据新增失败【{}】", e.getMessage());
         } finally {
-            close(connection, statement, null);
+            close(connection, statement, resultSet);
         }
         return false;
     }
@@ -208,7 +302,6 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             sb.append(field.getName());
             sb.append("=");
             sb.append(field.get(obj));
-            System.out.println(sb.toString());
             statement = connection.createStatement();
             statement.executeUpdate(sb.toString());
             return true;
@@ -220,6 +313,11 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
         return false;
     }
 
+    /**
+     * @param primaryKey
+     * @param cls
+     * @return
+     */
     @Override
     public boolean deleteByPk(Long primaryKey, Class<T> cls) {
         Connection connection = null;
@@ -239,11 +337,10 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             sb.append(field.getName());
             sb.append("=");
             sb.append(primaryKey);
-            System.out.println(sb.toString());
             statement.executeUpdate(sb.toString());
             return true;
         } catch (Exception e) {
-            log.error("数据库连接失败！{}", e.getMessage());
+            log.error("错误！更新数据失败【{}】】【{}】", primaryKey, e.getMessage());
         } finally {
             close(connection, statement, null);
         }
@@ -326,7 +423,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             }
             return list;
         } catch (Exception e) {
-            log.error("数据库连接失败！{}", e.getMessage());
+            log.error("错误！查询数据失败【{}】", e.getMessage());
         } finally {
             close(connection, statement, resultSet);
         }
@@ -339,7 +436,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
         try {
             return (connection = getConnection()) != null;
         } catch (Exception e) {
-            log.error("数据库连接失败！{}", e.getMessage());
+            log.error("错误！数据库连接失败【{}】", e.getMessage());
         } finally {
             close(connection, null, null);
         }
@@ -349,15 +446,18 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
     @Override
     public boolean checkTableIsExist(String tableName) {
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
             connection = getConnection();
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery("SELECT COUNT(*) FROM " + tableName);
-            return true;
+            statement = connection.prepareStatement("SELECT count(*) from sqlite_master where type='table' and name=?");
+            statement.setString(1, tableName);
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            }
         } catch (Exception e) {
-            log.error("数据库连接失败！{}", e.getMessage());
+            log.error("错误！检查表是否存在失败【{}】", e.getMessage());
         } finally {
             close(connection, statement, resultSet);
         }
@@ -382,7 +482,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             }
             return dbNames;
         } catch (Exception e) {
-            log.error("获取数据库信息失败！{}", e.getMessage());
+            log.error("错误！获取数据库信息失败！【{}】", e.getMessage());
         } finally {
             close(connection, null, null);
         }
@@ -394,6 +494,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
         Connection connection = null;
         ResultSet rs = null;
         try {
+            jdbcSourceInfo.setDbName(jdbcDbInfo.getDbName());
             connection = getConnection();
             if (connection == null) {
                 return null;
@@ -403,7 +504,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             DatabaseMetaData metaData = connection.getMetaData();
             //目录名称; 数据库名; 表名称; 表类型;
-            rs = metaData.getTables(catalog(connection.getCatalog()), schemaPattern(dbName), tableNamePattern(), types());
+            rs = metaData.getTables(this.catalog(connection.getCatalog(), dbName), schemaPattern(dbName), tableNamePattern(), types());
             while (rs.next()) {
                 JdbcTableInfo jdbcTableInfo = new JdbcTableInfo();
                 jdbcTableInfo.setDbName(dbName);
@@ -415,14 +516,14 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             }
             return tableInfos;
         } catch (Exception e) {
-            log.error("获取数据库表信息失败！{}", e.getMessage());
+            log.error("错误！获取数据库表信息失败【{}】", e.getMessage());
         } finally {
             close(connection, null, rs);
         }
         return null;
     }
 
-    protected String catalog(String catalog) {
+    protected String catalog(String catalog, String dbName) {
         return catalog;
     }
 
@@ -436,7 +537,6 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
 
     protected String[] types() {
         return new String[]{"TABLE"};
-//        return new String[]{"TABLE", "VIEW"};
     }
 
     /**
@@ -455,9 +555,10 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             }
             List<JdbcMapJavaInfo> result = new ArrayList<>();
             DatabaseMetaData meta = connection.getMetaData();
-            rs = meta.getColumns(catalog(connection.getCatalog()), schemaPattern(dbName), tableName.trim(), null);
+            rs = meta.getColumns(this.catalog(connection.getCatalog(), dbName), schemaPattern(dbName), tableName.trim(), null);
             Set<String> columnCache = new HashSet<>();
             String pk = getTablePrimaryKeys(dbName, tableName, connection);
+            log.debug("获取表信息参数：数据库{}主键是{}", dbName, pk);
             while (rs.next()) {
                 String columnName = rs.getString("COLUMN_NAME");
                 if (columnCache.contains(columnName)) {
@@ -471,7 +572,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             }
             return result;
         } catch (Exception e) {
-            log.error("获取数据库表信息失败！{}", e.getMessage());
+            log.error("错误！获取数据库表信息失败【{}】", e.getMessage());
         } finally {
             close(connection, null, rs);
         }
@@ -484,14 +585,14 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
      * @return
      */
     private String getTablePrimaryKeys(String dbName, String tableName, Connection connection) {
-        try (ResultSet rs = connection.getMetaData().getPrimaryKeys(catalog(connection.getCatalog()), schemaPattern(dbName), tableName.trim());) {
+        try (ResultSet rs = connection.getMetaData().getPrimaryKeys(catalog(connection.getCatalog(), dbName), schemaPattern(dbName), tableName.trim());) {
             if (rs != null) {
                 while (rs.next()) {
                     return rs.getString("COLUMN_NAME");
                 }
             }
         } catch (Exception e) {
-            log.error("获取数据库表主键信息失败！{}", e.getMessage());
+            log.error("错误！获取数据库表主键信息失败【{}】", e.getMessage());
         }
         return null;
     }
@@ -561,6 +662,8 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
         if (CollectionUtils.isEmpty(pkList)) {
             return null;
         }
-        return pkList.get(0);
+        final Field field = pkList.get(0);
+        field.setAccessible(true);
+        return field;
     }
 }

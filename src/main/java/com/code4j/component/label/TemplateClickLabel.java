@@ -2,7 +2,7 @@ package com.code4j.component.label;
 
 import com.code4j.component.dialog.BaseDialog;
 import com.code4j.component.panel.CommonPanel;
-import com.code4j.config.TemplateTypeEnum;
+import com.code4j.enums.TemplateTypeEnum;
 import com.code4j.util.CustomDialogUtil;
 
 import javax.swing.*;
@@ -24,7 +24,7 @@ public class TemplateClickLabel<T extends BaseDialog> extends JLabel {
      * @param title
      * @param templateTypeEnum
      */
-    public TemplateClickLabel(String text, String title, TemplateTypeEnum templateTypeEnum, CommonPanel bindCommonPanel) {
+    public TemplateClickLabel(String text, String title, TemplateTypeEnum templateTypeEnum, CommonPanel bindCommonPanel, boolean Visible) {
         super(text);
         this.bindCommonPanel = bindCommonPanel;
         this.setForeground(Color.BLUE);
@@ -40,6 +40,8 @@ public class TemplateClickLabel<T extends BaseDialog> extends JLabel {
                         showDialog = (T) CustomDialogUtil.showMapperConfigDialog(bindCommonPanel, title, templateTypeEnum);
                     } else if (TemplateTypeEnum.XML.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
                         showDialog = (T) CustomDialogUtil.showXmlConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                    } else if (TemplateTypeEnum.CONTROLLER.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
+                        showDialog = (T) CustomDialogUtil.showControllerApiConfigDialog(bindCommonPanel, title, templateTypeEnum);
                     } else {
                         showDialog = (T) CustomDialogUtil.showTableConfigDialog(bindCommonPanel, title, templateTypeEnum);
                     }
@@ -56,7 +58,7 @@ public class TemplateClickLabel<T extends BaseDialog> extends JLabel {
 
             }
         });
-        setVisible(true);
+        this.setVisible(Visible);
     }
 
     public CommonPanel getBindCommonPanel() {

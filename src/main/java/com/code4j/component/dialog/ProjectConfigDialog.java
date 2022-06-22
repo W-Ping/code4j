@@ -1,9 +1,10 @@
 package com.code4j.component.dialog;
 
+import com.code4j.component.CustomJTextField;
 import com.code4j.component.panel.CommonPanel;
 import com.code4j.component.panel.TopPanel;
 import com.code4j.config.Code4jConstants;
-import com.code4j.config.TemplateTypeEnum;
+import com.code4j.enums.TemplateTypeEnum;
 import com.code4j.pojo.ProjectCodeConfigInfo;
 import com.code4j.util.CustomDialogUtil;
 import com.code4j.util.SQLiteUtil;
@@ -25,6 +26,8 @@ public class ProjectConfigDialog extends BaseDialog {
     private CommonPanel xmlComponent;
     private CommonPanel mapperComponent;
     private CommonPanel serviceComponent;
+    private CommonPanel serviceImplComponent;
+    private CommonPanel contrComponent;
 
 
     public ProjectConfigDialog(Component parentComponent, String title, boolean modal, Object extObj, boolean isUpdate) {
@@ -35,21 +38,24 @@ public class ProjectConfigDialog extends BaseDialog {
     protected Component content() {
         ProjectCodeConfigInfo projectCodeConfigInfo = extObj != null ? (ProjectCodeConfigInfo) extObj : new ProjectCodeConfigInfo(true);
         Dimension inputDim = new Dimension(230, 30);
-        JTextField j1 = new JTextField(projectCodeConfigInfo.getProjectName());
-        j1.setPreferredSize(inputDim);
-        projectComponent = new CommonPanel(new JLabel("项目名称："), j1);
-        doComponent = createItemComponent(TemplateTypeEnum.DO, projectCodeConfigInfo.getDoPath(), projectCodeConfigInfo.getDoPackageName(), projectCodeConfigInfo.getDoSuperClass());
-        voComponent = createItemComponent(TemplateTypeEnum.VO, projectCodeConfigInfo.getVoPath(), projectCodeConfigInfo.getVoPackageName(), projectCodeConfigInfo.getVoSuperClass());
-        xmlComponent = createItemComponent(TemplateTypeEnum.XML, projectCodeConfigInfo.getXmlPath(), projectCodeConfigInfo.getXmlPackageName(), null);
-        mapperComponent = createItemComponent(TemplateTypeEnum.MAPPER, projectCodeConfigInfo.getMapperPath(), projectCodeConfigInfo.getMapperPackageName(), projectCodeConfigInfo.getMapperSuperClass());
-        serviceComponent = createItemComponent(TemplateTypeEnum.SERVICE_API, projectCodeConfigInfo.getServiceApiPath(), projectCodeConfigInfo.getServiceApiPackageName(), projectCodeConfigInfo.getServiceSuperClass());
+        CustomJTextField j1 = new CustomJTextField(projectCodeConfigInfo.getProjectName(), inputDim);
+        projectComponent = new CommonPanel(new JLabel("配置名称："), j1);
+        doComponent = createItemComponent(TemplateTypeEnum.DO, projectCodeConfigInfo.getDoPath(), projectCodeConfigInfo.getDoPackageName(), projectCodeConfigInfo.getDoSuperClass(), null);
+        voComponent = createItemComponent(TemplateTypeEnum.VO, projectCodeConfigInfo.getVoPath(), projectCodeConfigInfo.getVoPackageName(), projectCodeConfigInfo.getVoSuperClass(), null);
+        xmlComponent = createItemComponent(TemplateTypeEnum.XML, projectCodeConfigInfo.getXmlPath(), projectCodeConfigInfo.getXmlPackageName(), null, null);
+        mapperComponent = createItemComponent(TemplateTypeEnum.MAPPER, projectCodeConfigInfo.getMapperPath(), projectCodeConfigInfo.getMapperPackageName(), projectCodeConfigInfo.getMapperSuperClass(), null);
+        serviceComponent = createItemComponent(TemplateTypeEnum.SERVICE_API, projectCodeConfigInfo.getServiceApiPath(), projectCodeConfigInfo.getServiceApiPackageName(), projectCodeConfigInfo.getServiceSuperClass(), null);
+        serviceImplComponent = createItemComponent(TemplateTypeEnum.SERVICE, projectCodeConfigInfo.getServiceImplPath(), projectCodeConfigInfo.getServiceImplPackageName(), projectCodeConfigInfo.getServiceImplSuperClass(), null);
+        contrComponent = createItemComponent(TemplateTypeEnum.CONTROLLER, projectCodeConfigInfo.getContrPath(), projectCodeConfigInfo.getContrPackageName(), projectCodeConfigInfo.getContrSuperClass(), projectCodeConfigInfo.getContrResultClass());
         Box box = Box.createVerticalBox();
         box.add(projectComponent);
         box.add(doComponent);
         box.add(voComponent);
-        box.add(serviceComponent);
         box.add(mapperComponent);
         box.add(xmlComponent);
+        box.add(serviceComponent);
+        box.add(serviceImplComponent);
+        box.add(contrComponent);
         CommonPanel commonPanel = new CommonPanel(box);
         return commonPanel;
     }
@@ -65,22 +71,14 @@ public class ProjectConfigDialog extends BaseDialog {
             CustomDialogUtil.showError("项目名称不可用");
             return;
         }
-//        final List<ProjectCodeConfigInfo> projectConfigPropertyValues = SQLiteUtil.select(new ProjectCodeConfigInfo());
-//        if (CollectionUtils.isNotEmpty(projectConfigPropertyValues)) {
-//            if ((!this.isUpdate &&
-//                    projectConfigPropertyValues.stream().anyMatch(v -> projectCodeConfigInfo.getProjectName().equals(v.getProjectName())))
-//                    || this.isUpdate && projectConfigPropertyValues.stream().filter(v -> !v.getId().equals(projectCodeConfigInfo.getId())).anyMatch(v -> projectCodeConfigInfo.getProjectName().equals(v.getProjectName()))) {
-//                CustomDialogUtil.showError("项目名称不能重复");
-//                return;
-//            }
-//        }
         if (!SQLiteUtil.insertOrUpdate(projectCodeConfigInfo)) {
             CustomDialogUtil.showError("保存配置失败！");
             return;
         } else {
-            CustomDialogUtil.showOk("保存成功！");
-            ((TopPanel) parentComponent).loadProjectCodeConfig();
-            this.close();
+            CustomDialogUtil.showOk("保存成功！", true, (bol) -> {
+                ((TopPanel) parentComponent).loadProjectCodeConfig("save");
+                this.close();
+            });
         }
 
     }
@@ -97,7 +95,7 @@ public class ProjectConfigDialog extends BaseDialog {
                 public void actionPerformed(final ActionEvent e) {
                     CustomDialogUtil.confirm(projectConfigDialog, "确认删除", (c) -> {
                         if (SQLiteUtil.deleteByPk(projectCodeConfigInfo.getId(), ProjectCodeConfigInfo.class)) {
-                            ((TopPanel) parentComponent).loadProjectCodeConfig();
+                            ((TopPanel) parentComponent).loadProjectCodeConfig("delete");
                             projectConfigDialog.close();
                         }
                         return null;
@@ -126,7 +124,7 @@ public class ProjectConfigDialog extends BaseDialog {
         } else {
             projectCodeConfigInfo = new ProjectCodeConfigInfo();
         }
-        JTextField pj = (JTextField) projectComponent.getComponent(1);
+        CustomJTextField pj = (CustomJTextField) projectComponent.getComponent(1);
         projectCodeConfigInfo.setProjectName(pj.getText());
         projectCodeConfigInfo.setVoPackageName(getPackText(voComponent));
         projectCodeConfigInfo.setVoPath(getPathText(voComponent));
@@ -142,6 +140,13 @@ public class ProjectConfigDialog extends BaseDialog {
         projectCodeConfigInfo.setVoSuperClass(getSupperText(voComponent));
         projectCodeConfigInfo.setMapperSuperClass(getSupperText(mapperComponent));
         projectCodeConfigInfo.setServiceSuperClass(getSupperText(serviceComponent));
+        projectCodeConfigInfo.setServiceImplPackageName(getPackText(serviceImplComponent));
+        projectCodeConfigInfo.setServiceImplPath(getPathText(serviceImplComponent));
+        projectCodeConfigInfo.setServiceImplSuperClass(getSupperText(serviceImplComponent));
+        projectCodeConfigInfo.setContrPackageName(getPackText(contrComponent));
+        projectCodeConfigInfo.setContrPath(getPathText(contrComponent));
+        projectCodeConfigInfo.setContrSuperClass(getSupperText(contrComponent));
+        projectCodeConfigInfo.setContrResultClass(getResultText(contrComponent));
         return projectCodeConfigInfo;
     }
 
@@ -149,31 +154,38 @@ public class ProjectConfigDialog extends BaseDialog {
      * @param templateTypeEnum
      * @param defaultPath
      * @param defaultPackage
+     * @param superClass
+     * @param resultClass
      * @return
      */
-    public CommonPanel createItemComponent(TemplateTypeEnum templateTypeEnum, String defaultPath, String defaultPackage, String superClass) {
+    public CommonPanel createItemComponent(TemplateTypeEnum templateTypeEnum, String defaultPath, String defaultPackage, String superClass, String resultClass) {
         Dimension boxDimension = new Dimension(820, 70);
         Dimension inputDim = new Dimension(230, 25);
         Border lineBorder = BorderFactory.createLineBorder(Color.WHITE, 2);
-        JTextField j2 = new JTextField(defaultPackage);
-        j2.setPreferredSize(inputDim);
-        JTextField j3 = new JTextField(defaultPath);
-        j3.setPreferredSize(new Dimension(150, 25));
+        CustomJTextField j2 = new CustomJTextField(defaultPackage, inputDim);
+        CustomJTextField j3 = new CustomJTextField(defaultPath, new Dimension(150, 25));
         CommonPanel c2 = new CommonPanel(new JLabel("包 名："), j2);
-        CommonPanel c3 = new CommonPanel(new JLabel("包路径："), j3);
+        CommonPanel c3 = new CommonPanel(new JLabel("路 径："), j3);
         Box hBox = Box.createHorizontalBox();
         hBox.add(c2);
         hBox.add(c3);
         if (TemplateTypeEnum.XML != templateTypeEnum) {
-            JTextField j4 = new JTextField(superClass);
-            j4.setPreferredSize(inputDim);
-            j4.setToolTipText("父类全路径");
+            CustomJTextField j4 = new CustomJTextField(superClass, inputDim);
+            j4.setToolTipText(superClass);
             CommonPanel c4 = new CommonPanel(new JLabel("父 类："), j4);
             hBox.add(c4);
+        }
+        CommonPanel rePack = null;
+        if (TemplateTypeEnum.CONTROLLER == templateTypeEnum) {
+            boxDimension = new Dimension(820, 105);
+            rePack = new CommonPanel(new JLabel("响 应："), new CustomJTextField(resultClass, inputDim));
         }
         CommonPanel itemCP = new CommonPanel(new FlowLayout(FlowLayout.LEFT), boxDimension);
         itemCP.setBorder(BorderFactory.createTitledBorder(lineBorder, templateTypeEnum.getTemplateDesc()));
         itemCP.addList(hBox);
+        if (rePack != null) {
+            itemCP.add(rePack);
+        }
         return itemCP;
     }
 
@@ -184,7 +196,7 @@ public class ProjectConfigDialog extends BaseDialog {
     private String getPackText(CommonPanel commonPanel) {
         Box box = (Box) commonPanel.getComponent(0);
         CommonPanel packC = (CommonPanel) box.getComponent(0);
-        JTextField textField = (JTextField) packC.getComponent(1);
+        CustomJTextField textField = (CustomJTextField) packC.getComponent(1);
         return textField.getText();
     }
 
@@ -195,7 +207,7 @@ public class ProjectConfigDialog extends BaseDialog {
     private String getPathText(CommonPanel commonPanel) {
         Box box = (Box) commonPanel.getComponent(0);
         CommonPanel packC = (CommonPanel) box.getComponent(1);
-        JTextField textField = (JTextField) packC.getComponent(1);
+        CustomJTextField textField = (CustomJTextField) packC.getComponent(1);
         return textField.getText();
     }
 
@@ -206,7 +218,18 @@ public class ProjectConfigDialog extends BaseDialog {
     private String getSupperText(CommonPanel commonPanel) {
         Box box = (Box) commonPanel.getComponent(0);
         CommonPanel packC = (CommonPanel) box.getComponent(2);
-        JTextField textField = (JTextField) packC.getComponent(1);
+        CustomJTextField textField = (CustomJTextField) packC.getComponent(1);
+        return textField.getText();
+    }
+
+    /**
+     * @param commonPanel
+     * @return
+     */
+    private String getResultText(CommonPanel commonPanel) {
+        final Component[] components = commonPanel.getComponents();
+        CommonPanel resultCp = (CommonPanel) commonPanel.getComponent(components.length - 1);
+        CustomJTextField textField = (CustomJTextField) resultCp.getComponent(1);
         return textField.getText();
     }
 }

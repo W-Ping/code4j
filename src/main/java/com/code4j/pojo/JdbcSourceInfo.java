@@ -5,7 +5,7 @@ import com.code4j.annotation.Column;
 import com.code4j.annotation.IgnoreReflection;
 import com.code4j.annotation.PropertyKeyIndexId;
 import com.code4j.annotation.Table;
-import com.code4j.connect.DataSourceTypeEnum;
+import com.code4j.enums.DataSourceTypeEnum;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
  * @date 2020/11/17
  * @see
  */
-@Table(value = "jdbc_source_info", uniqueKey = {"connect_host", "connect_port", "source_type"})
+@Table(value = "jdbc_source_info", uniqueKey = {"connect_name","connect_host", "connect_port", "source_type"})
 @PropertyKeyIndexId
 public class JdbcSourceInfo extends BaseInfo {
     /**

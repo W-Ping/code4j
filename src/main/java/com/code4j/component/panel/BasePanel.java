@@ -1,6 +1,8 @@
 package com.code4j.component.panel;
 
 import com.code4j.pojo.BaseInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,27 +13,32 @@ import java.awt.*;
  * @see
  */
 public abstract class BasePanel<T extends BaseInfo> extends JPanel {
+    protected static final Logger log = LoggerFactory.getLogger(BasePanel.class);
 
+    protected BasePanel bindPanel;
 
     public BasePanel() {
-        super();
-        init();
+        this(null, null, null);
     }
 
     public BasePanel(Dimension dimension) {
-        super();
-        setPreferredSize(dimension);
-        init();
+        this(null, dimension, null);
     }
 
     public BasePanel(LayoutManager layout) {
-        super(layout);
-        init();
+        this(layout, null, null);
     }
 
     public BasePanel(LayoutManager layout, Dimension dimension) {
-        super(layout);
-        setPreferredSize(dimension);
+        this(layout, dimension, null);
+    }
+
+    public BasePanel(LayoutManager layout, Dimension dimension, BasePanel bindPanel) {
+        super(layout != null ? layout : new FlowLayout());
+        if (dimension != null) {
+            setPreferredSize(dimension);
+        }
+        this.bindPanel = bindPanel;
         init();
     }
 
@@ -40,5 +47,11 @@ public abstract class BasePanel<T extends BaseInfo> extends JPanel {
      */
     protected abstract void init();
 
+    public BasePanel getBindPanel() {
+        return bindPanel;
+    }
 
+    public void setBindPanel(BasePanel bindPanel) {
+        this.bindPanel = bindPanel;
+    }
 }

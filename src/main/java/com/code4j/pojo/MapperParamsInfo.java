@@ -9,10 +9,16 @@ import java.util.List;
  */
 public class MapperParamsInfo extends BaseTemplateInfo {
     private SuperPojoInfo superPojoInfo;
+
     /**
      *
      */
     private List<MapperApiParamsInfo> mapperApiParamsInfos;
+
+
+    public MapperParamsInfo(List<JdbcMapJavaInfo> tableColumnInfos) {
+        super(tableColumnInfos);
+    }
 
     public SuperPojoInfo getSuperPojoInfo() {
         return superPojoInfo;
@@ -29,4 +35,5 @@ public class MapperParamsInfo extends BaseTemplateInfo {
     public void setMapperApiParamsInfos(final List<MapperApiParamsInfo> mapperApiParamsInfos) {
         this.mapperApiParamsInfos = mapperApiParamsInfos;
     }
+
 }

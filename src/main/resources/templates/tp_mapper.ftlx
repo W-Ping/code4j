@@ -5,7 +5,8 @@ import ${model};
 </#list>
 </#if>
 /**
- * ${(baseInfo.jdbcTableInfo.remark)!}
+ * ${(baseInfo.jdbcTableInfo.remark)!} Mapper类
+ *
  * @author ${(baseInfo.author)!}
  * @date Created in ${.now}
  */
@@ -15,8 +16,13 @@ public interface ${(baseInfo.pojoName)!} extends ${baseInfo.superPojoInfo.pojoNa
 <#else>
 public interface ${(baseInfo.pojoName)!}{
 </#if>
+
 <#if (apiInfos)??>
 <#list apiInfos as model>
+ /**
+  *
+  * @return  ${model.resultType?no_esc}
+  */
     <#if model.parameterTypeIsList>
  ${model.resultType?no_esc} ${model.apiId}(@Param("List") list<${(model.parameterType)!}> list);
     <#elseif model.parameterTypeIsPk>

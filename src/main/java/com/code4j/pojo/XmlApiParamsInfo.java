@@ -1,5 +1,7 @@
 package com.code4j.pojo;
 
+import com.code4j.enums.XmlSqlTemplateEnum;
+
 import java.util.List;
 
 /**
@@ -14,6 +16,7 @@ public class XmlApiParamsInfo {
     private String parameterType;
     private List<JdbcMapJavaInfo> xmlApiWhereParamsInfos;
     private boolean isPageSelect;
+    private XmlSqlTemplateEnum xmlSqlTemplateEnum;
 
     public String getApiId() {
         return apiId;
@@ -21,13 +24,17 @@ public class XmlApiParamsInfo {
 
 
     public XmlApiParamsInfo() {
+
     }
 
-    public XmlApiParamsInfo(String templateId, String apiId) {
-        this.templateId = templateId;
-        this.apiId = apiId;
+    public XmlApiParamsInfo(XmlSqlTemplateEnum xmlSqlTemplateEnum) {
+        this.xmlSqlTemplateEnum = xmlSqlTemplateEnum;
+        if (xmlSqlTemplateEnum != null) {
+            this.templateId = xmlSqlTemplateEnum.getTemplateId();
+            this.apiId = xmlSqlTemplateEnum.getApiId();
+        }
     }
-
+    
     public void setApiId(final String apiId) {
         this.apiId = apiId;
     }
@@ -71,5 +78,13 @@ public class XmlApiParamsInfo {
 
     public void setPageSelect(final boolean pageSelect) {
         isPageSelect = pageSelect;
+    }
+
+    public XmlSqlTemplateEnum getXmlSqlTemplateEnum() {
+        return xmlSqlTemplateEnum;
+    }
+
+    public void setXmlSqlTemplateEnum(XmlSqlTemplateEnum xmlSqlTemplateEnum) {
+        this.xmlSqlTemplateEnum = xmlSqlTemplateEnum;
     }
 }

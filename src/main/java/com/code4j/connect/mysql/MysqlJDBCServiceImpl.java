@@ -1,7 +1,7 @@
 package com.code4j.connect.mysql;
 
 import com.code4j.connect.AbstractJDBCService;
-import com.code4j.connect.DataSourceTypeEnum;
+import com.code4j.enums.DataSourceTypeEnum;
 import com.code4j.pojo.JdbcSourceInfo;
 
 /**
@@ -20,7 +20,7 @@ public class MysqlJDBCServiceImpl extends AbstractJDBCService {
     }
 
     @Override
-    protected String catalog(String catalog) {
-        return null;
+    protected String catalog(String catalog,String dbName) {
+        return dbName;
     }
 }

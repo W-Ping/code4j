@@ -1,20 +1,21 @@
 package com.code4j.component.dialog;
 
+import com.code4j.component.LinkTree;
 import com.code4j.component.panel.CommonPanel;
 import com.code4j.component.panel.LeftPanel;
 import com.code4j.component.panel.TopPanel;
 import com.code4j.connect.JDBCService;
 import com.code4j.connect.JdbcServiceFactory;
 import com.code4j.exception.Code4jException;
-import com.code4j.pojo.JdbcDbInfo;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.util.CustomDialogUtil;
+import com.code4j.util.JSONUtil;
+import com.code4j.util.SQLiteUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.List;
 
 /**
  * 数据库连接 对话框
@@ -24,6 +25,8 @@ import java.util.List;
  * @see
  */
 public class DBConfigDialog extends BaseDialog {
+
+
     private JTextField connectNameField;
     private JTextField connectHostField;
     private JTextField connectPortField;
@@ -140,35 +143,43 @@ public class DBConfigDialog extends BaseDialog {
             return;
         }
         if (isSave) {
-            //新增
-//            if (extObj == null) {
-//                final List<JdbcSourceInfo> jdbcPropertyValues = jdbcService.select(new JdbcSourceInfo());
-////                List<JdbcSourceInfo> jdbcPropertyValues = PropertiesUtil.getJdbcPropertyValues();
-//                if (CollectionUtils.isEmpty(jdbcPropertyValues)) {
-//                    jdbcSourceInfo.setIndex(0);
-//                } else {
-//                    //最后一条
-//                    Integer index = jdbcPropertyValues.get(jdbcPropertyValues.size() - 1).getIndex();
-//                    jdbcSourceInfo.setIndex(++index);
-//                }
-//            } else {
-//                jdbcSourceInfo.setIndex(((JdbcSourceInfo) extObj).getIndex());
-//            }
-            List<JdbcDbInfo> jdbcDbInfos = jdbcService.getAllJdbcDbInfo();
-            if (parentComponent instanceof TopPanel || parentComponent instanceof LeftPanel) {
-                LeftPanel leftPanel;
+            // 编辑
+            boolean isSuccess = false;
+            if (parentComponent instanceof LinkTree) {
+                if (!SQLiteUtil.checkUnique(jdbcSourceInfo, true)) {
+                    CustomDialogUtil.showError("保存失败！已存在相同连接");
+                    log.error("保存更新失败！已存在相同连接{}", JSONUtil.Object2JSON(jdbcSourceInfo));
+                    return;
+                }
+                isSuccess = ((LinkTree) parentComponent).refresh(jdbcSourceInfo);
+            } else if (parentComponent instanceof TopPanel || parentComponent instanceof LeftPanel) {
+                if (!SQLiteUtil.checkUnique(jdbcSourceInfo, false)) {
+                    log.error("保存新增失败！已存在相同连接{}", JSONUtil.Object2JSON(jdbcSourceInfo));
+                    CustomDialogUtil.showError("保存失败！已存在相同连接");
+                    return;
+                }
+                //新增
+                LeftPanel leftPanel = null;
                 if (parentComponent instanceof TopPanel) {
                     TopPanel topPanel = (TopPanel) parentComponent;
-                    leftPanel = topPanel.getLeftPanel();
+                    leftPanel = (LeftPanel) topPanel.getBindPanel();
                 } else {
                     leftPanel = (LeftPanel) parentComponent;
                 }
-                jdbcSourceInfo.setJdbcDbInfos(jdbcDbInfos);
-                leftPanel.editTreeNode(jdbcSourceInfo);
-                this.close();
+                jdbcSourceInfo.setJdbcDbInfos(jdbcService.getAllJdbcDbInfo());
+                isSuccess = leftPanel.addLinkTree(jdbcSourceInfo);
+
+            }
+            if (isSuccess) {
+                CustomDialogUtil.showOk("保存成功！", true, (bol) -> {
+                    this.close();
+                });
+            } else {
+                CustomDialogUtil.showError("保存失败！");
+                log.error("保存失败{}", JSONUtil.Object2JSON(jdbcSourceInfo));
             }
         } else {
-            CustomDialogUtil.showOk("连接成功！");
+            CustomDialogUtil.showOk("连接成功！", false, null);
         }
     }
 

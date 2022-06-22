@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration  status="WARN" monitorInterval="500">
+    <properties>
+        <!--LOG_HOME:指定当前日志存放的目录 -->
+        <property name="LOG_HOME">code4j_logs</property>
+    </properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <!--pattern:日期,线程名,日志级别,日志名称,日志信息,换行 -->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level [%L] - %msg%n" />
+        </Console>
+        <!--INFO级别日志输出-->
+        <RollingRandomAccessFile name="INFO"
+                                 fileName="${LOG_HOME}/info.log"
+                                 filePattern="${LOG_HOME}/info-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY" />
+            </Filters>
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+            <!-- DefaultRolloverStrategy属性如不设置，则默认为最多同一文件夹下7个文件，这里设置了20 -->
+            <DefaultRolloverStrategy max="20" />
+        </RollingRandomAccessFile>
+        <!--ERROR级别日志输出-->
+        <RollingRandomAccessFile name="ERROR"
+                                 fileName="${LOG_HOME}/error.log"
+                                 filePattern="${LOG_HOME}/error-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY" />
+            </Filters>
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="20" />
+        </RollingRandomAccessFile>
+    </Appenders>
+    <!--Loggers:定义日志级别和使用的Appenders -->
+    <Loggers>
+        <!--Root:日志默认打印到控制台 -->
+        <!--level日志级别: ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF -->
+        <Root level="DEBUG">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="INFO" />
+            <AppenderRef ref="ERROR" />
+        </Root>
+    </Loggers>
+</Configuration>

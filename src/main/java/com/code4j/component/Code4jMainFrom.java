@@ -1,12 +1,13 @@
 package com.code4j.component;
 
-import com.code4j.component.panel.*;
+import com.code4j.component.panel.BottomPanel;
+import com.code4j.component.panel.LeftPanel;
+import com.code4j.component.panel.RightPanel;
+import com.code4j.component.panel.TopPanel;
 import com.code4j.config.Code4jConstants;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 
 /**
  * @author liu_wp
@@ -15,6 +16,10 @@ import java.awt.event.ComponentListener;
  */
 public class Code4jMainFrom extends JFrame {
     private String title;
+    /**
+     *
+     */
+    private String icon;
     private TopPanel topPanel;
     private LeftPanel leftPanel;
     private RightPanel rightPanel;
@@ -23,6 +28,7 @@ public class Code4jMainFrom extends JFrame {
     private Code4jMainFrom(Code4jMainFrom.Builder builder) {
         super(builder.title);
         this.title = builder.title;
+        this.icon = builder.icon;
         this.topPanel = builder.topPanel;
         this.leftPanel = builder.leftPanel;
         this.rightPanel = builder.rightPanel;
@@ -43,6 +49,8 @@ public class Code4jMainFrom extends JFrame {
         this.setResizable(true);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        final Toolkit toolkit = Toolkit.getDefaultToolkit();
+        this.setIconImage(toolkit.getImage(ClassLoader.getSystemResource(icon)));
 //        this.setAlwaysOnTop(true);
     }
 
@@ -52,6 +60,7 @@ public class Code4jMainFrom extends JFrame {
 
     public static class Builder {
         private String title;
+        private String icon;
         private TopPanel topPanel;
         private LeftPanel leftPanel;
         private RightPanel rightPanel;
@@ -60,6 +69,10 @@ public class Code4jMainFrom extends JFrame {
 
         public Code4jMainFrom.Builder title(String title) {
             this.title = title;
+            return this;
+        }
+        public Code4jMainFrom.Builder icon(String icon) {
+            this.icon = icon;
             return this;
         }
 

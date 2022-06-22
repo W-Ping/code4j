@@ -14,63 +14,94 @@ import java.util.List;
  */
 public interface JDBCService<T> {
     /**
+     * 测试连接
+     *
      * @return
      */
     boolean test();
 
     /**
+     * 获取所有数据库
+     *
      * @return
      */
     List<JdbcDbInfo> getAllJdbcDbInfo();
 
     /**
+     * 获取数据库表列表
+     *
      * @param jdbcDbInfo
      * @return
      */
     List<JdbcTableInfo> getJdbcTableInfo(JdbcDbInfo jdbcDbInfo);
 
     /**
+     * 获取表元素
+     *
      * @param tableName
      * @return
      */
     List<JdbcMapJavaInfo> getTableColumnInfo(String dbName, String tableName);
 
-
     /**
-     * @param cls
-     * @param dbTableInfos
-     * @param forceCreate
+     * 检查表是否存在
+     *
+     * @param tableName
      * @return
      */
-    boolean createTableIfAbsent(Class<T> cls, List<DbTableInfo> dbTableInfos,boolean forceCreate);
+    boolean checkTableIsExist(String tableName);
+
+    /**
+     * 新建表
+     *
+     * @param cls          表对应的实体类
+     * @param dbTableInfos 表字段信息
+     * @param forceCreate  是否强制创建
+     * @return
+     */
+    boolean createTableIfAbsent(Class<T> cls, List<DbTableInfo> dbTableInfos, boolean forceCreate);
 
 
     /**
+     * 新增
+     *
      * @param obj
      * @return
      */
     boolean insert(T obj);
 
     /**
+     * 校验数据唯一性
+     *
+     * @param obj
+     * @param exclude 排除自己
+     * @return
+     */
+    boolean checkUniqueKey(T obj, boolean exclude);
+
+    /**
+     * 根据主键修改数据
+     *
      * @param obj
      * @return
      */
     boolean updateByPk(T obj);
-    /**
-     * @param primaryKey
-     * @return
-     */
-    boolean deleteByPk(Long primaryKey,Class<T> cls);
 
     /**
+     * 根据主键删除数据
+     *
+     * @param primaryKey
+     * @param cls
+     * @return
+     */
+    boolean deleteByPk(Long primaryKey, Class<T> cls);
+
+    /**
+     * 查询所有数据
+     *
      * @return
      */
     List<T> select(T obj);
 
-    /**
-     * @param tableName
-     * @return
-     */
-    boolean checkTableIsExist(String tableName);
 
 }

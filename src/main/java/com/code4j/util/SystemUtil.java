@@ -1,6 +1,8 @@
 package com.code4j.util;
 
 import com.code4j.config.Code4jConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +10,7 @@ import java.awt.datatransfer.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * @author liu_wp
@@ -15,6 +18,21 @@ import java.net.URISyntaxException;
  * @see
  */
 public class SystemUtil {
+    protected static final Logger log = LoggerFactory.getLogger(SystemUtil.class);
+
+    /**
+     * @param path
+     * @return
+     */
+    public static URL getSystemResource(String path) {
+        try {
+            return ClassLoader.getSystemResource(path);
+        } catch (Exception e) {
+            log.error("加载资源失败！【{}】{}", path, e.getMessage());
+        }
+        return null;
+    }
+
     /**
      * @param path
      * @return
@@ -23,7 +41,7 @@ public class SystemUtil {
         try {
             return readByStream(new FileInputStream(path));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.error("readByLines 读取数据失败！【{}】{}", path, e.getMessage());
         }
         return null;
     }
@@ -39,7 +57,6 @@ public class SystemUtil {
         String content = null;
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
-
             StringBuffer sb = new StringBuffer();
             String temp = null;
             while ((temp = bufferedReader.readLine()) != null) {
@@ -49,9 +66,9 @@ public class SystemUtil {
             content = sb.toString();
             bufferedReader.close();
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error("readByStream 执行失败！{}", e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("readByStream 执行失败！{}", e.getMessage());
         }
         return content;
     }
@@ -64,14 +81,32 @@ public class SystemUtil {
         try {
             File file = new File(path);
             if (file.exists()) {
-                file.createNewFile();
+                file.delete();
             }
+            file.createNewFile();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
             bufferedWriter.write(content);
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("writeFile 执行失败！{}{}{}", path, content, e.getMessage());
+        }
+    }
+
+    public static void open(String outDir) {
+        try {
+            String osName = System.getProperty("os.name");
+            if (osName != null) {
+                if (osName.contains("Mac")) {
+                    Runtime.getRuntime().exec("open " + outDir);
+                } else if (osName.contains("Windows")) {
+                    Runtime.getRuntime().exec("cmd /c start " + outDir);
+                } else {
+                    log.debug("文件输出目录:" + outDir);
+                }
+            }
+        } catch (IOException var3) {
+            var3.printStackTrace();
         }
     }
 
