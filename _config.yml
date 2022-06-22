@@ -1,1 +1,7 @@
 theme: jekyll-theme-cayman
+title: Cayman theme
+description: Cayman is a clean, responsive theme for GitHub Pages.
+show_downloads: true
+github:
+  zip_url: http://example.com/download.zip
+  another_url: another value
