@@ -2,7 +2,11 @@ theme: jekyll-theme-cayman
 title: code4j|java
 description: 代码生成工具
 show_downloads: true
+gitee:
+  repository_url: https://gitee.com/LW_Ping/code4j
 github:
   is_project_page: false
-  zip_url: http://example.com/download.zip
-  tar_url: http://example.com/download.tar
+  jar_url: https://github.com/W-Ping/code4j/releases/download/v1.1.0/code4j.jar
+  zip_url: https://github.com/W-Ping/code4j/archive/refs/tags/v1.1.0.zip
+
+  
