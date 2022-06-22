@@ -1,6 +1,6 @@
 # code4j
 #### `JAVA`模板代码生成工具。
-### 源码地址：[码云](https://gitee.com/LW_Ping/code4j) [GitHub](https://github.com/W-Ping/code4j)
+### 源码地址：[码云](https://gitee.com/LW_Ping/code4j)
 ![gif](https://user-images.githubusercontent.com/42802329/174940893-1f512f9d-3ef4-44ed-9515-0f41a8493ece.gif)
 
 ## 环境资源
