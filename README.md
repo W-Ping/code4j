@@ -66,4 +66,4 @@ Controller 配置：可选自定义的方法（默认不生成）。
 **右键-选择已连接的数据源可以刷新、编辑、删除**
 
 
-![img.png](img.png)
+![image](https://user-images.githubusercontent.com/42802329/174946492-b9aa05b9-6051-4bf9-8735-d17051f68a5a.png)
