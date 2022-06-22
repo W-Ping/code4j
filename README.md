@@ -1,11 +1,11 @@
 # code4j
-#### `JAVA`模板代码生成工具。
-### 源码地址：[码云](https://gitee.com/LW_Ping/code4j) [GitHub](https://github.com/W-Ping/code4j)
+**Java代码生成工具客户端 [文档](https://w-ping.github.io/code4j/)**
+
 ![gif](https://user-images.githubusercontent.com/42802329/174940893-1f512f9d-3ef4-44ed-9515-0f41a8493ece.gif)
 
 ## 环境资源
 * Windows 系统
-* JDK8+ 
+* JDK8+
 * MySQL数据库
 * PostgreSQL数据库
 
@@ -14,20 +14,24 @@
 * 自定义配置：自定义代码模板配置
 * 帮助文档：查看工具文档
 
+## 支持插件模板
+* lombok
+* swagger
+* mybatis-plus
 ## 代码模板说明
-* Entity 配置：此对象与数据库表结构对应
+* Entity 配置：此对象与数据库表结构对应（字段配置）。
 
-* VO 配置：显示层对象。
+* VO 配置：显示层对象（字段配置）。
 
-* Mapper 配置：数据访问层接口。
+* Mapper 配置：数据访问层接口（不选mybatis-plus可配置）。
 
-* Xml 配置：mybatis sql 文件。
+* Xml 配置：Mybatis Sql 文件（不选mybatis-plus可配置）。
 
 * Service Api配置：业务层接口。
 
 * Service Impl配置：业务层实现类接口。
 
-* Controller 配置：应用层方法。
+* Controller 配置：应用层方法(可配置)。
 
 名称：代码（类名）或文件名称；例如：UserInfo.java  UserMapper.xml
 
@@ -45,10 +49,7 @@ Xml 配置：可选择自定义的接口。（默认不生成）
 
 Controller 配置：可选自定义的方法（默认不生成）。
 
-## 支持插件模板
-* lombok 
-* swagger 
-* mybatis-plus
+响应：专指Controller层方法统一响应类。
 
 ## 使用教程
 
@@ -63,7 +64,7 @@ Controller 配置：可选自定义的方法（默认不生成）。
 5. 点击生成代码按钮，确定后即可生成代码。
 
 ## 补充说明
-**右键-选择已连接的数据源可以刷新、编辑、删除**
-
 
 ![image](https://user-images.githubusercontent.com/42802329/174946492-b9aa05b9-6051-4bf9-8735-d17051f68a5a.png)
+
+## 源码地址：[码云](https://gitee.com/LW_Ping/code4j)
