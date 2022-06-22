@@ -14,11 +14,11 @@ public class Code4jConstants {
     public final static String FAIL = "fail";
     public final static String APPLICATION_JAR = "code4j-v1.jar";
     public final static String SYS_ICON = "images/sys_icon.png";
-    public static Dimension FROM_MIN_DEFAULT_SIZE = new Dimension(1260, 760);
-    public static Dimension TOP_MIN_DEFAULT_SIZE = new Dimension(1260, 25);
+    public static Dimension FROM_MIN_DEFAULT_SIZE = new Dimension(1270, 760);
+    public static Dimension TOP_MIN_DEFAULT_SIZE = new Dimension(1270, 25);
     public static Dimension LEFT_MIN_DEFAULT_SIZE = new Dimension(200, 710);
-    public static Dimension RIGHT_MIN_DEFAULT_SIZE = new Dimension(1040, 710);
-    public static Dimension BOTTOM_MIN_DEFAULT_SIZE = new Dimension(1260, 20);
+    public static Dimension RIGHT_MIN_DEFAULT_SIZE = new Dimension(1050, 710);
+    public static Dimension BOTTOM_MIN_DEFAULT_SIZE = new Dimension(1270, 20);
 
     /**
      * 数据连接配置文件

@@ -39,7 +39,7 @@ public class ProjectConfigDialog extends BaseDialog {
         ProjectCodeConfigInfo projectCodeConfigInfo = extObj != null ? (ProjectCodeConfigInfo) extObj : new ProjectCodeConfigInfo(true);
         Dimension inputDim = new Dimension(230, 30);
         CustomJTextField j1 = new CustomJTextField(projectCodeConfigInfo.getProjectName(), inputDim);
-        projectComponent = new CommonPanel(new JLabel("项目名称："), j1);
+        projectComponent = new CommonPanel(new JLabel("配置名称："), j1);
         doComponent = createItemComponent(TemplateTypeEnum.DO, projectCodeConfigInfo.getDoPath(), projectCodeConfigInfo.getDoPackageName(), projectCodeConfigInfo.getDoSuperClass(), null);
         voComponent = createItemComponent(TemplateTypeEnum.VO, projectCodeConfigInfo.getVoPath(), projectCodeConfigInfo.getVoPackageName(), projectCodeConfigInfo.getVoSuperClass(), null);
         xmlComponent = createItemComponent(TemplateTypeEnum.XML, projectCodeConfigInfo.getXmlPath(), projectCodeConfigInfo.getXmlPackageName(), null, null);
@@ -165,7 +165,7 @@ public class ProjectConfigDialog extends BaseDialog {
         CustomJTextField j2 = new CustomJTextField(defaultPackage, inputDim);
         CustomJTextField j3 = new CustomJTextField(defaultPath, new Dimension(150, 25));
         CommonPanel c2 = new CommonPanel(new JLabel("包 名："), j2);
-        CommonPanel c3 = new CommonPanel(new JLabel("包路径："), j3);
+        CommonPanel c3 = new CommonPanel(new JLabel("路 径："), j3);
         Box hBox = Box.createHorizontalBox();
         hBox.add(c2);
         hBox.add(c3);

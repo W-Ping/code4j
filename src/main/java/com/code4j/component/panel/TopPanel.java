@@ -53,11 +53,11 @@ public class TopPanel extends BasePanel {
         });
         linkMenu.add(item);
         linkMenu.add(item2);
-        pcfMenu = new JMenu("项目配置");
+        pcfMenu = new JMenu("自定义配置");
         pcfMenu.setIcon(new ImageIcon(ClassLoader.getSystemResource("images/config.png")));
         CustomJMenuItem m2Item = new CustomJMenuItem(Code4jConstants.CONFIG_NAME, "add", new CustomBasicMenuItemUI(Code4jConstants.selectionBackground, Code4jConstants.selectionForeground));
         m2Item.addActionListener((e) -> {
-            showProjectConfigDialog("新增项目配置", null, false);
+            showProjectConfigDialog("新增自定义配置", null, false);
         });
         MatteBorder matteBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.black);
         m2Item.setBorder(matteBorder);
@@ -72,7 +72,7 @@ public class TopPanel extends BasePanel {
             projectConfigPropertyValues.forEach(v -> {
                 CustomJMenuItem itm = new CustomJMenuItem(v.getProjectName(), "tp", v, new CustomBasicMenuItemUI(Code4jConstants.selectionBackground, Code4jConstants.selectionForeground));
                 itm.addActionListener(e -> {
-                    showProjectConfigDialog("编辑项目配置", itm.getData(), true);
+                    showProjectConfigDialog("编辑自定义配置", itm.getData(), true);
                 });
                 pcfMenu.add(itm);
             });
