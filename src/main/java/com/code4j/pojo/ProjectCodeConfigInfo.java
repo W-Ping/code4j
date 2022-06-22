@@ -96,7 +96,7 @@ public class ProjectCodeConfigInfo extends BaseInfo {
     /**
      * service api 父类
      */
-    @Column("service_super_path")
+    @Column("service_super_class")
     private String serviceSuperClass;
     /**
      * service impl 包名称
@@ -112,7 +112,7 @@ public class ProjectCodeConfigInfo extends BaseInfo {
     /**
      * service impl 父类
      */
-    @Column("service_impl_super_path")
+    @Column("service_impl_super_class")
     private String serviceImplSuperClass;
 
     /**
@@ -131,6 +131,11 @@ public class ProjectCodeConfigInfo extends BaseInfo {
      */
     @Column("contr_super_class")
     private String contrSuperClass;
+    /**
+     * controller 响应类
+     */
+    @Column("contr_result_class")
+    private String contrResultClass;
     /**
      * 索引位置
      */
@@ -164,15 +169,16 @@ public class ProjectCodeConfigInfo extends BaseInfo {
             this.serviceImplPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.SERVICE, null);
             this.serviceApiPath = Code4jConstants.DEFAULT_PATH;
             this.serviceImplPath = Code4jConstants.DEFAULT_PATH;
-            this.projectName = projectName;
+            this.projectName = StringUtils.isBlank(projectName) ? tableName : projectName;
             this.doSuperClass = Code4jConstants.DO_SUPER_CLASS;
             this.voSuperClass = Code4jConstants.VO_SUPER_CLASS;
             this.serviceSuperClass = Code4jConstants.SERVICE_SUPER_CLASS;
             this.serviceImplSuperClass = Code4jConstants.SERVICE_SUPER_IMPL_CLASS;
             this.mapperSuperClass = Code4jConstants.MAPPER_SUPER_CLASS;
             this.contrPath = Code4jConstants.DEFAULT_PATH;
-            this.contrPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.CONTROLLER,null);
+            this.contrPackageName = BaseTemplateInfo.getDefaultPackageName(TemplateTypeEnum.CONTROLLER, null);
             this.contrSuperClass = Code4jConstants.CONTROLLER_SUPER_CLASS;
+            this.contrResultClass = Code4jConstants.CONTROLLER_RESULT_CLASS;
             this.index = index;
         }
     }
@@ -367,5 +373,13 @@ public class ProjectCodeConfigInfo extends BaseInfo {
 
     public void setContrPath(String contrPath) {
         this.contrPath = contrPath;
+    }
+
+    public String getContrResultClass() {
+        return contrResultClass;
+    }
+
+    public void setContrResultClass(String contrResultClass) {
+        this.contrResultClass = contrResultClass;
     }
 }

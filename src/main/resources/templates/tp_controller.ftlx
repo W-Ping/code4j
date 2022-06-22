@@ -23,6 +23,11 @@ public class ${(baseInfo.pojoName)!} extends ${(baseInfo.superPojoInfo.pojoName)
 public class ${(baseInfo.pojoName)!}{
 </#if>
 
+<#if (baseInfo.interfaceParamsInfo)??>
+    @Resource
+    private ${baseInfo.interfaceParamsInfo.pojoName} ${baseInfo.interfaceParamsInfo.pojoName};
+</#if>
+
 <#if (apiInfos)??>
     <#list apiInfos as model>
       /**

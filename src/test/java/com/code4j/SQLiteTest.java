@@ -29,6 +29,13 @@ public class SQLiteTest {
     }
 
     @Test
+    public void init() {
+        final boolean isSuccess1 = SQLiteUtil.createJDBCSourceTable(true);
+        final boolean isSuccess2 = SQLiteUtil.createProjectCodeConfigTable(true);
+        Assert.assertTrue(isSuccess1 && isSuccess2);
+    }
+
+    @Test
     public void createTableIfAbsent() {
         final boolean isSuccess = SQLiteUtil.createJDBCSourceTable(true);
         Assert.assertTrue(isSuccess);

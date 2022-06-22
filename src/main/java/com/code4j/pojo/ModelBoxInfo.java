@@ -11,12 +11,16 @@ public class ModelBoxInfo {
     private CustomJTextField packageField;
     private CustomJTextField pojoPathField;
     private CustomJTextField superPathField;
+
+    private CustomJTextField resultClassField;
     private Object bindObject;
-    public ModelBoxInfo(CustomJTextField packNameFiled, CustomJTextField packageField, CustomJTextField pojoPathField, CustomJTextField superPathField,Object bindObject) {
+
+    public ModelBoxInfo(CustomJTextField packNameFiled, CustomJTextField packageField, CustomJTextField pojoPathField, CustomJTextField superPathField, CustomJTextField resultClassField, Object bindObject) {
         this.packNameFiled = packNameFiled;
         this.packageField = packageField;
         this.pojoPathField = pojoPathField;
         this.superPathField = superPathField;
+        this.resultClassField = resultClassField;
         this.bindObject = bindObject;
     }
 
@@ -58,5 +62,13 @@ public class ModelBoxInfo {
 
     public void setBindObject(Object bindObject) {
         this.bindObject = bindObject;
+    }
+
+    public CustomJTextField getResultClassField() {
+        return resultClassField;
+    }
+
+    public void setResultClassField(CustomJTextField resultClassField) {
+        this.resultClassField = resultClassField;
     }
 }

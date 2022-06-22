@@ -122,6 +122,12 @@ public class GenerateCodeAction implements ActionListener {
         ControllerParamsInfo controllerParamsInfo = (ControllerParamsInfo) baseTemplateInfo;
         PojoParamsInfo doPojo = (PojoParamsInfo) templateParamsInfoMap.get(TemplateTypeEnum.DO.getTemplateId());
         PojoParamsInfo voPojo = (PojoParamsInfo) templateParamsInfoMap.get(TemplateTypeEnum.VO.getTemplateId());
+        ServiceParamsInfo interfaceParamsInfo = (ServiceParamsInfo) templateParamsInfoMap.get(TemplateTypeEnum.SERVICE_API.getTemplateId());
+        if (interfaceParamsInfo != null) {
+            controllerParamsInfo.setInterfaceParamsInfo(interfaceParamsInfo.getInterfaceParamsInfo());
+        } else {
+            controllerParamsInfo.setInterfaceParamsInfo(null);
+        }
         final List<ControllerApiParamsInfo> controllerApiParamsInfos = controllerParamsInfo.getControllerApiParamsInfos();
         final Set<String> packages = this.getControllerPackages(controllerParamsInfo, doPojo, voPojo, controllerApiParamsInfos);
         final Set<String> superPojoInfoPackages = this.getSuperPojoInfoPackages(controllerParamsInfo.getSuperPojoInfo(), doPojo, controllerParamsInfo, mybatisPlus.isSelected(), null);
@@ -150,22 +156,43 @@ public class GenerateCodeAction implements ActionListener {
         Set<String> packages = new HashSet<>();
         if (!CollectionUtils.isEmpty(controllerApiParamsInfos)) {
             JdbcMapJavaInfo tablePrimaryKey = controllerParamsInfo.getTablePrimaryKey();
+            //响应参数类型
+            final String resultClass = controllerParamsInfo.getResultClass();
+            String resultName = null;
+            if (StringUtils.isNotBlank(resultClass)) {
+                packages.add(resultClass);
+                resultName = controllerParamsInfo.getResultName();
+            }
+            //引用service
+            final InterfaceParamsInfo interfaceParamsInfo = controllerParamsInfo.getInterfaceParamsInfo();
+            if (interfaceParamsInfo != null) {
+                packages.add(interfaceParamsInfo.getPackagePath());
+                packages.add("javax.annotation.Resource");
+            }
             for (ControllerApiParamsInfo info : controllerApiParamsInfos) {
-                if (ControllerApiTemplateEnum.isObjectListResultType(info.getTemplateId())) {
-                    packages.add("java.util.List");
-                    info.setResultType(String.format("R<List<%s>>", voPojo != null ? voPojo.getPojoName() : "Object"));
-                } else if (ControllerApiTemplateEnum.isObjectResultType(info.getTemplateId())) {
-                    info.setResultType(String.format("R<%s>", voPojo != null ? voPojo.getPojoName() : "Object"));
-                } else if (ControllerApiTemplateEnum.isBooleanResultType(info.getTemplateId())) {
-                    info.setResultType("R<Boolean>");
-                } else if (ControllerApiTemplateEnum.isPageResultType(info.getTemplateId())) {
-                    info.setResultType(String.format("R<Page<%s>>", voPojo != null ? voPojo.getPojoName() : "Object"));
-                    if (mybatisPlus.isSelected()) {
-                        packages.add("com.baomidou.mybatisplus.extension.plugins.pagination.Page");
-                    } else {
-                        //自定义分页插件路径 实际项目中需替换
-                        packages.add(Code4jConstants.DEFAULT_PAGEINFO_PACKAGE);
+                if (CollectionUtils.isNotEmpty(info.getParameterInfos())) {
+                    //清除上一次执行的缓存
+                    info.getParameterInfos().clear();
+                }
+                if (StringUtils.isNotBlank(resultName)) {
+                    if (ControllerApiTemplateEnum.isObjectListResultType(info.getTemplateId())) {
+                        packages.add("java.util.List");
+                        info.setResultType(String.format("%s<List<%s>>", resultName, voPojo != null ? voPojo.getPojoName() : (doPojo != null ? doPojo.getPojoName() : "Object")));
+                    } else if (ControllerApiTemplateEnum.isObjectResultType(info.getTemplateId())) {
+                        info.setResultType(String.format("%s<%s>", resultName, voPojo != null ? voPojo.getPojoName() : (doPojo != null ? doPojo.getPojoName() : "Object")));
+                    } else if (ControllerApiTemplateEnum.isBooleanResultType(info.getTemplateId())) {
+                        info.setResultType(String.format("%s<Boolean>", resultName));
+                    } else if (ControllerApiTemplateEnum.isPageResultType(info.getTemplateId())) {
+                        info.setResultType(String.format("%s<Page<%s>>", resultName, voPojo != null ? voPojo.getPojoName() : (doPojo != null ? doPojo.getPojoName() : "Object")));
+                        if (mybatisPlus.isSelected()) {
+                            packages.add("com.baomidou.mybatisplus.extension.plugins.pagination.Page");
+                        } else {
+                            //自定义分页插件路径 实际项目中需替换
+                            packages.add(Code4jConstants.DEFAULT_PAGEINFO_PACKAGE);
+                        }
                     }
+                } else {
+                    info.setResultType("Object");
                 }
                 if (ControllerApiTemplateEnum.isIdPathVariable(info.getControllerApiTemplateEnum())) {
                     final Set<ControllerApiParamsInfo.ParameterInfo> parameterInfos = Optional.ofNullable(info.getParameterInfos()).orElse(new HashSet<>());
@@ -179,7 +206,7 @@ public class GenerateCodeAction implements ActionListener {
                 if (ControllerApiTemplateEnum.isRequestBody(info.getControllerApiTemplateEnum())) {
                     final Set<ControllerApiParamsInfo.ParameterInfo> parameterInfos = Optional.ofNullable(info.getParameterInfos()).orElse(new HashSet<>());
                     ControllerApiParamsInfo.ParameterInfo parameterInfo = new ControllerApiParamsInfo.ParameterInfo();
-                    parameterInfo.setAnnotations("@Validated @RequestBody");
+                    parameterInfo.setAnnotations(voPojo != null || doPojo != null ? "@Validated @RequestBody" : "@RequestBody");
                     packages.add("org.springframework.validation.annotation.Validated");
                     //优先使用voPojo
                     if (voPojo != null) {
@@ -446,10 +473,15 @@ public class GenerateCodeAction implements ActionListener {
 //            MapperParamsInfo mapperParamsInfo = (MapperParamsInfo) mapperPojo;
             // mapper 选择了自定义接口 需要生成对应的SQL
 //            xmlParamsInfo.defaultXmlApiParamsInfos(mapperParamsInfo.getMapperApiParamsInfos());
+        } else {
+            xmlParamsInfo.setNamespace(null);
         }
         if (doPojo != null) {
+            //doPojo替换默认的 tableColumnInfos
             xmlParamsInfo.setTableColumnInfos(doPojo.getTableColumnInfos());
             xmlParamsInfo.setResultMapType(StringUtils.isNotBlank(doPojo.getPackageRoot()) ? doPojo.getPackageRoot() + doPojo.getPackagePath() : doPojo.getPackagePath());
+        } else {
+            xmlParamsInfo.setResultMapType(null);
         }
         HashMap<String, Object> dataMap = new HashMap<>(2);
         List<XmlApiParamsInfo> xmlApiParamsInfos = xmlParamsInfo.getXmlApiParamsInfos();
@@ -607,8 +639,7 @@ public class GenerateCodeAction implements ActionListener {
                         List<XmlApiParamsInfo> xmlApiParamsInfos = xmlParamsInfo.getXmlApiParamsInfos();
                         if (CollectionUtils.isNotEmpty(xmlApiParamsInfos)) {
                             for (final XmlApiParamsInfo xmlApiParamsInfo : xmlApiParamsInfos) {
-                                if (XmlSqlTemplateEnum.isObjectListResultType(xmlApiParamsInfo.getTemplateId()) ||
-                                        XmlSqlTemplateEnum.isObjectResultType(xmlApiParamsInfo.getTemplateId())) {
+                                if (XmlSqlTemplateEnum.isObjectListResultType(xmlApiParamsInfo.getTemplateId()) || XmlSqlTemplateEnum.isObjectResultType(xmlApiParamsInfo.getTemplateId())) {
                                     xmlApiParamsInfo.setXmlApiWhereParamsInfos(jdbcMapJavaInfos);
                                 }
                                 //是否分页方法
@@ -654,6 +685,10 @@ public class GenerateCodeAction implements ActionListener {
                             controllerParamsInfo.setDefaultPackageName(PojoParamsInfo.getDefaultPackageName(templateTypeEnum, StrUtil.underlineToCamelToLower(jdbcTableInfo.getTableName())));
                             controllerParamsInfo.setPackageRoot(controllerParamsInfo.getUseDefaultPackageRoot(customJFileChooserPanel.getFileName()));
                             controllerParamsInfo.setSuperPojoInfo(this.getSuperPojoName(superPathT.getText().trim(), false));
+                            final CustomJTextField resultClassField = modelBoxInfo.getResultClassField();
+                            if (resultClassField != null) {
+                                controllerParamsInfo.setResultClass(resultClassField.getText().trim());
+                            }
                             templateParamsInfoMap.put(customJCheckBox.getId(), controllerParamsInfo);
                         } else {
                             List<JdbcMapJavaInfo> jdbcMapJavaInfos = (List<JdbcMapJavaInfo>) modelBoxInfo.getBindObject();

@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class MapperParamsInfo extends BaseTemplateInfo {
     private SuperPojoInfo superPojoInfo;
+
     /**
      *
      */
@@ -34,4 +35,5 @@ public class MapperParamsInfo extends BaseTemplateInfo {
     public void setMapperApiParamsInfos(final List<MapperApiParamsInfo> mapperApiParamsInfos) {
         this.mapperApiParamsInfos = mapperApiParamsInfos;
     }
+
 }
