@@ -53,7 +53,7 @@ Controller 配置：可选自定义的方法（默认不生成）。
 
 ## 使用教程
 
-1. 拉取代码到本地打成jar包 （mvn package）双击运行jar包。
+1. 下载jar包或拉取代码到本地打成jar包 （mvn package）双击运行jar包。
 
 2. 配置MySQL/PostgreSQL数据源。
 
