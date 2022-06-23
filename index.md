@@ -6,6 +6,7 @@
 ## 环境资源
 * Windows 系统
 * JDK8+
+* Maven
 * MySQL数据库
 * PostgreSQL数据库
 
@@ -18,6 +19,7 @@
 * lombok
 * swagger
 * mybatis-plus
+
 ## 代码模板说明
 * Entity 配置：此对象与数据库表结构对应（字段配置）。
 
@@ -53,7 +55,7 @@ Controller 配置：可选自定义的方法（默认不生成）。
 
 ## 使用教程
 
-1. 拉取代码到本地打成jar包 （mvn package）双击运行jar包。
+1. 下载jar包或拉取代码到本地打成jar包 （mvn package）双击运行jar包。
 
 2. 配置MySQL/PostgreSQL数据源。
 
