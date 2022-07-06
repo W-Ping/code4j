@@ -1,10 +1,11 @@
 package ${(pojo.packageRoot)!""}${(pojo.packageName)!};
-<#if (packages)??><#list packages as model>
-import ${model};
+
+<#if (packages)??><#list packages as pak>
+import ${pak!};
 </#list>
 </#if>
 /**
- * ${(pojo.jdbcTableInfo.remark)!} 接口
+ * ${(pojo.jdbcTableInfo.remark)!} Service API
  *
  * @author ${(pojo.author)!}
  * @date Created in ${.now}

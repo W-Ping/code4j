@@ -1,21 +1,17 @@
 package ${(pojoInfo.packageRoot)!""}${(pojoInfo.packageName)!};
 
-<#if packages??>
-    <#list packages as pak >
-import ${pak};
-    </#list>
-</#if>
-<#if isLombok==true>
+<#if packages??><#list packages as pak >
+import ${pak!};
+</#list></#if><#if isLombok==true>
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-</#if>
-<#if isSwagger==true>
+</#if><#if isSwagger==true>
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 </#if>
 /**
- * ${(pojoInfo.jdbcTableInfo.remark)!} VO类
+ * ${(pojoInfo.jdbcTableInfo.remark)!} VO
  *
  * @author ${(pojoInfo.author)!}
  * @date Created in ${.now}

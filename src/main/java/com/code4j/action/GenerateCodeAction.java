@@ -138,8 +138,6 @@ public class GenerateCodeAction implements ActionListener {
         dataMap.put("packages", packages);
         dataMap.put("apiInfos", controllerApiParamsInfos);
         dataMap.put("isSwagger", swagger.isSelected());
-        //还原选择
-//        controllerParamsInfo.setControllerApiParamsInfos(null);
         return dataMap;
     }
 
@@ -154,6 +152,12 @@ public class GenerateCodeAction implements ActionListener {
      */
     private Set<String> getControllerPackages(ControllerParamsInfo controllerParamsInfo, PojoParamsInfo doPojo, PojoParamsInfo voPojo, List<ControllerApiParamsInfo> controllerApiParamsInfos) {
         Set<String> packages = new HashSet<>();
+        //引用service
+        final InterfaceParamsInfo interfaceParamsInfo = controllerParamsInfo.getInterfaceParamsInfo();
+        if (interfaceParamsInfo != null) {
+            packages.add(interfaceParamsInfo.getPackagePath());
+            packages.add("javax.annotation.Resource");
+        }
         if (!CollectionUtils.isEmpty(controllerApiParamsInfos)) {
             JdbcMapJavaInfo tablePrimaryKey = controllerParamsInfo.getTablePrimaryKey();
             //响应参数类型
@@ -162,12 +166,6 @@ public class GenerateCodeAction implements ActionListener {
             if (StringUtils.isNotBlank(resultClass)) {
                 packages.add(resultClass);
                 resultName = controllerParamsInfo.getResultName();
-            }
-            //引用service
-            final InterfaceParamsInfo interfaceParamsInfo = controllerParamsInfo.getInterfaceParamsInfo();
-            if (interfaceParamsInfo != null) {
-                packages.add(interfaceParamsInfo.getPackagePath());
-                packages.add("javax.annotation.Resource");
             }
             for (ControllerApiParamsInfo info : controllerApiParamsInfos) {
                 if (CollectionUtils.isNotEmpty(info.getParameterInfos())) {
@@ -240,10 +238,9 @@ public class GenerateCodeAction implements ActionListener {
         MapperParamsInfo mapperParamsInfo = (MapperParamsInfo) baseTemplateInfo;
         List<MapperApiParamsInfo> mapperApiParamsInfos = mapperParamsInfo.getMapperApiParamsInfos();
         dataMap.put("baseInfo", mapperParamsInfo);
-        dataMap.put("packages", this.getMapperPackages(mapperParamsInfo, doPojo, mapperApiParamsInfos));
+        final Set<String> packages = this.getMapperPackages(mapperParamsInfo, doPojo, mapperApiParamsInfos);
+        dataMap.put("packages", packages);
         dataMap.put("apiInfos", mybatisPlus.isSelected() ? null : mapperApiParamsInfos);
-        //还原选择
-//        mapperParamsInfo.setMapperApiParamsInfos(null);
         return dataMap;
     }
 
@@ -326,7 +323,8 @@ public class GenerateCodeAction implements ActionListener {
     private Map<String, Object> convertPojoTemplateData(BaseTemplateInfo baseTemplateInfo) {
         PojoParamsInfo pojoParamsInfo = (PojoParamsInfo) baseTemplateInfo;
         Map<String, Object> dataMap = new HashMap<>(5);
-        dataMap.put("packages", columnPackage(pojoParamsInfo));
+        final Set<String> packages = columnPackage(pojoParamsInfo);
+        dataMap.put("packages", packages);
         dataMap.put("pojoInfo", pojoParamsInfo);
         dataMap.put("isLombok", lombok.isSelected());
         dataMap.put("isSwagger", swagger.isSelected());
@@ -354,6 +352,9 @@ public class GenerateCodeAction implements ActionListener {
             packages.addAll(superPackages);
         }
         dataMap.put("packages", packages);
+        for (String aPackage : packages) {
+            log.info("Service import {}", aPackage);
+        }
         return dataMap;
     }
 
@@ -488,8 +489,6 @@ public class GenerateCodeAction implements ActionListener {
 
         dataMap.put("xmlMap", xmlParamsInfo);
         dataMap.put("xmlApiParamsInfos", mybatisPlus.isSelected() ? null : xmlApiParamsInfos);
-        //还原选择
-//        xmlParamsInfo.setXmlApiParamsInfos(null);
         return dataMap;
     }
 

@@ -1,11 +1,12 @@
 package ${(baseInfo.packageRoot)!}${(baseInfo.packageName)!};
+
 import org.springframework.stereotype.Repository;
-<#if (packages)??><#list packages as model>
-import ${model};
+<#if (packages)??><#list packages as pak>
+import ${pak!};
 </#list>
 </#if>
 /**
- * ${(baseInfo.jdbcTableInfo.remark)!} Mapper类
+ * ${(baseInfo.jdbcTableInfo.remark)!} Mapper
  *
  * @author ${(baseInfo.author)!}
  * @date Created in ${.now}

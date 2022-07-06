@@ -1,13 +1,12 @@
 package ${(baseInfo.packageRoot)!""}${(baseInfo.packageName)!};
 
-import org.springframework.web.bind.annotation.*
-<#if (packages)??>
-    <#list packages as model>
-import ${model};
-    </#list>
+import org.springframework.web.bind.annotation.*;
+<#if (packages)??><#list packages as pak>
+import ${pak!};
+ </#list>
 </#if>
 /**
- * ${(baseInfo.jdbcTableInfo.remark)!} Controller类
+ * ${(baseInfo.jdbcTableInfo.remark)!} Controller
  *
  * @author ${(baseInfo.author)!}
  * @date Created in ${.now}

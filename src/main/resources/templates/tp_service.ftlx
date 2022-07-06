@@ -1,13 +1,12 @@
 package ${(pojo.packageRoot)!""}${(pojo.packageName)!};
 
 import org.springframework.stereotype.Service;
-<#if (packages)??>
- <#list packages as model>
-import ${model};
+<#if (packages)??><#list packages as pak>
+import ${pak!};
 </#list>
 </#if>
 /**
- * ${(pojo.jdbcTableInfo.remark)!} 接口实现类
+ * ${(pojo.jdbcTableInfo.remark)!} Service API Impl
  *
  * @author ${(pojo.author)!}
  * @date Created in ${.now}

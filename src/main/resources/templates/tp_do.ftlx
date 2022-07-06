@@ -1,20 +1,17 @@
 package ${(pojoInfo.packageRoot)!""}${(pojoInfo.packageName)!};
+
 <#if isMybatisPlus==true>
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.TableField;
-</#if>
-<#if isLombok==true>
+</#if><#if isLombok==true>
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-</#if>
-
-<#if packages??>
- <#list packages as pak >
-import ${pak};
+</#if><#if packages??><#list packages as pak >
+import ${pak!};
 </#list>
 </#if>
 /**
- * ${(pojoInfo.jdbcTableInfo.remark)!} 实体类
+ * ${(pojoInfo.jdbcTableInfo.remark)!} Entity
  *
  * @author ${(pojoInfo.author)!}
  * @date Created in ${.now}
@@ -24,7 +21,11 @@ import ${pak};
 @EqualsAndHashCode(callSuper = true)
 </#if>
 <#if isMybatisPlus==true>
+<#if (pojoInfo.jdbcTableInfo.jdbcSchemaInfo)??>
+@TableName(value= "${(pojoInfo.jdbcTableInfo.tableName)!}",schema="${(pojoInfo.jdbcTableInfo.jdbcSchemaInfo.schemaName)!}")
+<#else>
 @TableName(value= "${(pojoInfo.jdbcTableInfo.tableName)!}")
+</#if>
 </#if>
 <#if (pojoInfo.superPojoInfo)??>
 public class ${(pojoInfo.pojoName)!} extends ${pojoInfo.superPojoInfo.pojoName!}{
