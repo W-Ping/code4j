@@ -53,7 +53,8 @@ public class SQLiteUtil {
         DbTableInfo c4 = new DbTableInfo("user_name", "VARCHAR(100)", "用户名称", false, false);
         DbTableInfo c5 = new DbTableInfo("password", "VARCHAR(100)", "密码", false, false);
         DbTableInfo c6 = new DbTableInfo("source_type", "VARCHAR(50)", "类型", false, false);
-        List<DbTableInfo> tableInfoList = Arrays.asList(c0, c1, c2, c3, c4, c5, c6);
+        DbTableInfo c7 = new DbTableInfo("init_db", "VARCHAR(50)", "初始数据库", false, false);
+        List<DbTableInfo> tableInfoList = Arrays.asList(c0, c1, c2, c3, c4, c5, c6,c7);
         return sqLiteJDBCService.createTableIfAbsent(JdbcSourceInfo.class, tableInfoList, forceCreate);
     }
 

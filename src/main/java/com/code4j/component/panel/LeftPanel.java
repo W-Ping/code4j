@@ -4,6 +4,7 @@ import com.code4j.component.LinkTree;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.util.SQLiteUtil;
 import com.code4j.util.VFlowLayout;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -34,10 +35,12 @@ public class LeftPanel extends BasePanel {
         linkTreePanel = new CommonPanel();
         linkTreePanel.setLayout(new VFlowLayout());
         linkTreePanel.setBackground(this.getBackground());
-        for (int i = 0; i < jdbcPropertyValues.size(); i++) {
-            final JdbcSourceInfo jdbcSourceInfo = jdbcPropertyValues.get(i);
-            LinkTree tree = new LinkTree(this.bindPanel, new DefaultMutableTreeNode(jdbcSourceInfo), i, this.getBackground());
-            linkTreePanel.add(tree);
+        if (CollectionUtils.isNotEmpty(jdbcPropertyValues)) {
+            for (int i = 0; i < jdbcPropertyValues.size(); i++) {
+                final JdbcSourceInfo jdbcSourceInfo = jdbcPropertyValues.get(i);
+                LinkTree tree = new LinkTree(this.bindPanel, new DefaultMutableTreeNode(jdbcSourceInfo), i, this.getBackground());
+                linkTreePanel.add(tree);
+            }
         }
         JScrollPane treeJScrollPane = new JScrollPane(linkTreePanel);
         treeJScrollPane.setBackground(this.getBackground());

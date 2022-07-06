@@ -11,6 +11,8 @@ public class JdbcTableInfo {
     private String tableType;
     private String remark;
     private JdbcSourceInfo jdbcSourceInfo;
+
+    private JdbcSchemaInfo jdbcSchemaInfo;
     public String getDbName() {
         return dbName;
     }
@@ -54,5 +56,13 @@ public class JdbcTableInfo {
 
     public void setJdbcSourceInfo(final JdbcSourceInfo jdbcSourceInfo) {
         this.jdbcSourceInfo = jdbcSourceInfo;
+    }
+
+    public JdbcSchemaInfo getJdbcSchemaInfo() {
+        return jdbcSchemaInfo;
+    }
+
+    public void setJdbcSchemaInfo(JdbcSchemaInfo jdbcSchemaInfo) {
+        this.jdbcSchemaInfo = jdbcSchemaInfo;
     }
 }

@@ -22,7 +22,10 @@ public class CommonPanel extends BasePanel {
     public CommonPanel(final Dimension dimension) {
         super(dimension);
     }
-
+    public CommonPanel(final Dimension dimension,Component... sbComponent) {
+        super(dimension);
+        this.addList(sbComponent);
+    }
     public CommonPanel(final LayoutManager layout) {
         super(layout);
     }

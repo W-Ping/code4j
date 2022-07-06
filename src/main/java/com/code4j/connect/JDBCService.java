@@ -1,9 +1,6 @@
 package com.code4j.connect;
 
-import com.code4j.pojo.DbTableInfo;
-import com.code4j.pojo.JdbcDbInfo;
-import com.code4j.pojo.JdbcMapJavaInfo;
-import com.code4j.pojo.JdbcTableInfo;
+import com.code4j.pojo.*;
 
 import java.util.List;
 
@@ -28,12 +25,21 @@ public interface JDBCService<T> {
     List<JdbcDbInfo> getAllJdbcDbInfo();
 
     /**
+     * 获取 schema
+     *
+     * @param dbName
+     * @return
+     */
+    List<JdbcSchemaInfo> getJdbcSchemaInfo(String dbName);
+
+    /**
      * 获取数据库表列表
      *
      * @param jdbcDbInfo
+     * @param schema
      * @return
      */
-    List<JdbcTableInfo> getJdbcTableInfo(JdbcDbInfo jdbcDbInfo);
+    List<JdbcTableInfo> getJdbcTableInfo(JdbcDbInfo jdbcDbInfo,String schema);
 
     /**
      * 获取表元素

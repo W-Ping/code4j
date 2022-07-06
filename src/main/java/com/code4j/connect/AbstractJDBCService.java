@@ -154,7 +154,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
                 }
                 final Object value = field.get(obj);
                 if (value == null) {
-                    return false;
+                    continue;
                 }
                 objects.add(value);
                 sql.append(" = ?");
@@ -490,11 +490,38 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
     }
 
     @Override
-    public List<JdbcTableInfo> getJdbcTableInfo(final JdbcDbInfo jdbcDbInfo) {
+    public List<JdbcSchemaInfo> getJdbcSchemaInfo(String dbName) {
+        Connection connection = null;
+        try {
+            jdbcSourceInfo.setInitDb(dbName);
+            connection = getConnection();
+            if (connection == null) {
+                return null;
+            }
+            DatabaseMetaData metaData = connection.getMetaData();
+            List<JdbcSchemaInfo> schemaInfoList = new ArrayList<>();
+            final ResultSet schemas = metaData.getSchemas();
+            while (schemas.next()) {
+                final String tableSchema = schemas.getString("TABLE_SCHEM");
+                JdbcSchemaInfo jdbcSchemaInfo=new JdbcSchemaInfo();
+                jdbcSchemaInfo.setSchemaName(tableSchema);
+                schemaInfoList.add(jdbcSchemaInfo);
+            }
+            return schemaInfoList;
+        } catch (Exception e) {
+            log.error("错误！获取数据库信息失败！【{}】", e.getMessage());
+        } finally {
+            close(connection, null, null);
+        }
+        return null;
+    }
+
+    @Override
+    public List<JdbcTableInfo> getJdbcTableInfo(final JdbcDbInfo jdbcDbInfo, final String schema) {
         Connection connection = null;
         ResultSet rs = null;
         try {
-            jdbcSourceInfo.setDbName(jdbcDbInfo.getDbName());
+            jdbcSourceInfo.setInitDb(jdbcDbInfo.getDbName());
             connection = getConnection();
             if (connection == null) {
                 return null;
@@ -504,7 +531,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             DatabaseMetaData metaData = connection.getMetaData();
             //目录名称; 数据库名; 表名称; 表类型;
-            rs = metaData.getTables(this.catalog(connection.getCatalog(), dbName), schemaPattern(dbName), tableNamePattern(), types());
+            rs = metaData.getTables(this.catalog(connection.getCatalog(), dbName), Optional.ofNullable(schema).orElse(schemaPattern(dbName)), tableNamePattern(), types());
             while (rs.next()) {
                 JdbcTableInfo jdbcTableInfo = new JdbcTableInfo();
                 jdbcTableInfo.setDbName(dbName);

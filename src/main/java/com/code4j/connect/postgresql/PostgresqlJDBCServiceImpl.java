@@ -31,7 +31,8 @@ public class PostgresqlJDBCServiceImpl extends AbstractJDBCService {
 
     @Override
     protected String schemaPattern(String schemaPattern) {
-        return "public";
+//        return "public";
+        return "project";
     }
 
     @Override
@@ -75,7 +76,7 @@ public class PostgresqlJDBCServiceImpl extends AbstractJDBCService {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
-            jdbcSourceInfo.setDbName(jdbcDbInfo.getDbName());
+            jdbcSourceInfo.setInitDb(jdbcDbInfo.getDbName());
             connection = getConnection();
             if (connection == null) {
                 return null;

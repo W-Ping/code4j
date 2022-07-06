@@ -28,7 +28,7 @@
     <select id="selectByEntity" resultMap="BaseResultMap" parameterType="${(xmlMap.resultMapType)!}">
         select
         <include refid="Base_Table_Column" />
-        from ${(xmlMap.jdbcTableInfo.tableName)!}
+        from <#if (xmlMap.jdbcTableInfo.jdbcSchemaInfo??)>${(xmlMap.jdbcTableInfo.jdbcSchemaInfo.schemaName)!}.</#if>${(xmlMap.jdbcTableInfo.tableName)!}
         <where>
             <#list xmlMap.tableColumnInfos as model>
                 <#if model.javaType=="java.lang.String">
@@ -46,18 +46,18 @@
     <#if methodModel.templateId=="6">
      <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="${tablePK.javaType}" >
        select <include refid="Base_Table_Column" />
-       from ${(xmlMap.jdbcTableInfo.tableName)!}
+       from <#if (xmlMap.jdbcTableInfo.jdbcSchemaInfo??)>${(xmlMap.jdbcTableInfo.jdbcSchemaInfo.schemaName)!}.</#if>${(xmlMap.jdbcTableInfo.tableName)!}
        where ${tablePK.column} = ${r"#"}{${(tablePK.javaProperty)!}}
     </select>
     </#if>
      <#if methodModel.templateId=="3">
      <delete id="deleteByPrimaryKey" parameterType="${tablePK.javaType}" >
-       delete from ${(xmlMap.jdbcTableInfo.tableName)!} where ${tablePK.column} = ${r"#"}{${(tablePK.javaProperty)!}}
+       delete from <#if (xmlMap.jdbcTableInfo.jdbcSchemaInfo??)>${(xmlMap.jdbcTableInfo.jdbcSchemaInfo.schemaName)!}.</#if>${(xmlMap.jdbcTableInfo.tableName)!} where ${tablePK.column} = ${r"#"}{${(tablePK.javaProperty)!}}
      </delete>
      </#if>
      <#if methodModel.templateId=="4">
       <update id="${(methodModel.apiId)!}" parameterType="${(xmlMap.resultMapType)!}" >
-       update ${(xmlMap.jdbcTableInfo.tableName)!}
+       update <#if (xmlMap.jdbcTableInfo.jdbcSchemaInfo??)>${(xmlMap.jdbcTableInfo.jdbcSchemaInfo.schemaName)!}.</#if>${(xmlMap.jdbcTableInfo.tableName)!}
          <set>
           <#list xmlMap.tableColumnInfos as model>
            ${model.column} = ${r"#"}{${(model.javaProperty)!}},
@@ -68,7 +68,7 @@
      </#if>
     <#if methodModel.templateId=="41">
     <update id="${(methodModel.apiId)!}" parameterType="${(xmlMap.resultMapType)!}" >
-      update ${(xmlMap.jdbcTableInfo.tableName)!}
+      update <#if (xmlMap.jdbcTableInfo.jdbcSchemaInfo??)>${(xmlMap.jdbcTableInfo.jdbcSchemaInfo.schemaName)!}.</#if>${(xmlMap.jdbcTableInfo.tableName)!}
         <set>
          <#list xmlMap.tableColumnInfos as model>
            <#if model.javaType=="java.lang.String">
@@ -88,7 +88,7 @@
         <selectKey resultType="${tablePK.javaType}" keyProperty="${tablePK.column}" order="AFTER" >
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into ${(xmlMap.jdbcTableInfo.tableName)!}
+        insert into <#if (xmlMap.jdbcTableInfo.jdbcSchemaInfo??)>${(xmlMap.jdbcTableInfo.jdbcSchemaInfo.schemaName)!}.</#if>${(xmlMap.jdbcTableInfo.tableName)!}
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <#list xmlMap.tableColumnInfos as model>
                 <#if model.javaType=="java.lang.String">
@@ -118,7 +118,7 @@
           <selectKey resultType="${tablePK.javaType}" keyProperty="${tablePK.column}" order="AFTER" >
               SELECT LAST_INSERT_ID()
           </selectKey>
-          insert into ${(xmlMap.jdbcTableInfo.tableName)!}
+          insert into <#if (xmlMap.jdbcTableInfo.jdbcSchemaInfo??)>${(xmlMap.jdbcTableInfo.jdbcSchemaInfo.schemaName)!}.</#if>${(xmlMap.jdbcTableInfo.tableName)!}
           <trim prefix="(" suffix=")" suffixOverrides="," >
             <#list xmlMap.tableColumnInfos as model>
                 <#if model.javaType=="java.lang.String">

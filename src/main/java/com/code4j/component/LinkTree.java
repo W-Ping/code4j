@@ -8,7 +8,9 @@ import com.code4j.component.panel.RightPanel;
 import com.code4j.config.Code4jConstants;
 import com.code4j.connect.JDBCService;
 import com.code4j.connect.JdbcServiceFactory;
+import com.code4j.enums.DataSourceTypeEnum;
 import com.code4j.pojo.JdbcDbInfo;
+import com.code4j.pojo.JdbcSchemaInfo;
 import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.pojo.JdbcTableInfo;
 import com.code4j.util.CustomDialogUtil;
@@ -143,6 +145,7 @@ public class LinkTree extends JTree {
                     CustomDialogUtil.showError("删除连接失败");
                     return;
                 } else {
+                    linkTree.getRightPanel().reset(jdbcSourceInfo);
                     parent.remove(linkTree);
                     parent.updateUI();
                 }
@@ -206,6 +209,8 @@ public class LinkTree extends JTree {
                 }
             } else if (userObject instanceof JdbcDbInfo) {
                 this.setIcon(getIconPath("db", sel || expanded));
+            } else if (userObject instanceof JdbcSchemaInfo) {
+                this.setIcon(getIconPath("schema", sel || expanded));
             } else if (userObject instanceof JdbcTableInfo) {
                 this.setIcon(getIconPath("table", sel || expanded));
             }
@@ -251,29 +256,54 @@ public class LinkTree extends JTree {
             } else if (object instanceof JdbcDbInfo) {
                 log.debug("》》》选择数据库：{}", object);
                 JdbcDbInfo jdbcDbInfo = (JdbcDbInfo) object;
-                JDBCService jdbcService = JdbcServiceFactory.getJdbcService(jdbcDbInfo.getJdbcSourceInfo());
-                List<JdbcTableInfo> jdbcTableInfos = jdbcService.getJdbcTableInfo(jdbcDbInfo);
-                if (CollectionUtils.isNotEmpty(jdbcTableInfos)) {
-                    for (final JdbcTableInfo tableInfo : jdbcTableInfos) {
-                        DefaultMutableTreeNode dbNameNode = new DefaultMutableTreeNode(tableInfo, false);
-                        if (node.getChildCount() > 0) {
-                            TreeNode lastChild = node.getLastChild();
-                            JdbcTableInfo jdbcTableInfo = (JdbcTableInfo) ((DefaultMutableTreeNode) lastChild).getUserObject();
-                            if (!jdbcTableInfo.getTableName().equals(tableInfo.getTableName())) {
-                                node.add(dbNameNode);
-                            }
-                        } else {
-                            node.add(dbNameNode);
+                final JdbcSourceInfo jdbcSourceInfo = jdbcDbInfo.getJdbcSourceInfo();
+                JDBCService jdbcService = JdbcServiceFactory.getJdbcService(jdbcSourceInfo);
+                //postgresql schema
+                if (DataSourceTypeEnum.POSTGRESQL == jdbcSourceInfo.getDataSourceTypeEnum()) {
+                    final List<JdbcSchemaInfo> jdbcSchemaInfo = jdbcService.getJdbcSchemaInfo(jdbcDbInfo.getDbName());
+                    if (CollectionUtils.isNotEmpty(jdbcSchemaInfo)) {
+                        for (JdbcSchemaInfo schemaInfo : jdbcSchemaInfo) {
+                            schemaInfo.setJdbcDbInfo(jdbcDbInfo);
+                            DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(schemaInfo, true);
+                            node.add(schemaNode);
                         }
                     }
                 } else {
-                    linkTree.getRightPanel().clearEmpty(jdbcDbInfo.toString() + " 没有表信息");
+                    List<JdbcTableInfo> jdbcTableInfos = jdbcService.getJdbcTableInfo(jdbcDbInfo, null);
+                    this.extracted(node, jdbcDbInfo.getDbName(), jdbcTableInfos, null);
                 }
+            } else if (object instanceof JdbcSchemaInfo) {
+                log.debug("》》》选择schema：{}", object);
+                JdbcSchemaInfo jdbcSchemaInfo = (JdbcSchemaInfo) object;
+                final JdbcDbInfo jdbcDbInfo = jdbcSchemaInfo.getJdbcDbInfo();
+                JDBCService jdbcService = JdbcServiceFactory.getJdbcService(jdbcDbInfo.getJdbcSourceInfo());
+                List<JdbcTableInfo> jdbcTableInfos = jdbcService.getJdbcTableInfo(jdbcDbInfo, jdbcSchemaInfo.getSchemaName());
+                this.extracted(node, jdbcSchemaInfo.getSchemaName(), jdbcTableInfos, jdbcSchemaInfo);
             } else if (object instanceof JdbcTableInfo) {
                 //选择表
                 log.debug("》》》选择表：{}", object);
                 JdbcTableInfo jdbcTableInfo = (JdbcTableInfo) object;
                 linkTree.getRightPanel().showGenerateView(jdbcTableInfo, jdbcTableInfo.getJdbcSourceInfo());
+            }
+        }
+
+        private void extracted(DefaultMutableTreeNode node, String db, List<JdbcTableInfo> jdbcTableInfos, JdbcSchemaInfo jdbcSchemaInfo) {
+            if (CollectionUtils.isNotEmpty(jdbcTableInfos)) {
+                for (final JdbcTableInfo tableInfo : jdbcTableInfos) {
+                    tableInfo.setJdbcSchemaInfo(jdbcSchemaInfo);
+                    DefaultMutableTreeNode dbNameNode = new DefaultMutableTreeNode(tableInfo, false);
+                    if (node.getChildCount() > 0) {
+                        TreeNode lastChild = node.getLastChild();
+                        JdbcTableInfo jdbcTableInfo = (JdbcTableInfo) ((DefaultMutableTreeNode) lastChild).getUserObject();
+                        if (!jdbcTableInfo.getTableName().equals(tableInfo.getTableName())) {
+                            node.add(dbNameNode);
+                        }
+                    } else {
+                        node.add(dbNameNode);
+                    }
+                }
+            } else {
+                linkTree.getRightPanel().clearEmpty(db + " 没有表信息");
             }
         }
 

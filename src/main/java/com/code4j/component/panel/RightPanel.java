@@ -65,6 +65,8 @@ public class RightPanel extends BasePanel {
     private CustomJTextField contrResultText;
     private CustomJTextField doSpText;
 
+    private JdbcSourceInfo currJdbcSourceInfo;
+
     public RightPanel(final Dimension dimension) {
         super(new FlowLayout(FlowLayout.LEFT), dimension);
     }
@@ -73,6 +75,13 @@ public class RightPanel extends BasePanel {
     @Override
     protected void init() {
         this.setLayout(new BorderLayout());
+    }
+
+    public void reset(JdbcSourceInfo jdbcSourceInfo) {
+        if (this.currJdbcSourceInfo != null && this.currJdbcSourceInfo.equals(jdbcSourceInfo)) {
+            this.removeAll();
+            this.updateUI();
+        }
     }
 
     public void clearEmpty(String promptMsg) {
@@ -92,7 +101,7 @@ public class RightPanel extends BasePanel {
      */
     public void showGenerateView(JdbcTableInfo jdbcTableInfo, JdbcSourceInfo jdbcSourceInfo) {
         this.clearEmpty(null);
-
+        this.currJdbcSourceInfo = jdbcSourceInfo;
         //获取选择的表信息
         List<JdbcMapJavaInfo> tableColumnInfos = JdbcServiceFactory.getJdbcService(jdbcSourceInfo).getTableColumnInfo(jdbcTableInfo.getDbName(), jdbcTableInfo.getTableName());
         //表名
@@ -108,7 +117,7 @@ public class RightPanel extends BasePanel {
         //----------------------------------------------项目配置---------------------------------------------
         //项目配置容器尺寸  width=容器宽度-10 height=avgH+20
         CommonPanel projectP = new CommonPanel(new FlowLayout(FlowLayout.LEFT), new Dimension((int) preferredSize.getWidth() - 10, avgH + 20));
-        projectP.setBorder(BorderFactory.createTitledBorder(lineBorder, "项目配置（" + jdbcTableInfo.getDbName() + "." + tableName + "）"));
+        projectP.setBorder(BorderFactory.createTitledBorder(lineBorder, "项目配置（" + this.info(jdbcTableInfo) + "）"));
         JLabel p1 = new JLabel("项目地址：");
         CustomJFileChooserPanel p1V = new CustomJFileChooserPanel(this, false, JFileChooser.DIRECTORIES_ONLY);
         CustomJCheckBox lombokCb = new CustomJCheckBox("lombok", true, "lombok");
@@ -225,6 +234,7 @@ public class RightPanel extends BasePanel {
         this.updateUI();
     }
 
+
     public void defaultInit(String tableName) {
         this.loadProjectConfig(new ProjectCodeConfigInfo(tableName));
     }
@@ -285,13 +295,6 @@ public class RightPanel extends BasePanel {
         }
     }
 
-    private String getPojoName(String str, String prefix) {
-        if (str.startsWith("t_")) {
-            str = StrUtil.subFirstStr(str, "t_");
-        }
-        return StrUtil.underlineToCamelFirstToUpper(str) + prefix;
-    }
-
 
     public ProjectCodeConfigInfo getProjectCodeConfigInfo() {
         return projectCodeConfigInfo;
@@ -299,5 +302,24 @@ public class RightPanel extends BasePanel {
 
     public void setProjectCodeConfigInfo(ProjectCodeConfigInfo projectCodeConfigInfo) {
         this.projectCodeConfigInfo = projectCodeConfigInfo;
+    }
+
+    private String info(JdbcTableInfo jdbcTableInfo) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(jdbcTableInfo.getDbName());
+        if (jdbcTableInfo.getJdbcSchemaInfo() != null) {
+            sb.append(".");
+            sb.append(jdbcTableInfo.getJdbcSchemaInfo().getSchemaName());
+        }
+        sb.append(".");
+        sb.append(jdbcTableInfo.getTableName());
+        return sb.toString();
+    }
+
+    private String getPojoName(String str, String prefix) {
+        if (str.startsWith("t_")) {
+            str = StrUtil.subFirstStr(str, "t_");
+        }
+        return StrUtil.underlineToCamelFirstToUpper(str) + prefix;
     }
 }

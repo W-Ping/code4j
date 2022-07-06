@@ -2,6 +2,7 @@ package com.code4j.component.dialog;
 
 import com.code4j.component.panel.CommonPanel;
 import com.code4j.util.CustomDialogUtil;
+import com.code4j.util.SystemUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,7 @@ public abstract class BaseDialog extends JDialog {
 
     public BaseDialog(Component parentComponent, String title, boolean modal, Object extObj, boolean isUpdate) {
         super(parentComponent == null ? CustomDialogUtil.getRootFrame() : (Frame) SwingUtilities.windowForComponent(parentComponent));
+        this.setIconImage(new ImageIcon(SystemUtil.getSystemResource(String.format("images/%s.png","sys_icon"))).getImage());
         this.isUpdate = isUpdate;
         this.parentComponent = parentComponent;
         this.extObj = extObj;

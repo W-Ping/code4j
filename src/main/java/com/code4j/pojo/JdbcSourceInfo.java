@@ -6,6 +6,7 @@ import com.code4j.annotation.IgnoreReflection;
 import com.code4j.annotation.PropertyKeyIndexId;
 import com.code4j.annotation.Table;
 import com.code4j.enums.DataSourceTypeEnum;
+import com.google.common.base.Objects;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
  * @date 2020/11/17
  * @see
  */
-@Table(value = "jdbc_source_info", uniqueKey = {"connect_name","connect_host", "connect_port", "source_type"})
+@Table(value = "jdbc_source_info", uniqueKey = {"connect_name", "connect_host", "connect_port", "source_type", "init_db"})
 @PropertyKeyIndexId
 public class JdbcSourceInfo extends BaseInfo {
     /**
@@ -48,13 +49,17 @@ public class JdbcSourceInfo extends BaseInfo {
     @Column("user_name")
     private String userName;
     /**
+     * 初始数据库
+     */
+    @Column("init_db")
+    private String initDb;
+    /**
      * 用户密码
      */
     @Column("password")
     private String password;
     @Column("source_type")
     private String sourceType;
-    private String dbName;
 
     private String creator = "code4j";
 
@@ -77,6 +82,7 @@ public class JdbcSourceInfo extends BaseInfo {
             jdbcSourceInfo.setUserName(this.getUserName());
             jdbcSourceInfo.setPassword(this.getPassword());
             jdbcSourceInfo.setCreator(this.getCreator());
+            jdbcSourceInfo.setInitDb(this.getInitDb());
             jdbcSourceInfo.setSourceType(this.getSourceType());
             jdbcSourceInfo.setDataSourceTypeEnum(this.getDataSourceTypeEnum());
             jdbcSourceInfo.setCurrTreeNode(this.getCurrTreeNode());
@@ -85,27 +91,27 @@ public class JdbcSourceInfo extends BaseInfo {
             return null;
         }
     }
-
     @Override
     public String toString() {
         return this.connectName;
     }
 
-    /**
-     * @param obj
-     * @return
-     */
     @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        JdbcSourceInfo jdbcSourceInfo = (JdbcSourceInfo) obj;
-        if (jdbcSourceInfo.getConnectHost() != null && jdbcSourceInfo.getConnectHost().equals(this.getConnectHost())
-                && jdbcSourceInfo.getConnectPort() != null && jdbcSourceInfo.getConnectPort().equals(this.getConnectPort()) && jdbcSourceInfo.getConnectName().equals(this.getConnectName())) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        return false;
+        if (!(o instanceof JdbcSourceInfo)) {
+            return false;
+        }
+        JdbcSourceInfo that = (JdbcSourceInfo) o;
+        return Objects.equal(connectName, that.connectName) && Objects.equal(connectHost, that.connectHost) && Objects.equal(connectPort, that.connectPort) && Objects.equal(userName, that.userName)
+                && Objects.equal(initDb, that.initDb) && Objects.equal(password, that.password) && Objects.equal(sourceType, that.sourceType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(connectName, connectHost, connectPort, userName, initDb, password, sourceType);
     }
 
     public String getConnectName() {
@@ -208,12 +214,12 @@ public class JdbcSourceInfo extends BaseInfo {
         this.index = index;
     }
 
-    public String getDbName() {
-        return dbName;
+
+    public String getInitDb() {
+        return initDb;
     }
 
-    public void setDbName(String dbName) {
-        this.dbName = dbName;
+    public void setInitDb(String initDb) {
+        this.initDb = initDb;
     }
-    
 }

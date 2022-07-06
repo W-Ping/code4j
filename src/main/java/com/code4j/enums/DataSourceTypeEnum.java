@@ -16,6 +16,9 @@ import java.util.Optional;
  * @see
  */
 public enum DataSourceTypeEnum {
+    /**
+     *
+     */
     MYSQL {
         @Override
         public String getDriver() {
@@ -25,6 +28,11 @@ public enum DataSourceTypeEnum {
         @Override
         public int defaultPort() {
             return 3306;
+        }
+
+        @Override
+        public String defaultInitDb() {
+            return null;
         }
 
         @Override
@@ -61,13 +69,18 @@ public enum DataSourceTypeEnum {
         }
 
         @Override
+        public String defaultInitDb() {
+            return "postgres";
+        }
+
+        @Override
         public String typeName() {
             return "PostgreSQL";
         }
 
         @Override
         public String getUrl(final JdbcSourceInfo JDBCSourceInfo) {
-            String url = "jdbc:postgresql://" + JDBCSourceInfo.getConnectHost() + ":" + JDBCSourceInfo.getConnectPort() + "/" + Optional.ofNullable(JDBCSourceInfo.getDbName()).orElse("");
+            String url = "jdbc:postgresql://" + JDBCSourceInfo.getConnectHost() + ":" + JDBCSourceInfo.getConnectPort() + "/" + Optional.ofNullable(JDBCSourceInfo.getInitDb()).orElse("");
             return url;
         }
 
@@ -94,13 +107,18 @@ public enum DataSourceTypeEnum {
         }
 
         @Override
+        public String defaultInitDb() {
+            return null;
+        }
+
+        @Override
         public String typeName() {
             return "SQLite";
         }
 
         @Override
         public String getUrl(final JdbcSourceInfo JDBCSourceInfo) {
-            String dbName = StringUtils.isNotBlank(JDBCSourceInfo.getDbName()) ? JDBCSourceInfo.getDbName() : Code4jConstants.SQLITE_DEFAULT_DB;
+            String dbName = StringUtils.isNotBlank(JDBCSourceInfo.getInitDb()) ? JDBCSourceInfo.getInitDb() : Code4jConstants.SQLITE_DEFAULT_DB;
             String url = "jdbc:sqlite:" + dbName + ".db";
             return url;
         }
@@ -128,6 +146,8 @@ public enum DataSourceTypeEnum {
      * @return
      */
     public abstract int defaultPort();
+
+    public abstract String defaultInitDb();
 
     /**
      * @return
