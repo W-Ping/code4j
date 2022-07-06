@@ -116,7 +116,25 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>code4j</finalName>
+        <finalName>${name}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>images/*.png</include>
+                    <include>templates/*.ftlx</include>
+                    <include>log4j2.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${basedir}</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>*.md</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -125,6 +143,7 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
             <plugin>
@@ -158,6 +177,9 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <archiverConfig>
+                        <encoding>utf-8</encoding>
+                    </archiverConfig>
                 </configuration>
                 <executions>
                     <execution>
