@@ -31,8 +31,7 @@ public class PostgresqlJDBCServiceImpl extends AbstractJDBCService {
 
     @Override
     protected String schemaPattern(String schemaPattern) {
-//        return "public";
-        return "project";
+        return "public";
     }
 
     @Override
