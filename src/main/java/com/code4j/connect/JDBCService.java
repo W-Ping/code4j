@@ -39,15 +39,17 @@ public interface JDBCService<T> {
      * @param schema
      * @return
      */
-    List<JdbcTableInfo> getJdbcTableInfo(JdbcDbInfo jdbcDbInfo,String schema);
+    List<JdbcTableInfo> getJdbcTableInfo(JdbcDbInfo jdbcDbInfo, String schema);
 
     /**
      * 获取表元素
      *
+     * @param schema
+     * @param dbName
      * @param tableName
      * @return
      */
-    List<JdbcMapJavaInfo> getTableColumnInfo(String dbName, String tableName);
+    List<JdbcMapJavaInfo> getTableColumnInfo(String schema, String dbName, String tableName);
 
     /**
      * 检查表是否存在

@@ -102,8 +102,9 @@ public class RightPanel extends BasePanel {
     public void showGenerateView(JdbcTableInfo jdbcTableInfo, JdbcSourceInfo jdbcSourceInfo) {
         this.clearEmpty(null);
         this.currJdbcSourceInfo = jdbcSourceInfo;
+        final String schemaName = jdbcTableInfo.getJdbcSchemaInfo() != null ? jdbcTableInfo.getJdbcSchemaInfo().getSchemaName() : null;
         //获取选择的表信息
-        List<JdbcMapJavaInfo> tableColumnInfos = JdbcServiceFactory.getJdbcService(jdbcSourceInfo).getTableColumnInfo(jdbcTableInfo.getDbName(), jdbcTableInfo.getTableName());
+        List<JdbcMapJavaInfo> tableColumnInfos = JdbcServiceFactory.getJdbcService(jdbcSourceInfo).getTableColumnInfo(schemaName, jdbcTableInfo.getDbName(), jdbcTableInfo.getTableName());
         //表名
         String tableName = jdbcTableInfo.getTableName();
         Border lineBorder = BorderFactory.createLineBorder(Color.WHITE, 2);

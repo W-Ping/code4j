@@ -34,10 +34,6 @@ public class PostgresqlJDBCServiceImpl extends AbstractJDBCService {
         return "public";
     }
 
-    @Override
-    protected String catalog(String catalog, String dbName) {
-        return dbName;
-    }
 
     @Override
     public List<JdbcDbInfo> getAllJdbcDbInfo() {

@@ -503,7 +503,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             final ResultSet schemas = metaData.getSchemas();
             while (schemas.next()) {
                 final String tableSchema = schemas.getString("TABLE_SCHEM");
-                JdbcSchemaInfo jdbcSchemaInfo=new JdbcSchemaInfo();
+                JdbcSchemaInfo jdbcSchemaInfo = new JdbcSchemaInfo();
                 jdbcSchemaInfo.setSchemaName(tableSchema);
                 schemaInfoList.add(jdbcSchemaInfo);
             }
@@ -566,13 +566,15 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
         return new String[]{"TABLE"};
     }
 
+
     /**
+     * @param schema
      * @param dbName
      * @param tableName
      * @return
      */
     @Override
-    public List<JdbcMapJavaInfo> getTableColumnInfo(final String dbName, final String tableName) {
+    public List<JdbcMapJavaInfo> getTableColumnInfo(final String schema, final String dbName, final String tableName) {
         Connection connection = null;
         ResultSet rs = null;
         try {
@@ -582,9 +584,9 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             }
             List<JdbcMapJavaInfo> result = new ArrayList<>();
             DatabaseMetaData meta = connection.getMetaData();
-            rs = meta.getColumns(this.catalog(connection.getCatalog(), dbName), schemaPattern(dbName), tableName.trim(), null);
+            rs = meta.getColumns(this.catalog(connection.getCatalog(), dbName), Optional.ofNullable(schema).orElse(schemaPattern(dbName)), tableName.trim(), null);
             Set<String> columnCache = new HashSet<>();
-            String pk = getTablePrimaryKeys(dbName, tableName, connection);
+            String pk = getTablePrimaryKeys(schema, dbName, tableName, connection);
             log.debug("获取表信息参数：数据库{}主键是{}", dbName, pk);
             while (rs.next()) {
                 String columnName = rs.getString("COLUMN_NAME");
@@ -611,8 +613,8 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
      * @param tableName
      * @return
      */
-    private String getTablePrimaryKeys(String dbName, String tableName, Connection connection) {
-        try (ResultSet rs = connection.getMetaData().getPrimaryKeys(catalog(connection.getCatalog(), dbName), schemaPattern(dbName), tableName.trim());) {
+    private String getTablePrimaryKeys(String schema, String dbName, String tableName, Connection connection) {
+        try (ResultSet rs = connection.getMetaData().getPrimaryKeys(catalog(connection.getCatalog(), dbName), Optional.ofNullable(schema).orElse(schemaPattern(dbName)), tableName.trim())) {
             if (rs != null) {
                 while (rs.next()) {
                     return rs.getString("COLUMN_NAME");
