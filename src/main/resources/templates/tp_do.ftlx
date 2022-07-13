@@ -1,8 +1,7 @@
 package ${(pojoInfo.packageRoot)!""}${(pojoInfo.packageName)!};
 
 <#if isMybatisPlus==true>
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.*;
 </#if><#if isLombok==true>
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,7 +39,7 @@ public class ${(pojoInfo.pojoName)!}{
     */
     <#if isMybatisPlus==true>
       <#if model.primaryKey==true>
-    @TableField(value="${model.column!}",type = IdType.AUTO)
+    @TableId(value="${model.column!}",type = IdType.AUTO)
        <#else>
     @TableField(value="${model.column!}")
       </#if>
