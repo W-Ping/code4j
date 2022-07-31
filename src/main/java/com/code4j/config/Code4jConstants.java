@@ -9,15 +9,33 @@ import java.io.File;
  * @see
  */
 public class Code4jConstants {
-    public final static String APP_VERSION = "V1.1.0";
+    public final static String APP_VERSION = "V1.1.1";
+    public final static String GITEE_URL = "https://gitee.com/LW_Ping/code4j";
+    public final static String WEB_DOC_URL = "https://w-ping.github.io/code4j/";
+    /**
+     * 作者 key
+     */
+    public final static String AUTHOR_KEY = "author";
+    /**
+     * 项目配置 key
+     */
+    public final static String DEFAULT_SELECTED_CONFIG_KEY = "config";
+    /**
+     * 项目地址 key
+     */
+    public final static String DEFAULT_PATH_KEY = "path";
+    /**
+     * 默认作者
+     */
+    public final static String DEFAULT_AUTHOR = "code4j";
     public final static String SUCCESS = "success";
     public final static String FAIL = "fail";
     public final static String APPLICATION_JAR = "code4j-v1.jar";
     public final static String SYS_ICON = "images/sys_icon.png";
-    public static Dimension FROM_MIN_DEFAULT_SIZE = new Dimension(1270, 760);
+    public static Dimension FROM_MIN_DEFAULT_SIZE = new Dimension(1270, 770);
     public static Dimension TOP_MIN_DEFAULT_SIZE = new Dimension(1270, 25);
-    public static Dimension LEFT_MIN_DEFAULT_SIZE = new Dimension(200, 710);
-    public static Dimension RIGHT_MIN_DEFAULT_SIZE = new Dimension(1050, 710);
+    public static Dimension LEFT_MIN_DEFAULT_SIZE = new Dimension(200, 720);
+    public static Dimension RIGHT_MIN_DEFAULT_SIZE = new Dimension(1050, 720);
     public static Dimension BOTTOM_MIN_DEFAULT_SIZE = new Dimension(1270, 20);
 
     /**
@@ -77,10 +95,10 @@ public class Code4jConstants {
     /**
      * 选择的项目地址
      */
-    public static  File CACHE_PROJECT_SELECTED_FILE = new File("");
+    public static File CACHE_PROJECT_SELECTED_FILE = new File("");
 
-    public static final String SQLITE_DEFAULT_NAME="code4j_sb";
-    public static final String SQLITE_DEFAULT_PWD="code4j_sb@";
-    public static final String SQLITE_DEFAULT_DB="code4j";
+    public static final String SQLITE_DEFAULT_NAME = "code4j_sb";
+    public static final String SQLITE_DEFAULT_PWD = "code4j_sb@";
+    public static final String SQLITE_DEFAULT_DB = "code4j";
 
 }

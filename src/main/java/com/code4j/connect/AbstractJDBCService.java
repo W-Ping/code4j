@@ -218,6 +218,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             columns.append(" (");
             columnValues.append(" (");
             final List<Field> fields = Arrays.stream(declaredFields).filter(f -> f.getAnnotation(Column.class) != null).collect(Collectors.toList());
+            boolean valueAllIsNull = true;
             for (int i = 0; i < fields.size(); i++) {
                 Field field = fields.get(i);
                 field.setAccessible(true);
@@ -225,11 +226,15 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
                 final Column annotation = field.getAnnotation(Column.class);
                 String value = annotation.value();
                 columns.append(value);
-                if (field.getType().equals(String.class)) {
+                if (field.getType().equals(String.class) && objValue != null) {
                     columnValues.append("'");
                     columnValues.append(objValue);
                     columnValues.append("'");
+                    valueAllIsNull = false;
                 } else {
+                    if (objValue != null) {
+                        valueAllIsNull = false;
+                    }
                     columnValues.append(objValue);
                 }
                 if (i != fields.size() - 1) {
@@ -245,6 +250,10 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             sql.append(columns);
             sql.append(columnValues);
             log.debug("数据新增SQL:{}", sql);
+            if (valueAllIsNull) {
+                log.error("新增数据失败！{} 字段值都是null", tbAnnotation.value());
+                return false;
+            }
             statement = connection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
             statement.executeUpdate();
             resultSet = statement.getGeneratedKeys();
@@ -363,7 +372,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
             StringBuilder sql = new StringBuilder();
             sql.append("SELECT * FROM ");
             sql.append(table);
-            StringBuilder where = new StringBuilder();
+            StringBuilder where = new StringBuilder(" where 1=1");
             for (Field declaredField : declaredFields) {
                 final Column annotation = declaredField.getAnnotation(Column.class);
                 if (annotation == null) {
@@ -374,9 +383,10 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
                 final Object val = declaredField.get(obj);
                 final Class<?> type = declaredField.getType();
                 if (val != null) {
+                    where.append(" AND ");
                     where.append(value);
                     where.append("=");
-                    if (type.equals(Integer.class) || type.equals(Long.class)) {
+                    if (type.equals(String.class) || type.equals(Integer.class) || type.equals(Long.class)) {
                         where.append("'");
                         where.append(val);
                         where.append("'");
@@ -390,6 +400,7 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
                 sql.append(" ");
                 sql.append(where);
             }
+            log.debug("数据查询SQL:{}", sql);
             resultSet = statement.executeQuery(sql.toString());
             List<T> list = new ArrayList<>();
             while (resultSet.next()) {

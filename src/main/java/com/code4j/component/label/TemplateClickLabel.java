@@ -1,7 +1,6 @@
 package com.code4j.component.label;
 
 import com.code4j.component.dialog.BaseDialog;
-import com.code4j.component.panel.CommonPanel;
 import com.code4j.enums.TemplateTypeEnum;
 import com.code4j.util.CustomDialogUtil;
 
@@ -16,15 +15,18 @@ import java.awt.event.MouseEvent;
  * @see
  */
 public class TemplateClickLabel<T extends BaseDialog> extends JLabel {
-    private CommonPanel bindCommonPanel;
+    private Component bindCommonPanel;
     private T showDialog;
 
     /**
      * @param text
      * @param title
      * @param templateTypeEnum
+     * @param bindCommonPanel
+     * @param Visible
+     * @param from
      */
-    public TemplateClickLabel(String text, String title, TemplateTypeEnum templateTypeEnum, CommonPanel bindCommonPanel, boolean Visible) {
+    public TemplateClickLabel(String text, String title, TemplateTypeEnum templateTypeEnum, Component bindCommonPanel, boolean Visible, int from) {
         super(text);
         this.bindCommonPanel = bindCommonPanel;
         this.setForeground(Color.BLUE);
@@ -34,17 +36,24 @@ public class TemplateClickLabel<T extends BaseDialog> extends JLabel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
-                    if (TemplateTypeEnum.SERVICE_API.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
-                        showDialog = (T) CustomDialogUtil.showServiceApiConfigDialog(bindCommonPanel, title, templateTypeEnum);
-                    } else if (TemplateTypeEnum.MAPPER.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
-                        showDialog = (T) CustomDialogUtil.showMapperConfigDialog(bindCommonPanel, title, templateTypeEnum);
-                    } else if (TemplateTypeEnum.XML.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
-                        showDialog = (T) CustomDialogUtil.showXmlConfigDialog(bindCommonPanel, title, templateTypeEnum);
-                    } else if (TemplateTypeEnum.CONTROLLER.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
-                        showDialog = (T) CustomDialogUtil.showControllerApiConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                    if (from == 0) {
+                        if (TemplateTypeEnum.SERVICE_API.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
+                            showDialog = (T) CustomDialogUtil.showServiceApiConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                        } else if (TemplateTypeEnum.MAPPER.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
+                            showDialog = (T) CustomDialogUtil.showMapperConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                        } else if (TemplateTypeEnum.XML.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
+                            showDialog = (T) CustomDialogUtil.showXmlConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                        } else if (TemplateTypeEnum.CONTROLLER.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
+                            showDialog = (T) CustomDialogUtil.showControllerApiConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                        } else {
+                            showDialog = (T) CustomDialogUtil.showTableConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                        }
                     } else {
-                        showDialog = (T) CustomDialogUtil.showTableConfigDialog(bindCommonPanel, title, templateTypeEnum);
+                        if (TemplateTypeEnum.VO.getTemplateId().equals(templateTypeEnum.getTemplateId()) || TemplateTypeEnum.DO.getTemplateId().equals(templateTypeEnum.getTemplateId())) {
+                            showDialog = (T) CustomDialogUtil.showPojoIgFieldDialog(bindCommonPanel, title, templateTypeEnum);
+                        }
                     }
+
                 }
             }
 
@@ -58,14 +67,16 @@ public class TemplateClickLabel<T extends BaseDialog> extends JLabel {
 
             }
         });
-        this.setVisible(Visible);
+        this.
+
+                setVisible(Visible);
     }
 
-    public CommonPanel getBindCommonPanel() {
+    public Component getBindCommonPanel() {
         return bindCommonPanel;
     }
 
-    public void setBindCommonPanel(CommonPanel bindCommonPanel) {
+    public void setBindCommonPanel(Component bindCommonPanel) {
         this.bindCommonPanel = bindCommonPanel;
     }
 

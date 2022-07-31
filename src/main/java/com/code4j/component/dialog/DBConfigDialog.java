@@ -13,12 +13,13 @@ import com.code4j.pojo.JdbcSourceInfo;
 import com.code4j.util.CustomDialogUtil;
 import com.code4j.util.JSONUtil;
 import com.code4j.util.SQLiteUtil;
-import com.code4j.util.SystemUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Optional;
 
 /**
@@ -136,12 +137,19 @@ public class DBConfigDialog extends BaseDialog {
             // 编辑
             boolean isSuccess = false;
             if (parentComponent instanceof LinkTree) {
-                if (!SQLiteUtil.checkUnique(jdbcSourceInfo, true)) {
-                    CustomDialogUtil.showError("保存失败！已存在相同连接");
-                    log.error("保存更新失败！已存在相同连接{}", JSONUtil.Object2JSON(jdbcSourceInfo));
-                    return;
+                if (jdbcSourceInfo.getId() >= 0) {
+                    if (!SQLiteUtil.checkUnique(jdbcSourceInfo, true)) {
+                        CustomDialogUtil.showError("保存失败！已存在相同连接");
+                        log.error("保存更新失败！已存在相同连接{}", JSONUtil.Object2JSON(jdbcSourceInfo));
+                        return;
+                    }
+                    if (!SQLiteUtil.insertOrUpdate(jdbcSourceInfo)) {
+                        CustomDialogUtil.showError("编辑更新失败!");
+                        log.error("编辑更新失败！{}", JSONUtil.Object2JSON(jdbcSourceInfo));
+                        return;
+                    }
+                    isSuccess = ((LinkTree) parentComponent).refresh(jdbcSourceInfo);
                 }
-                isSuccess = ((LinkTree) parentComponent).refresh(jdbcSourceInfo);
             } else if (parentComponent instanceof TopPanel || parentComponent instanceof LeftPanel) {
                 if (!SQLiteUtil.checkUnique(jdbcSourceInfo, false)) {
                     log.error("保存新增失败！已存在相同连接{}", JSONUtil.Object2JSON(jdbcSourceInfo));

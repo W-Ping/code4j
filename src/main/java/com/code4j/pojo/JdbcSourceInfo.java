@@ -61,7 +61,6 @@ public class JdbcSourceInfo extends BaseInfo {
     @Column("source_type")
     private String sourceType;
 
-    private String creator = "code4j";
 
     @IgnoreReflection
     private DataSourceTypeEnum dataSourceTypeEnum;
@@ -81,7 +80,6 @@ public class JdbcSourceInfo extends BaseInfo {
             jdbcSourceInfo.setConnectPort(this.getConnectPort());
             jdbcSourceInfo.setUserName(this.getUserName());
             jdbcSourceInfo.setPassword(this.getPassword());
-            jdbcSourceInfo.setCreator(this.getCreator());
             jdbcSourceInfo.setInitDb(this.getInitDb());
             jdbcSourceInfo.setSourceType(this.getSourceType());
             jdbcSourceInfo.setDataSourceTypeEnum(this.getDataSourceTypeEnum());
@@ -91,6 +89,7 @@ public class JdbcSourceInfo extends BaseInfo {
             return null;
         }
     }
+
     @Override
     public String toString() {
         return this.connectName;
@@ -168,13 +167,6 @@ public class JdbcSourceInfo extends BaseInfo {
         this.dataSourceTypeEnum = dataSourceTypeEnum;
     }
 
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(final String creator) {
-        this.creator = creator;
-    }
 
     public String getSourceType() {
         if (null != dataSourceTypeEnum) {

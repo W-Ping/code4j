@@ -1,6 +1,7 @@
 package com.code4j.component.dialog;
 
 import com.code4j.component.panel.CommonPanel;
+import com.code4j.component.panel.CustomJFileChooserPanel;
 import com.code4j.pojo.GenerateResultInfo;
 import com.code4j.util.SystemUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +27,7 @@ public class GenerateResultDialog extends BaseDialog {
      * @param generateResultInfos
      */
     public GenerateResultDialog(final Component parentComponent, String title, List<GenerateResultInfo> generateResultInfos) {
-        super(parentComponent, title, true, generateResultInfos,true);
+        super(parentComponent, title, true, generateResultInfos, true);
     }
 
 
@@ -86,6 +87,25 @@ public class GenerateResultDialog extends BaseDialog {
             return commonPanel;
         }
         return null;
+    }
+
+    @Override
+    public CommonPanel bottomMid() {
+        CommonPanel commonPanel = new CommonPanel();
+        JButton jButton = new JButton("打开目录");
+        CustomJFileChooserPanel customJFileChooserPanel = (CustomJFileChooserPanel) super.parentComponent;
+        jButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //单击选中
+                if (e.getClickCount() == 1) {
+                    String pathText = customJFileChooserPanel.getSelectValue();
+                    SystemUtil.open(pathText);
+                }
+            }
+        });
+        commonPanel.addList(jButton);
+        return commonPanel;
     }
 
     @Override

@@ -30,7 +30,6 @@ public class SuperPojoInfo extends BaseTemplateInfo {
      */
     private String genericMapperPackageName;
 
-
     public String getGenericPagePath() {
         if (StringUtils.isNotBlank(this.genericPackageName) && StringUtils.isNotBlank(this.genericPojoName)) {
             StringBuilder sb = new StringBuilder();

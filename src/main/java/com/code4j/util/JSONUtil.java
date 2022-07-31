@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author liu_wp
@@ -22,6 +23,10 @@ public class JSONUtil {
     public final static String Object2JSON(Object object) {
 
         return JSON.toJSONString(object);
+    }
+
+    public final static Map jsonToMap(String json) {
+        return JSON.parseObject(json, Map.class);
     }
 
     public final static JSONObject Str2JSONObject(String str) {

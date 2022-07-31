@@ -4,6 +4,7 @@ import com.code4j.component.CustomJCheckBox;
 import com.code4j.component.panel.CommonPanel;
 import com.code4j.exception.Code4jException;
 import com.code4j.pojo.JdbcMapJavaInfo;
+import com.code4j.pojo.PojoParamsConfigInfo;
 import com.code4j.util.CustomDialogUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,8 +46,8 @@ public class TableConfigDialog extends BaseDialog {
     protected Component content() {
         CommonPanel commonPanel = new CommonPanel();
         Box box = Box.createVerticalBox();
-        CommonPanel parentComponent = (CommonPanel) super.getParentComponent();
-        List<JdbcMapJavaInfo> tableColumnInfos = (List<JdbcMapJavaInfo>) parentComponent.getBindObject();
+        PojoParamsConfigInfo pojoParamsConfigInfo = this.getPojoParamsConfigInfo();
+        final List<JdbcMapJavaInfo> tableColumnInfos = pojoParamsConfigInfo.getTableColumnInfos();
         if (CollectionUtils.isNotEmpty(tableColumnInfos)) {
             Dimension seqNoDimension = new Dimension(30, 25);
             Dimension dimension = new Dimension(130, 25);
@@ -86,26 +87,19 @@ public class TableConfigDialog extends BaseDialog {
                 j4v.setPreferredSize(dimension);
                 j5v.setPreferredSize(checkDimension);
                 j5v.setBindComponent(c2);
+                j5v.setSelected(!tableColumnInfo.isIgnore());
                 selectCustomJCheckBoxList.add(j5v);
                 box.add(c2);
             }
         }
         commonPanel.addList(box);
         JScrollPane jScrollPane = new JScrollPane(commonPanel);
-//        JScrollPane jScrollPane = new JScrollPane(commonPanel) {
-//            @Override
-//            public Dimension getPreferredSize() {
-//                return getJScrollPaneDimension();
-//            }
-//        };
+        JScrollBar jsb = jScrollPane.getVerticalScrollBar();
+        jsb.setValue(jsb.getMinimum());
         jScrollPane.setBorder(null);
         return jScrollPane;
     }
 
-    public Dimension getJScrollPaneDimension() {
-        Dimension preferredSize = this.getMaximumSize();
-        return new Dimension((int) preferredSize.getWidth() - 5, (int) preferredSize.getHeight() - 5);
-    }
 
     @Override
     protected void okClick() {
@@ -123,8 +117,8 @@ public class TableConfigDialog extends BaseDialog {
                 JComponent bindComponent = customJCheckBox.getBindComponent();
                 JTextField javaPropertyT = (JTextField) bindComponent.getComponent(3);
                 JTextField javaTypeT = (JTextField) bindComponent.getComponent(4);
-                newTableColumnInfo.setJavaProperty(javaPropertyT.getText());
-                newTableColumnInfo.setJavaType(javaTypeT.getText());
+                newTableColumnInfo.setJavaProperty(javaPropertyT.getText().trim());
+                newTableColumnInfo.setJavaType(javaTypeT.getText().trim());
                 newTableColumnInfo.setIgnore(false);
             } else {
                 newTableColumnInfo.setJavaType(tableColumnInfo.getJavaType());
@@ -135,9 +129,17 @@ public class TableConfigDialog extends BaseDialog {
             jdbcMapJavaInfos.add(newTableColumnInfo);
         }
         CommonPanel parentComponent = (CommonPanel) super.getParentComponent();
+        final PojoParamsConfigInfo pojoParamsConfigInfo = getPojoParamsConfigInfo();
+        pojoParamsConfigInfo.setTableColumnInfos(jdbcMapJavaInfos);
         //重新绑定值
-        parentComponent.setBindObject(jdbcMapJavaInfos);
+        parentComponent.setBindObject(pojoParamsConfigInfo);
         this.close();
+    }
+
+    private PojoParamsConfigInfo getPojoParamsConfigInfo() {
+        CommonPanel parentComponent = (CommonPanel) super.getParentComponent();
+        PojoParamsConfigInfo pojoParamsConfigInfo = (PojoParamsConfigInfo) parentComponent.getBindObject();
+        return pojoParamsConfigInfo;
     }
 
     private void checkData(JdbcMapJavaInfo jdbcMapJavaInfo) {

@@ -35,6 +35,11 @@ public class ProjectCodeConfigInfo extends BaseInfo {
     @Column("vo_super_class")
     private String voSuperClass;
     /**
+     * vo 过滤字段
+     */
+    @Column("vo_ig_fields")
+    private String voIgFields;
+    /**
      * 路径
      */
     @Column("vo_path")
@@ -56,6 +61,12 @@ public class ProjectCodeConfigInfo extends BaseInfo {
      */
     @Column("do_super_class")
     private String doSuperClass;
+
+    /**
+     * do 过滤字段
+     */
+    @Column("do_ig_fields")
+    private String doIgFields;
     /**
      * 包名称
      */
@@ -131,6 +142,7 @@ public class ProjectCodeConfigInfo extends BaseInfo {
      */
     @Column("contr_super_class")
     private String contrSuperClass;
+
     /**
      * controller 响应类
      */
@@ -180,6 +192,9 @@ public class ProjectCodeConfigInfo extends BaseInfo {
             this.contrSuperClass = Code4jConstants.CONTROLLER_SUPER_CLASS;
             this.contrResultClass = Code4jConstants.CONTROLLER_RESULT_CLASS;
             this.index = index;
+            if ("--默认配置--".equals(projectName)) {
+                super.setId(-1L);
+            }
         }
     }
 
@@ -381,5 +396,21 @@ public class ProjectCodeConfigInfo extends BaseInfo {
 
     public void setContrResultClass(String contrResultClass) {
         this.contrResultClass = contrResultClass;
+    }
+
+    public String getVoIgFields() {
+        return voIgFields;
+    }
+
+    public void setVoIgFields(String voIgFields) {
+        this.voIgFields = voIgFields;
+    }
+
+    public String getDoIgFields() {
+        return doIgFields;
+    }
+
+    public void setDoIgFields(String doIgFields) {
+        this.doIgFields = doIgFields;
     }
 }

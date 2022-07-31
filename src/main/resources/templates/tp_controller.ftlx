@@ -12,7 +12,7 @@ import ${pak!};
  * @date Created in ${.now}
  */
 <#if isSwagger==true>
-@Api(tags = "${baseInfo.jdbcTableInfo.remark}")
+@Api(tags = "${(baseInfo.jdbcTableInfo.remark)!}")
 </#if>
 @RestController
 @RequestMapping("${baseInfo.rootRequestMapping}")

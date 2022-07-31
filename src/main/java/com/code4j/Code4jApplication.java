@@ -20,7 +20,7 @@ public class Code4jApplication {
 
     public static void main(String[] args) throws Exception {
         log.info("---------------------init SQLite ---------------------------");
-        if (SQLiteUtil.init()) {
+        if (SQLiteUtil.init(false)) {
             log.info("---------------------init SQLite Success -------------------");
             RightPanel rightPanel = new RightPanel(Code4jConstants.RIGHT_MIN_DEFAULT_SIZE);
             LeftPanel leftPanel = new LeftPanel(Code4jConstants.LEFT_MIN_DEFAULT_SIZE, rightPanel);

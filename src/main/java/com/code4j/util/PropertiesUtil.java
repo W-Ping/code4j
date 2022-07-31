@@ -244,7 +244,6 @@ public class PropertiesUtil {
                         sourceInfo.setConnectPort(jdbcSourceInfo.getConnectPort());
                         sourceInfo.setUserName(jdbcSourceInfo.getUserName());
                         sourceInfo.setPassword(jdbcSourceInfo.getPassword());
-                        sourceInfo.setCreator(jdbcSourceInfo.getCreator());
                         sourceInfo.setIndex(jdbcSourceInfo.getIndex());
                         sourceInfo.setDataSourceTypeEnum(jdbcSourceInfo.getDataSourceTypeEnum());
                         break;

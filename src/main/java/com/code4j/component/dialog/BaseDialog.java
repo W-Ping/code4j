@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -29,8 +32,8 @@ public abstract class BaseDialog extends JDialog {
     }
 
     public BaseDialog(Component parentComponent, String title, boolean modal, Object extObj, boolean isUpdate) {
-        super(parentComponent == null ? CustomDialogUtil.getRootFrame() : (Frame) SwingUtilities.windowForComponent(parentComponent));
-        this.setIconImage(new ImageIcon(SystemUtil.getSystemResource(String.format("images/%s.png","sys_icon"))).getImage());
+        super(getFrame(parentComponent));
+        this.setIconImage(new ImageIcon(SystemUtil.getSystemResource(String.format("images/%s.png", "sys_icon"))).getImage());
         this.isUpdate = isUpdate;
         this.parentComponent = parentComponent;
         this.extObj = extObj;
@@ -38,6 +41,17 @@ public abstract class BaseDialog extends JDialog {
         setTitle(title);
         setModal(modal);
         init();
+    }
+
+    private static Frame getFrame(Component parentComponent) {
+        if (parentComponent == null) {
+            return CustomDialogUtil.getRootFrame();
+        }
+        try {
+            return (Frame) SwingUtilities.windowForComponent(parentComponent);
+        } catch (Exception e) {
+            return CustomDialogUtil.getRootFrame();
+        }
     }
 
     public void init() {
@@ -74,6 +88,7 @@ public abstract class BaseDialog extends JDialog {
             }
         });
         JButton okBtn = new JButton("确定");
+        okBtn.setVisible(visibleOkBtn());
         okBtn.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -84,6 +99,12 @@ public abstract class BaseDialog extends JDialog {
                 });
             }
         });
+        okBtn.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                okClick();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
         commonPanel.add(cancelBtn);
         CommonPanel bottomMid = bottomMid();
         if (bottomMid != null) {
@@ -91,6 +112,10 @@ public abstract class BaseDialog extends JDialog {
         }
         commonPanel.add(okBtn);
         return commonPanel;
+    }
+
+    protected boolean visibleOkBtn() {
+        return true;
     }
 
     public CommonPanel bottomMid() {

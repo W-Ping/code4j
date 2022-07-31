@@ -35,7 +35,7 @@ public class ControllerApiConfigDialog extends BaseDialog {
     @Override
     public void beforeInit() {
         selectCustomJCheckBoxList = new ArrayList<>();
-        this.setPreferredSize(new Dimension(250, 200));
+        this.setPreferredSize(new Dimension(300, 250));
     }
 
     @Override

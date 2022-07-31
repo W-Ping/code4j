@@ -1,5 +1,6 @@
 package com.code4j.component.select;
 
+import com.code4j.component.panel.RightPanel;
 import com.code4j.pojo.ProjectCodeConfigInfo;
 import com.code4j.util.SQLiteUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -11,6 +12,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 /**
@@ -18,28 +20,37 @@ import java.util.function.BiConsumer;
  * @date :Created in 2022-03-14
  */
 public class ProjectConfigSelect extends JComboBox {
+    public static final Dimension SIZE = new Dimension(100, 20);
 
-    public ProjectConfigSelect(Component component, String tableName, BiConsumer<Component, ProjectCodeConfigInfo> function) {
+    public ProjectConfigSelect(Component component, String tableName, Long defaultSelected, BiConsumer<Component, ProjectCodeConfigInfo> function) {
         ProjectConfigSelect projectConfigSelect = this;
-        ProjectCodeConfigInfo defaultConfig = new ProjectCodeConfigInfo(tableName);
+        ProjectCodeConfigInfo defaultConfig = null;
+        if (defaultSelected != null && defaultSelected != -1L) {
+            ProjectCodeConfigInfo projectCodeConfigInfo = new ProjectCodeConfigInfo();
+            projectCodeConfigInfo.setId(defaultSelected);
+            List<ProjectCodeConfigInfo> items = SQLiteUtil.select(projectCodeConfigInfo);
+            if (CollectionUtils.isNotEmpty(items)) {
+                defaultConfig = this.getDefaultItem(items, defaultSelected);
+            }
+        }
+        this.setPreferredSize(SIZE);
+        if (defaultConfig == null) {
+            defaultConfig = new ProjectCodeConfigInfo(tableName);
+        }
+        if (component != null && component instanceof RightPanel) {
+            ((RightPanel) component).loadProjectConfig(defaultConfig);
+        }
         this.addItem(defaultConfig);
         this.addPopupMenuListener(new PopupMenuListener() {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                 List<ProjectCodeConfigInfo> items = SQLiteUtil.select(new ProjectCodeConfigInfo());
-                ProjectCodeConfigInfo selectedItem = (ProjectCodeConfigInfo) projectConfigSelect.getSelectedItem();
-                projectConfigSelect.removeAllItems();
-                projectConfigSelect.addItem(defaultConfig);
                 if (CollectionUtils.isNotEmpty(items)) {
-                    for (ProjectCodeConfigInfo item : items) {
-                        if (selectedItem.getId() != null && selectedItem.getId().equals(item.getId())) {
-                            selectedItem = item;
-                        }
-                        projectConfigSelect.addItem(item);
-                    }
-                    projectConfigSelect.setSelectedItem(selectedItem);
-                    projectConfigSelect.addItemListener(new SelectItem(component, function));
+                    projectConfigSelect.removeAllItems();
+                    projectConfigSelect.addItem(new ProjectCodeConfigInfo(tableName));
+                    items.forEach(v -> projectConfigSelect.addItem(v));
                 }
+
             }
 
             @Override
@@ -51,6 +62,22 @@ public class ProjectConfigSelect extends JComboBox {
 
             }
         });
+        this.addItemListener(new SelectItem(component, function));
+    }
+
+    /**
+     * @param items
+     * @param defaultSelected
+     * @return
+     */
+    private ProjectCodeConfigInfo getDefaultItem(List<ProjectCodeConfigInfo> items, Long defaultSelected) {
+        if (defaultSelected != null) {
+            Optional<ProjectCodeConfigInfo> optional = items.stream().filter(v -> v.getId().equals(defaultSelected)).findFirst();
+            if (optional.isPresent()) {
+                return optional.get();
+            }
+        }
+        return null;
     }
 
     public class SelectItem implements ItemListener {

@@ -11,6 +11,7 @@ import com.code4j.exception.Code4jException;
 import com.code4j.pojo.*;
 import com.code4j.util.CustomDialogUtil;
 import com.code4j.util.FreemarkerUtil;
+import com.code4j.util.SQLiteUtil;
 import com.code4j.util.StrUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -259,11 +260,11 @@ public class GenerateCodeAction implements ActionListener {
         if (!CollectionUtils.isEmpty(superPackages)) {
             packages.addAll(superPackages);
         }
-        JdbcMapJavaInfo tablePrimaryKey = mapperParamsInfo.getTablePrimaryKey();
-        if (tablePrimaryKey != null) {
-            packages.add(tablePrimaryKey.getJavaType());
-        }
         if (CollectionUtils.isNotEmpty(mapperApiParamsInfos) && !mybatisPlus.isSelected()) {
+            JdbcMapJavaInfo tablePrimaryKey = mapperParamsInfo.getTablePrimaryKey();
+            if (tablePrimaryKey != null) {
+                packages.add(tablePrimaryKey.getJavaType());
+            }
             String resultTypePath = null;
             if (doPojo != null) {
                 resultTypePath = this.getTypePath(doPojo.getPackageRoot(), doPojo.getPackageName(), doPojo.getPojoName());
@@ -345,6 +346,7 @@ public class GenerateCodeAction implements ActionListener {
         final MapperParamsInfo mapper = (MapperParamsInfo) templateParamsInfoMap.get(TemplateTypeEnum.MAPPER.getTemplateId());
         HashMap<String, Object> dataMap = new HashMap<>(2);
         dataMap.put("pojo", serviceParamsInfo);
+        dataMap.put("service_value", StrUtil.firstCharOnlyToLower(serviceParamsInfo.getPojoName()));
         dataMap.put("isMybatisPlus", mybatisPlus.isSelected());
         final Set<String> packages = this.serviceColumnPackages(serviceParamsInfo);
         Set<String> superPackages = this.getSuperPojoInfoPackages(superPojoInfo, doPojo, serviceParamsInfo, mybatisPlus.isSelected(), mapper);
@@ -541,6 +543,8 @@ public class GenerateCodeAction implements ActionListener {
      */
     private void setTemplateParams() {
         this.clearData();
+        //获取前端通用配置
+        final Map<String, String> currGeneralConfigInfo = SQLiteUtil.getCurrGeneralConfigInfo();
         for (final CustomJCheckBox customJCheckBox : customJCheckBoxes) {
             if (customJCheckBox.isSelected()) {
                 TemplateTypeEnum templateTypeEnum = TemplateTypeEnum.getTemplateTypeEnum(customJCheckBox.getId());
@@ -563,7 +567,7 @@ public class GenerateCodeAction implements ActionListener {
                     interfaceParamsInfo.setPackageName(apiPackage.getText().trim());
                     interfaceParamsInfo.setDefaultPackageName(StrUtil.underlineToCamelToLower(jdbcTableInfo.getTableName()));
                     interfaceParamsInfo.setPackageRoot(interfaceParamsInfo.getUseDefaultPackageRoot(customJFileChooserPanel.getFileName()));
-                    interfaceParamsInfo.setAuthor(jdbcSourceInfo.getCreator());
+                    interfaceParamsInfo.setAuthor(this.getAuthor(currGeneralConfigInfo));
                     interfaceParamsInfo.setJdbcTableInfo(jdbcTableInfo);
                     interfaceParamsInfo.setSuperPojoInfo(this.getSuperPojoName(apiSuperPath.getText().trim(), true));
                     TemplateInfo interfaceTp = new TemplateInfo(customJCheckBox.getId());
@@ -603,7 +607,7 @@ public class GenerateCodeAction implements ActionListener {
                     final SuperPojoInfo superPojoName = this.getSuperPojoName(implSuper, true);
                     serviceParamsInfo.setSuperPojoInfo(superPojoName);
                     serviceParamsInfo.setPojoDesc(templateTypeEnum.getTemplateDesc());
-                    serviceParamsInfo.setAuthor(jdbcSourceInfo.getCreator());
+                    serviceParamsInfo.setAuthor(this.getAuthor(currGeneralConfigInfo));
                     serviceParamsInfo.setJdbcTableInfo(jdbcTableInfo);
                     TemplateInfo templateInfo = new TemplateInfo(TemplateTypeEnum.SERVICE.getTemplateId());
                     serviceParamsInfo.setTemplateInfo(templateInfo);
@@ -627,7 +631,7 @@ public class GenerateCodeAction implements ActionListener {
                         xmlParamsInfo.setPojoName(packNameT.getText());
                         xmlParamsInfo.setPackageName(packageT.getText());
                         xmlParamsInfo.setPojoPath(pojoPathT.getText());
-                        xmlParamsInfo.setAuthor(jdbcSourceInfo.getCreator());
+                        xmlParamsInfo.setAuthor(this.getAuthor(currGeneralConfigInfo));
                         xmlParamsInfo.setJdbcTableInfo(jdbcTableInfo);
                         xmlParamsInfo.setPojoDesc(TemplateTypeEnum.XML.getTemplateDesc());
                         TemplateInfo templateInfo = new TemplateInfo(customJCheckBox.getId());
@@ -658,7 +662,7 @@ public class GenerateCodeAction implements ActionListener {
                             mapperParamsInfo.setPackageName(packageT.getText());
                             mapperParamsInfo.setPojoName(packNameT.getText());
                             mapperParamsInfo.setPojoPath(pojoPathT.getText());
-                            mapperParamsInfo.setAuthor(jdbcSourceInfo.getCreator());
+                            mapperParamsInfo.setAuthor(this.getAuthor(currGeneralConfigInfo));
                             mapperParamsInfo.setJdbcTableInfo(jdbcTableInfo);
                             mapperParamsInfo.setTemplateTypeEnum(templateTypeEnum);
                             TemplateInfo templateInfo = new TemplateInfo(customJCheckBox.getId());
@@ -669,7 +673,7 @@ public class GenerateCodeAction implements ActionListener {
                             templateParamsInfoMap.put(customJCheckBox.getId(), mapperParamsInfo);
                         } else if (TemplateTypeEnum.CONTROLLER.getTemplateId().equals(customJCheckBox.getId())) {
                             ControllerParamsInfo controllerParamsInfo = (ControllerParamsInfo) modelBoxInfo.getBindObject();
-                            controllerParamsInfo.setAuthor(jdbcSourceInfo.getCreator());
+                            controllerParamsInfo.setAuthor(this.getAuthor(currGeneralConfigInfo));
                             controllerParamsInfo.setJdbcTableInfo(jdbcTableInfo);
                             controllerParamsInfo.setPojoDesc(templateTypeEnum.getTemplateDesc());
                             controllerParamsInfo.setPojoType(customJCheckBox.getId());
@@ -690,7 +694,8 @@ public class GenerateCodeAction implements ActionListener {
                             }
                             templateParamsInfoMap.put(customJCheckBox.getId(), controllerParamsInfo);
                         } else {
-                            List<JdbcMapJavaInfo> jdbcMapJavaInfos = (List<JdbcMapJavaInfo>) modelBoxInfo.getBindObject();
+                            PojoParamsConfigInfo pojoParamsConfigInfo = (PojoParamsConfigInfo) modelBoxInfo.getBindObject();
+                            List<JdbcMapJavaInfo> jdbcMapJavaInfos = pojoParamsConfigInfo.getTableColumnInfos();
                             //do、vo模板参数
                             PojoParamsInfo pojoParamsInfo = new PojoParamsInfo();
                             pojoParamsInfo.setSuperPojoInfo(this.getSuperPojoName(superPathT.getText().trim(), true));
@@ -699,7 +704,7 @@ public class GenerateCodeAction implements ActionListener {
                             pojoParamsInfo.setPackageName(packageT.getText());
                             pojoParamsInfo.setPojoName(packNameT.getText());
                             pojoParamsInfo.setPojoPath(pojoPathT.getText());
-                            pojoParamsInfo.setAuthor(jdbcSourceInfo.getCreator());
+                            pojoParamsInfo.setAuthor(this.getAuthor(currGeneralConfigInfo));
                             pojoParamsInfo.setJdbcTableInfo(jdbcTableInfo);
                             pojoParamsInfo.setTemplateTypeEnum(templateTypeEnum);
                             TemplateInfo templateInfo = new TemplateInfo(customJCheckBox.getId());
@@ -716,6 +721,15 @@ public class GenerateCodeAction implements ActionListener {
                 templateParamsInfoMap.remove(customJCheckBox.getId());
             }
         }
+    }
+
+    /**
+     * @param map
+     * @return
+     */
+    private String getAuthor(Map<String, String> map) {
+        final String author = map.get(Code4jConstants.AUTHOR_KEY);
+        return Optional.ofNullable(author).orElse(Code4jConstants.DEFAULT_AUTHOR);
     }
 
     private String getTypePath(String packageRoot, String packageName, String pojoName) {

@@ -1,23 +1,43 @@
 # code4j
 **Java代码生成工具客户端 [文档](https://w-ping.github.io/code4j/)**
 
-![gif](https://user-images.githubusercontent.com/42802329/174940893-1f512f9d-3ef4-44ed-9515-0f41a8493ece.gif)
+![demo](https://user-images.githubusercontent.com/42802329/182007176-cecd5b1d-38dd-4f6b-b558-b45171468144.gif)
 
 ## 环境资源
 * Windows 系统
 * JDK8+
 * MySQL数据库
 * PostgreSQL数据库
+## 获取工具
+* 方式1：下载jar包（推荐）。
+* 方式2：拉取代码到本地打成jar包 （mvn package）
+## 使用教程
+1. 双击运行jar包或（java -jar code4j.jar）
 
-## 工具栏说明
-* 连接：配置数据源
-* 自定义配置：自定义代码模板配置
-* 帮助文档：查看工具文档
+2. 配置MySQL/PostgreSQL数据源。
 
-## 支持插件模板
+3. 选择左边栏数据库表。
+
+4. 根据实际需要配置(自定义)
+
+5. 点击生成代码按钮，确定后即可生成代码。
+## 功能支持
+* 支持全局配置默认项目路径。（设置》通用配置）
+* 支持全局设置默认项目配置。（设置》通用配置）
+* 支持自定义全局代码作者名称。（设置》通用配置）
+* 支持配置默认过滤字段。（自定义配置）
+
+## 插件模板
 * lombok
 * swagger
 * mybatis-plus
+
+## 工具栏说明
+* 连接：配置数据源。
+* 自定义配置：自定义代码模板配置。
+* 设置：通用配置设置，一键重置。
+* 帮助文档：查看工具文档。
+
 ## 代码模板说明
 * Entity 配置：此对象与数据库表结构对应（字段配置）。
 
@@ -50,21 +70,5 @@ Xml 配置：可选择自定义的接口。（默认不生成）
 Controller 配置：可选自定义的方法（默认不生成）。
 
 响应：专指Controller层方法统一响应类。
-
-## 使用教程
-
-1. 下载jar包或拉取代码到本地打成jar包 （mvn package）双击运行jar包。
-
-2. 配置MySQL/PostgreSQL数据源。
-
-3. 选择左边栏数据库表。
-
-4. 根据实际需要配置(自定义)
-
-5. 点击生成代码按钮，确定后即可生成代码。
-
-## 补充说明
-
-![image](https://user-images.githubusercontent.com/42802329/174946492-b9aa05b9-6051-4bf9-8735-d17051f68a5a.png)
 
 ## 源码地址：[码云](https://gitee.com/LW_Ping/code4j)

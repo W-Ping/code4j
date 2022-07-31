@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiModelProperty;
 @EqualsAndHashCode(callSuper = true)
 </#if>
 <#if isSwagger==true>
-@ApiModel(value = "${pojoInfo.jdbcTableInfo.remark}")
+@ApiModel(value = "${(pojoInfo.jdbcTableInfo.remark)!}")
 </#if>
 <#if (pojoInfo.superPojoInfo)??>
 public class ${(pojoInfo.pojoName)!} extends ${pojoInfo.superPojoInfo.pojoName!}{

@@ -31,7 +31,7 @@ public class CustomDialogUtil {
             new StringBuffer("CustomDialogUtil.customerSharedOwnerFrame");
 
     /**
-     * 数据库配置窗口
+     * 数据库配置弹窗
      *
      * @param parentComponent
      * @param title
@@ -46,8 +46,39 @@ public class CustomDialogUtil {
         return dbConfigDialog;
     }
 
+    /**
+     * 自定义配置弹窗
+     *
+     * @param parentComponent
+     * @param title
+     * @param extObj
+     * @param isUpdate
+     * @return
+     */
     public static ProjectConfigDialog showProjectConfigDialog(final Component parentComponent, final String title, Object extObj, boolean isUpdate) {
         return new ProjectConfigDialog(parentComponent, title, true, extObj, isUpdate);
+    }
+
+    /**
+     * @param parentComponent
+     * @param title
+     * @param extObj
+     * @return
+     */
+    public static PojoIgFieldDialog showPojoIgFieldDialog(final Component parentComponent, final String title, Object extObj) {
+        PojoIgFieldDialog pojoIgFieldDialog = new PojoIgFieldDialog(parentComponent, title, true, extObj);
+        return pojoIgFieldDialog;
+    }
+
+    /**
+     * @param parentComponent
+     * @param title
+     * @param extObj
+     * @return
+     */
+    public static GeneralConfigDialog showGeneralConfigDialog(final Component parentComponent, final String title, Object extObj) {
+        GeneralConfigDialog configDialog = new GeneralConfigDialog(parentComponent, title, true, extObj);
+        return configDialog;
     }
 
     /**

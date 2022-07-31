@@ -53,6 +53,16 @@ public class StrUtil {
     }
 
     /**
+     * @param str
+     * @return
+     */
+    public static String firstCharOnlyToUpper(String str) {
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL,str);
+    }
+    public static String firstCharOnlyToLower(String str) {
+        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL,str);
+    }
+    /**
      * 中划线逻辑符转驼峰
      * 例如：user-name
      *

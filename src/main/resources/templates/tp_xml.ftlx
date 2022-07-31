@@ -7,13 +7,13 @@
     -->
     <resultMap id="BaseResultMap" type="${(xmlMap.resultMapType)!}">
         <#if (xmlMap.tableColumnInfos)??><#list xmlMap.tableColumnInfos as model>
-            <#if model.ignore==false>
+<#--            <#if model.ignore==false>-->
                 <#if model.primaryKey>
         <id column="${(model.column)!}" property="${(model.javaProperty)!}" jdbcType="${(model.jdbcType)!}"></id>
                 <#else>
         <result column="${(model.column)!}" property="${(model.javaProperty)!}" jdbcType="${(model.jdbcType)!}"></result>
                 </#if>
-            </#if>
+<#--            </#if>-->
         </#list>
         </#if>
     </resultMap>

@@ -94,12 +94,24 @@ public class TopPanel extends BasePanel {
         });
         helpMenu.add(tutorial);
 
+        JMenu settingMenu = new JMenu("设置");
+        settingMenu.setIcon(new ImageIcon(ClassLoader.getSystemResource("images/setting.png")));
+        CustomJMenuItem restDbItem = new CustomJMenuItem("一键重置", "reset", new CustomBasicMenuItemUI(Code4jConstants.selectionBackground, Code4jConstants.selectionForeground));
+        restDbItem.addActionListener(e -> {
+            confirmRest();
+        });
+        CustomJMenuItem generalCfg = new CustomJMenuItem("通用配置", "general_cfg", new CustomBasicMenuItemUI(Code4jConstants.selectionBackground, Code4jConstants.selectionForeground));
+        generalCfg.addActionListener(e -> {
+            showGeneralConfigDialog("通用配置", null);
+        });
+        settingMenu.add(generalCfg);
+        settingMenu.add(restDbItem);
         jMenuBar.add(linkMenu);
         jMenuBar.add(pcfMenu);
+        jMenuBar.add(settingMenu);
         jMenuBar.add(helpMenu);
         CommonPanel commonPanel = new CommonPanel();
         commonPanel.add(jMenuBar);
-//        this.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.setLayout(new BorderLayout());
         this.add(commonPanel, BorderLayout.WEST);
     }
@@ -137,6 +149,25 @@ public class TopPanel extends BasePanel {
      */
     public void showDBConfigDialog(String title, DataSourceTypeEnum dataSourceTypeEnum) {
         CustomDialogUtil.showDBConfigDialog(this, title, dataSourceTypeEnum, null);
+    }
+
+    public void showGeneralConfigDialog(String title, Object object) {
+        CustomDialogUtil.showGeneralConfigDialog(this, title, object);
+    }
+
+    public void confirmRest() {
+        final LeftPanel leftPanel = (LeftPanel) this.getBindPanel();
+        CustomDialogUtil.confirm(this.getParent(), "【谨慎！！！】确认重置所有配置？", (c) -> {
+            if (SQLiteUtil.init(true)) {
+                leftPanel.clearEmpty(null);
+                RightPanel rightPanel = (RightPanel) leftPanel.getBindPanel();
+                rightPanel.clearEmpty("配置已全部重置");
+                CustomDialogUtil.showOk("重置成功！", true, null);
+                return null;
+            }
+            CustomDialogUtil.showError("重置失败");
+            return null;
+        });
     }
 
     /**

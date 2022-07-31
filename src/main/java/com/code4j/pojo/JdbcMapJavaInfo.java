@@ -71,14 +71,14 @@ public class JdbcMapJavaInfo {
         this.jdbcType = toJdbcType(jdbcType);
         this.comment = comment;
         this.javaProperty = toJavaProperty(column);
-        this.javaType = toJavaType(jdbcType);
+        this.javaType = toJavaType(this.jdbcType);
     }
 
     private String toJdbcType(String jdbcType) {
         if (jdbcType == null) {
             return null;
         }
-        if (jdbcType.equalsIgnoreCase("INT")) {
+        if (jdbcType.equalsIgnoreCase("INT") || jdbcType.equalsIgnoreCase("INT UNSIGNED")) {
             return "INTEGER";
         } else if (jdbcType.equalsIgnoreCase("DATETIME")) {
             return "TIMESTAMP";

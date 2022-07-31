@@ -11,7 +11,7 @@ import ${pak!};
  * @author ${(pojo.author)!}
  * @date Created in ${.now}
  */
-@Service("${(pojo.pojoName)!}")
+@Service("${(service_value)!}")
 <#if (pojo.superPojoInfo)??>
 public class ${(pojo.pojoName)!} extends ${(pojo.superPojoInfo.pojoName)!}<#if (isMybatisPlus==true && pojo.superPojoInfo.genericMapperName?? && pojo.superPojoInfo.genericPojoName??)><${pojo.superPojoInfo.genericMapperName},${pojo.superPojoInfo.genericPojoName}></#if> implements ${(pojo.interfaceParamsInfo.pojoName)!}{
 <#else>

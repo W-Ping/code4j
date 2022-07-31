@@ -1,6 +1,7 @@
 package com.code4j.component.dialog;
 
 import com.code4j.component.CustomJTextField;
+import com.code4j.component.label.TemplateClickLabel;
 import com.code4j.component.panel.CommonPanel;
 import com.code4j.component.panel.TopPanel;
 import com.code4j.config.Code4jConstants;
@@ -37,6 +38,7 @@ public class ProjectConfigDialog extends BaseDialog {
     @Override
     protected Component content() {
         ProjectCodeConfigInfo projectCodeConfigInfo = extObj != null ? (ProjectCodeConfigInfo) extObj : new ProjectCodeConfigInfo(true);
+        this.extObj = projectCodeConfigInfo;
         Dimension inputDim = new Dimension(230, 30);
         CustomJTextField j1 = new CustomJTextField(projectCodeConfigInfo.getProjectName(), inputDim);
         projectComponent = new CommonPanel(new JLabel("配置名称："), j1);
@@ -62,7 +64,7 @@ public class ProjectConfigDialog extends BaseDialog {
 
     @Override
     protected void okClick() {
-        ProjectCodeConfigInfo projectCodeConfigInfo = getProjectCodeConfigInfo(this.extObj);
+        ProjectCodeConfigInfo projectCodeConfigInfo = this.getProjectCodeConfigInfo(this.extObj);
         if (StringUtils.isBlank(projectCodeConfigInfo.getProjectName())) {
             CustomDialogUtil.showError("项目名称不能为空");
             return;
@@ -159,7 +161,7 @@ public class ProjectConfigDialog extends BaseDialog {
      * @return
      */
     public CommonPanel createItemComponent(TemplateTypeEnum templateTypeEnum, String defaultPath, String defaultPackage, String superClass, String resultClass) {
-        Dimension boxDimension = new Dimension(820, 70);
+        Dimension boxDimension = new Dimension(860, 70);
         Dimension inputDim = new Dimension(230, 25);
         Border lineBorder = BorderFactory.createLineBorder(Color.WHITE, 2);
         CustomJTextField j2 = new CustomJTextField(defaultPackage, inputDim);
@@ -174,6 +176,10 @@ public class ProjectConfigDialog extends BaseDialog {
             j4.setToolTipText(superClass);
             CommonPanel c4 = new CommonPanel(new JLabel("父 类："), j4);
             hBox.add(c4);
+            if (templateTypeEnum == TemplateTypeEnum.DO || templateTypeEnum == TemplateTypeEnum.VO) {
+                final TemplateClickLabel templateClickLabel = new TemplateClickLabel("过滤字段", templateTypeEnum.getTemplateId() + "过滤字段", templateTypeEnum, this, true, 1);
+                hBox.add(templateClickLabel);
+            }
         }
         CommonPanel rePack = null;
         if (TemplateTypeEnum.CONTROLLER == templateTypeEnum) {

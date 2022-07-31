@@ -16,7 +16,7 @@ import java.util.Map;
  * @see
  */
 public class FreemarkerUtil {
-
+    public static final String UTF_8 = "utf-8";
 
     /**
      * @param projectPath
@@ -29,6 +29,7 @@ public class FreemarkerUtil {
             Writer out = null;
             try {
                 Configuration configuration = new Configuration(Configuration.VERSION_2_3_30);
+                configuration.setDefaultEncoding(FreemarkerUtil.UTF_8);
                 TemplateInfo templateInfo = baseTemplateInfo.getTemplateInfo();
 //                File file = new File(templateInfo.getTemplatePath());
                 configuration.setClassForTemplateLoading(FreemarkerUtil.class, "/templates");
@@ -43,7 +44,7 @@ public class FreemarkerUtil {
                     outFile.delete();
                 }
                 Template template = configuration.getTemplate(templateTypeEnum.getTemplateName());
-                out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile)));
+                out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile), FreemarkerUtil.UTF_8));
                 template.process(dataMap, out);
                 out.flush();
                 return outFile.getAbsolutePath();

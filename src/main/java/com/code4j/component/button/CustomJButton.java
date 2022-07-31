@@ -12,4 +12,5 @@ public class CustomJButton extends JButton {
         super(text);
         this.addActionListener(listener);
     }
+
 }
