@@ -37,19 +37,19 @@ public enum XmlSqlTemplateEnum {
     }
 
     public static boolean isIntResultType(String templateId) {
-        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.resultType.equals("int"));
+        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && "int".equals(v.resultType));
     }
 
     public static boolean isObjectResultType(String templateId) {
-        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.resultType.equals("object"));
+        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && "object".equals(v.resultType));
     }
 
     public static boolean isObjectListResultType(String templateId) {
-        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.resultType.equals("objectList"));
+        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && "objectList".equals(v.resultType));
     }
 
     public static boolean isObjectParameterType(String templateId) {
-        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.parameterType.equals("object"));
+        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && "object".equals(v.parameterType));
     }
 
     /**
@@ -61,11 +61,11 @@ public enum XmlSqlTemplateEnum {
     }
 
     public static boolean isParameterPk(String templateId) {
-        return templateId != null && Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.parameterType.equals("pk"));
+        return templateId != null && Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && "pk".equals(v.parameterType));
     }
 
     public static boolean isObjectListParameterType(String templateId) {
-        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.parameterType.equals("objectList"));
+        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && "objectList".equals(v.parameterType));
     }
 
     public static XmlSqlTemplateEnum getXmlSqlTemplateEnumById(String templateId) {

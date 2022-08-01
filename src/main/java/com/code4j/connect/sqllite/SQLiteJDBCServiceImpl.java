@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 /**
+ * SQLite JDBC
+ *
  * @author lwp
  * @date 2022-05-20
  */

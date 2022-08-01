@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * PostgreSQL JDBC
+ *
  * @author lwp
  * @date 2022-05-20
  */

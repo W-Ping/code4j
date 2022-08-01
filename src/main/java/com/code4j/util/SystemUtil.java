@@ -204,30 +204,30 @@ public class SystemUtil {
 
     public static String formatDataType(String dataType) {
         dataType = dataType.toUpperCase();
-        if (dataType.equals("CHAR") || dataType.equals("TEXT") || dataType.equals("VARCHAR") || dataType.equals("TINYTEXT") || dataType.equals("LONGTEXT") || dataType.equals("JSON") || dataType.equals("XML")) {
+        if ("CHAR".equals(dataType) || "TEXT".equals(dataType) || "VARCHAR".equals(dataType) || "TINYTEXT".equals(dataType) || "LONGTEXT".equals(dataType) || "JSON".equals(dataType) || "XML".equals(dataType)) {
             dataType = "java.lang.String";
-        } else if (dataType.equals("BIGINT") || dataType.equals("INT8") || dataType.equals("BIGSERIAL")) {
+        } else if ("BIGINT".equals(dataType) || "INT8".equals(dataType) || "BIGSERIAL".equals(dataType)) {
             dataType = "java.lang.Long";
-        } else if (dataType.equals("INT") || dataType.equals("INTEGER") || dataType.equals("MEDIUMINT") || dataType.equals("TINYINT") || dataType.equals("SMALLINT")
-                || dataType.equals("INT2") || dataType.equals("INT4")) {
+        } else if ("INT".equals(dataType) || "INTEGER".equals(dataType) || "MEDIUMINT".equals(dataType) || "TINYINT".equals(dataType) || "SMALLINT".equals(dataType)
+                || "INT2".equals(dataType) || "INT4".equals(dataType)) {
             dataType = "java.lang.Integer";
-        } else if (dataType.equals("FLOAT") || dataType.equals("FLOAT4")) {
+        } else if ("FLOAT".equals(dataType) || "FLOAT4".equals(dataType)) {
             dataType = "java.lang.Float";
-        } else if (dataType.equals("DOUBLE") || dataType.equals("FLOAT8") || dataType.equals("MONEY")) {
+        } else if ("DOUBLE".equals(dataType) || "FLOAT8".equals(dataType) || "MONEY".equals(dataType)) {
             dataType = "java.lang.Double";
-        } else if (dataType.equals("NUMERIC") || dataType.equals("DECIMAL") || dataType.equals("numeric")) {
+        } else if ("NUMERIC".equals(dataType) || "DECIMAL".equals(dataType) || "numeric".equals(dataType)) {
             dataType = "java.math.BigDecimal";
-        } else if (dataType.equals("DATE") || dataType.equals("YEAR")) {
+        } else if ("DATE".equals(dataType) || "YEAR".equals(dataType)) {
             return "java.util.Date";
-        } else if (dataType.equals("TIMESTAMP") || dataType.equals("DATETIME")) {
+        } else if ("TIMESTAMP".equals(dataType) || "DATETIME".equals(dataType)) {
             return "java.sql.Timestamp";
-        } else if (dataType.equals("BIT") || dataType.equals("BOOL")) {
+        } else if ("BIT".equals(dataType) || "BOOL".equals(dataType)) {
             return "java.lang.Boolean";
-        } else if (dataType.equals("BLOB")) {
+        } else if ("BLOB".equals(dataType)) {
             return "java.lang.byte[]";
-        } else if (dataType.equals("CLOB")) {
+        } else if ("CLOB".equals(dataType)) {
             dataType = "java.sql.Clob";
-        } else if (dataType.equals("TIME")) {
+        } else if ("TIME".equals(dataType)) {
             dataType = "java.sql.Time";
         } else {
             dataType = "java.lang.Object";

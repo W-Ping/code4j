@@ -88,8 +88,8 @@ public class GeneralConfigDialog extends BaseDialog {
         authorLabel = new JLabel(author);
         AtomicReference<LinkLabel> saveLabel = new AtomicReference<>();
         cp4.add(authorLabel);
-        cp4.add(new LinkLabel("编辑", Color.BLUE, e -> {
-            if ("编辑".equals(e.getText())) {
+        cp4.add(new LinkLabel(Code4jConstants.EDIT_BTN_TEXT, Color.BLUE, e -> {
+            if (Code4jConstants.EDIT_BTN_TEXT.equals(e.getText())) {
                 cp4.remove(authorLabel);
                 cp4.add(customJTextField, 1);
                 saveLabel.set(new LinkLabel("保存", Color.BLUE, ee -> {
@@ -103,7 +103,7 @@ public class GeneralConfigDialog extends BaseDialog {
             }
             updateUI();
         }));
-        CommonPanel docWebCp = new CommonPanel(new JLabel("下载地址："),new LinkLabel(Code4jConstants.WEB_DOC_URL, Color.BLUE, (e) -> {
+        CommonPanel docWebCp = new CommonPanel(new JLabel("下载地址："),new LinkLabel(Code4jConstants.WEB_DOC_URL, Color.BLACK, (e) -> {
             SystemUtil.open(Code4jConstants.WEB_DOC_URL);
         }));
         CommonPanel bottomCp=new CommonPanel(cp0,cp1);

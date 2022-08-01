@@ -80,7 +80,7 @@ public class TopPanel extends BasePanel {
 
         JMenu helpMenu = new JMenu("帮助文档");
         helpMenu.setIcon(new ImageIcon(ClassLoader.getSystemResource("images/help.png")));
-        CustomJMenuItem tutorial = new CustomJMenuItem("使用教程", "tutorial", new CustomBasicMenuItemUI(Code4jConstants.selectionBackground, Code4jConstants.selectionForeground));
+        CustomJMenuItem tutorial = new CustomJMenuItem("查看教程", "tutorial", new CustomBasicMenuItemUI(Code4jConstants.selectionBackground, Code4jConstants.selectionForeground));
         tutorial.addActionListener(e -> {
             InputStream resourceAsStream = TopPanel.class.getClassLoader().getResourceAsStream("README.md");
             String content = SystemUtil.readByStream(resourceAsStream);

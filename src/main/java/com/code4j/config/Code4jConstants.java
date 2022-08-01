@@ -101,4 +101,6 @@ public class Code4jConstants {
     public static final String SQLITE_DEFAULT_PWD = "code4j_sb@";
     public static final String SQLITE_DEFAULT_DB = "code4j";
 
+    public static final String EDIT_BTN_TEXT = "编辑";
+
 }

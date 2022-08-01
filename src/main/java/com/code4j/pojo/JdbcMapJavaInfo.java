@@ -78,9 +78,9 @@ public class JdbcMapJavaInfo {
         if (jdbcType == null) {
             return null;
         }
-        if (jdbcType.equalsIgnoreCase("INT") || jdbcType.equalsIgnoreCase("INT UNSIGNED")) {
+        if ("INT".equalsIgnoreCase(jdbcType) || "INT UNSIGNED".equalsIgnoreCase(jdbcType)) {
             return "INTEGER";
-        } else if (jdbcType.equalsIgnoreCase("DATETIME")) {
+        } else if ("DATETIME".equalsIgnoreCase(jdbcType)) {
             return "TIMESTAMP";
         }
         return jdbcType;
@@ -119,7 +119,7 @@ public class JdbcMapJavaInfo {
     }
 
     public String getJdbcType() {
-        return this.jdbcType = jdbcType.equalsIgnoreCase("INT") ? "INTEGER" : jdbcType;
+        return this.jdbcType = "INT".equalsIgnoreCase(jdbcType) ? "INTEGER" : jdbcType;
     }
 
     public void setJdbcType(final String jdbcType) {

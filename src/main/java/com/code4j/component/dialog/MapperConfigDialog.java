@@ -41,7 +41,6 @@ public class MapperConfigDialog extends BaseDialog {
         Box box = Box.createVerticalBox();
         CommonPanel cp1 = new CommonPanel();
         CustomJCheckBox cb1 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT.getApiId(), selectedMap.containsKey(XmlSqlTemplateEnum.INSERT), XmlSqlTemplateEnum.INSERT.getTemplateId());
-//        CustomJCheckBox cb2 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT_BATCH.getTemplateDesc(), false, XmlSqlTemplateEnum.INSERT_BATCH.getTemplateId());
         CustomJCheckBox cb8 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT_DUPLICATEKEY.getApiId(), selectedMap.containsKey(XmlSqlTemplateEnum.INSERT_DUPLICATEKEY), XmlSqlTemplateEnum.INSERT_DUPLICATEKEY.getTemplateId());
         cp1.addList(cb1, cb8);
         CommonPanel cp2 = new CommonPanel();
@@ -51,11 +50,8 @@ public class MapperConfigDialog extends BaseDialog {
         CommonPanel cp3 = new CommonPanel();
         CustomJCheckBox cb5 = new CustomJCheckBox(XmlSqlTemplateEnum.SELECT.getApiId(), selectedMap.containsKey(XmlSqlTemplateEnum.SELECT), XmlSqlTemplateEnum.SELECT.getTemplateId());
         CustomJCheckBox cb6 = new CustomJCheckBox(XmlSqlTemplateEnum.SELECT_ONE.getApiId(), selectedMap.containsKey(XmlSqlTemplateEnum.SELECT_ONE), XmlSqlTemplateEnum.SELECT_ONE.getTemplateId());
-//        CustomJCheckBox cb7 = new CustomJCheckBox(XmlSqlTemplateEnum.SELECT_PAGE.getTemplateDesc(),
-//                false, XmlSqlTemplateEnum.SELECT_PAGE.getTemplateId());
         cp3.addList(cb5, cb6);
         CommonPanel cp4 = new CommonPanel();
-//        CustomJCheckBox cb9 = new CustomJCheckBox(XmlSqlTemplateEnum.INSERT_DUPLICATEKEY_BATCH.getTemplateDesc(), false, XmlSqlTemplateEnum.INSERT_DUPLICATEKEY_BATCH.getTemplateId());
         CustomJCheckBox cb4 = new CustomJCheckBox(XmlSqlTemplateEnum.DELETE.getApiId(), selectedMap.containsKey(XmlSqlTemplateEnum.DELETE), XmlSqlTemplateEnum.DELETE.getTemplateId());
         cp4.addList(cb4);
         selectCustomJCheckBoxList.addAll(Stream.of(cb1, cb3, cb31, cb4, cb5, cb6, cb8).collect(Collectors.toList()));

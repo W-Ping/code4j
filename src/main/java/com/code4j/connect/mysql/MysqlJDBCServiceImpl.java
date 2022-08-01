@@ -5,6 +5,8 @@ import com.code4j.enums.DataSourceTypeEnum;
 import com.code4j.pojo.JdbcSourceInfo;
 
 /**
+ * Mysql JDBC
+ *
  * @author liu_wp
  * @date 2020/11/18
  * @see
@@ -20,7 +22,7 @@ public class MysqlJDBCServiceImpl extends AbstractJDBCService {
     }
 
     @Override
-    protected String catalog(String catalog,String dbName) {
+    protected String catalog(String catalog, String dbName) {
         return dbName;
     }
 }

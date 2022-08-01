@@ -55,16 +55,16 @@ public enum ControllerApiTemplateEnum {
         return enu == UPDATE || enu == SAVE || enu == SEARCH;
     }
     public static boolean isObjectListResultType(String templateId) {
-        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.resultType.equals("objectList"));
+        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && "objectList".equals(v.resultType));
     }
     public static boolean isObjectResultType(String templateId) {
-        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.resultType.equals("object"));
+        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && "object".equals(v.resultType));
     }
     public static boolean isBooleanResultType(String templateId) {
-        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.resultType.equals("Boolean"));
+        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && "Boolean".equals(v.resultType));
     }
     public static boolean isPageResultType(String templateId) {
-        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && v.resultType.equals("pageObject"));
+        return Arrays.stream(values()).anyMatch(v -> v.templateId.equals(templateId) && "pageObject".equals(v.resultType));
     }
     public static ControllerApiTemplateEnum getControllerApiTemplateEnumById(String templateId) {
         for (final ControllerApiTemplateEnum value : values()) {

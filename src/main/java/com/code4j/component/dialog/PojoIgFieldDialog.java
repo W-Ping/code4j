@@ -102,7 +102,7 @@ public class PojoIgFieldDialog extends BaseDialog {
         if (sb.length() > 0) {
             fields = sb.substring(0, sb.lastIndexOf(","));
         }
-        if (fields.equals("null")) {
+        if ("null".equals(fields)) {
             fields = "";
         }
         if (TemplateTypeEnum.VO.equals(templateTypeEnum)) {
