@@ -38,7 +38,7 @@ public class ${(baseInfo.pojoName)!}{
      @ApiOperation(value = "${model.apiDesc}")
      </#if>
      @RequestMapping(value = "${model.requestMapping}",method = ${model.method})
-     public  ${model.resultType?no_esc}  ${model.apiId}(<#if (model.parameterInfos)??><#list model.parameterInfos as pm>${pm.annotations?no_esc} ${pm.parameterType?no_esc} ${pm.parameterName} </#list></#if>){
+     public  ${model.resultType?no_esc}  ${model.apiId}(<#if (model.parameterInfos)??><#list model.parameterInfos as pm>${pm.annotations?no_esc} ${pm.parameterType?no_esc} ${pm.parameterName}<#if pm_has_next>,</#if></#list></#if>){
         return null;
      }
     </#list>
