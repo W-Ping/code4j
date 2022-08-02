@@ -9,10 +9,7 @@ import com.code4j.enums.TemplateTypeEnum;
 import com.code4j.enums.XmlSqlTemplateEnum;
 import com.code4j.exception.Code4jException;
 import com.code4j.pojo.*;
-import com.code4j.util.CustomDialogUtil;
-import com.code4j.util.FreemarkerUtil;
-import com.code4j.util.SQLiteUtil;
-import com.code4j.util.StrUtil;
+import com.code4j.util.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -488,11 +485,14 @@ public class GenerateCodeAction implements ActionListener {
         }
         HashMap<String, Object> dataMap = new HashMap<>(2);
         List<XmlApiParamsInfo> xmlApiParamsInfos = xmlParamsInfo.getXmlApiParamsInfos();
-
         dataMap.put("xmlMap", xmlParamsInfo);
+        if (CollectionUtils.isNotEmpty(xmlParamsInfo.getTableColumnInfos())) {
+            xmlParamsInfo.getTableColumnInfos().forEach(v -> v.setJdbcType(SystemUtil.convertJdbcType(v.getJdbcType())));
+        }
         dataMap.put("xmlApiParamsInfos", mybatisPlus.isSelected() ? null : xmlApiParamsInfos);
         return dataMap;
     }
+
 
     private Set<String> columnPackage(PojoParamsInfo pojoParamsInfo) {
         Set<String> packageList = new HashSet<>();

@@ -157,7 +157,7 @@ public class RightPanel extends BasePanel {
         //----------------------------------------------mapper 配置---------------------------------------------
         CommonPanel mapperP = new CommonPanel(new FlowLayout(FlowLayout.LEFT), avgW, new MapperParamsInfo(tableColumnInfos));
         mapperP.setBorder(BorderFactory.createTitledBorder(lineBorder, TemplateTypeEnum.MAPPER.getTemplateDesc()));
-        CommonPanel mapperP1 = new CommonPanel(new JLabel("名 称："), new CustomJTextField(this.getPojoName(tableName, Code4jConstants.MAPPER_SUFFIX), INPUT_DIMENSION));
+        CommonPanel mapperP1 = new CommonPanel(new JLabel("名 称："), new CustomJTextField("I" + this.getPojoName(tableName, Code4jConstants.MAPPER_SUFFIX), INPUT_DIMENSION));
         CommonPanel mapperP2 = new CommonPanel(new JLabel("包 名："), mapperPackName = new CustomJTextField(null, PACKAGE_DIMENSION));
         CommonPanel mapperP3 = new CommonPanel(new JLabel("路 径："), mapperPackPath = new CustomJTextField(null, PATH_DIMENSION));
         CommonPanel mapperSp = new CommonPanel(new JLabel("父 类："), mapperSpText = new CustomJTextField(Code4jConstants.MAPPER_SUPER_CLASS, INPUT_DIMENSION));

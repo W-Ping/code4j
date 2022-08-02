@@ -202,6 +202,10 @@ public class SystemUtil {
         System.exit(0);
     }
 
+    /**
+     * @param dataType
+     * @return
+     */
     public static String formatDataType(String dataType) {
         dataType = dataType.toUpperCase();
         if ("CHAR".equals(dataType) || "TEXT".equals(dataType) || "VARCHAR".equals(dataType) || "TINYTEXT".equals(dataType) || "LONGTEXT".equals(dataType) || "JSON".equals(dataType) || "XML".equals(dataType)) {
@@ -233,5 +237,41 @@ public class SystemUtil {
             dataType = "java.lang.Object";
         }
         return dataType;
+    }
+
+    /**
+     * @param jdbcType
+     * @return
+     */
+    public static String convertJdbcType(String jdbcType) {
+        if (jdbcType == null) {
+            return null;
+        }
+        if (jdbcType.toLowerCase().startsWith("int")) {
+            final String size = jdbcType.substring(3);
+            if (size != null && Long.parseLong(size) >= 8L) {
+                return "BIGINT";
+            }
+            return "INTEGER";
+        } else if ("byte".equalsIgnoreCase(jdbcType)) {
+            return "TINYINT";
+        } else if ("byte[]".equalsIgnoreCase(jdbcType)) {
+            return "VARBINARY";
+        } else if ("LocalDate".equalsIgnoreCase(jdbcType)) {
+            return "DATE";
+        } else if ("LocalDateTime".equalsIgnoreCase(jdbcType)) {
+            return "TIMESTAMP";
+        } else if ("LocalTime".equalsIgnoreCase(jdbcType)) {
+            return "TIME";
+        } else if ("float".equalsIgnoreCase(jdbcType)) {
+            return "REAL";
+        } else if ("Long".equalsIgnoreCase(jdbcType) || "BigInteger".equalsIgnoreCase(jdbcType)) {
+            return "BIGINT";
+        } else if ("Short".equalsIgnoreCase(jdbcType)) {
+            return "SMALLINT";
+        } else if ("BigDecimal".equalsIgnoreCase(jdbcType)) {
+            return "NUMERIC";
+        }
+        return jdbcType;
     }
 }

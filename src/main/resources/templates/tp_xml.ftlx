@@ -9,9 +9,9 @@
         <#if (xmlMap.tableColumnInfos)??><#list xmlMap.tableColumnInfos as model>
 <#--            <#if model.ignore==false>-->
                 <#if model.primaryKey>
-        <id column="${(model.column)!}" property="${(model.javaProperty)!}" jdbcType="${(model.jdbcType)!}"></id>
+        <id column="${(model.column)!}" property="${(model.javaProperty)!}" jdbcType="${(model.jdbcType? upper_case)!}"></id>
                 <#else>
-        <result column="${(model.column)!}" property="${(model.javaProperty)!}" jdbcType="${(model.jdbcType)!}"></result>
+        <result column="${(model.column)!}" property="${(model.javaProperty)!}" jdbcType="${(model.jdbcType? upper_case)!}"></result>
                 </#if>
 <#--            </#if>-->
         </#list>
