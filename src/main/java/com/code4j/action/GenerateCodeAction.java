@@ -486,9 +486,6 @@ public class GenerateCodeAction implements ActionListener {
         HashMap<String, Object> dataMap = new HashMap<>(2);
         List<XmlApiParamsInfo> xmlApiParamsInfos = xmlParamsInfo.getXmlApiParamsInfos();
         dataMap.put("xmlMap", xmlParamsInfo);
-        if (CollectionUtils.isNotEmpty(xmlParamsInfo.getTableColumnInfos())) {
-            xmlParamsInfo.getTableColumnInfos().forEach(v -> v.setJdbcType(SystemUtil.convertJdbcType(v.getJdbcType())));
-        }
         dataMap.put("xmlApiParamsInfos", mybatisPlus.isSelected() ? null : xmlApiParamsInfos);
         return dataMap;
     }

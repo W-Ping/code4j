@@ -1,6 +1,7 @@
 package com.code4j.util;
 
 import com.code4j.config.Code4jConstants;
+import com.code4j.enums.JdbcType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -241,36 +242,13 @@ public class SystemUtil {
 
     /**
      * @param jdbcType
+     * @param columnCount
      * @return
      */
-    public static String convertJdbcType(String jdbcType) {
-        if (jdbcType == null) {
-            return null;
-        }
-        if (jdbcType.toLowerCase().startsWith("int")) {
-            final String size = jdbcType.substring(3);
-            if (size != null && Long.parseLong(size) >= 8L) {
-                return "BIGINT";
-            }
-            return "INTEGER";
-        } else if ("byte".equalsIgnoreCase(jdbcType)) {
-            return "TINYINT";
-        } else if ("byte[]".equalsIgnoreCase(jdbcType)) {
-            return "VARBINARY";
-        } else if ("LocalDate".equalsIgnoreCase(jdbcType)) {
-            return "DATE";
-        } else if ("LocalDateTime".equalsIgnoreCase(jdbcType)) {
-            return "TIMESTAMP";
-        } else if ("LocalTime".equalsIgnoreCase(jdbcType)) {
-            return "TIME";
-        } else if ("float".equalsIgnoreCase(jdbcType)) {
-            return "REAL";
-        } else if ("Long".equalsIgnoreCase(jdbcType) || "BigInteger".equalsIgnoreCase(jdbcType)) {
-            return "BIGINT";
-        } else if ("Short".equalsIgnoreCase(jdbcType)) {
-            return "SMALLINT";
-        } else if ("BigDecimal".equalsIgnoreCase(jdbcType)) {
-            return "NUMERIC";
+    public static String convertJdbcType(String jdbcType, Integer columnCount) {
+        if (columnCount != null) {
+            final JdbcType jt = JdbcType.forCode(columnCount.intValue());
+            return jt.name();
         }
         return jdbcType;
     }

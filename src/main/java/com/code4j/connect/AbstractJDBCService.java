@@ -605,9 +605,10 @@ public abstract class AbstractJDBCService<T extends BaseInfo> implements JDBCSer
                     continue;
                 }
                 columnCache.add(columnName);
+                Integer dataTypeNum = rs.getInt("DATA_TYPE");
                 String dataType = rs.getString("TYPE_NAME");
                 String columnComment = rs.getString("REMARKS");
-                JdbcMapJavaInfo jdbcMapJavaInfo = new JdbcMapJavaInfo(columnName, dataType, columnComment, columnName.equalsIgnoreCase(pk));
+                JdbcMapJavaInfo jdbcMapJavaInfo = new JdbcMapJavaInfo(columnName, dataType, columnComment, columnName.equalsIgnoreCase(pk), dataTypeNum);
                 result.add(jdbcMapJavaInfo);
             }
             return result;

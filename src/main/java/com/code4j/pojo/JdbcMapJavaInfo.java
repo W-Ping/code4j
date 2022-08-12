@@ -25,6 +25,10 @@ public class JdbcMapJavaInfo {
      */
     private String jdbcType;
     /**
+     *
+     */
+    private String xmlJdbcType;
+    /**
      * java属性
      */
     private String javaProperty;
@@ -65,25 +69,27 @@ public class JdbcMapJavaInfo {
         return Objects.hash(comment, column, jdbcType, javaProperty, javaType, ignore);
     }
 
-    public JdbcMapJavaInfo(String column, String jdbcType, String comment, boolean primaryKey) {
+    public JdbcMapJavaInfo(String column, String jdbcType, String comment, boolean primaryKey, Integer jdbcTypeNum) {
         this.column = column;
         this.primaryKey = primaryKey;
-        this.jdbcType = toJdbcType(jdbcType);
+        this.xmlJdbcType = toJdbcType(jdbcType, jdbcTypeNum);
+        this.jdbcType = jdbcType;
         this.comment = comment;
         this.javaProperty = toJavaProperty(column);
         this.javaType = toJavaType(this.jdbcType);
     }
 
-    private String toJdbcType(String jdbcType) {
-        if (jdbcType == null) {
-            return null;
-        }
-        if ("INT".equalsIgnoreCase(jdbcType) || "INT UNSIGNED".equalsIgnoreCase(jdbcType)) {
-            return "INTEGER";
-        } else if ("DATETIME".equalsIgnoreCase(jdbcType)) {
-            return "TIMESTAMP";
-        }
-        return jdbcType;
+    private String toJdbcType(String jdbcType, Integer jdbcTypeNum) {
+//        if (jdbcType == null) {
+//            return null;
+//        }
+//        if ("INT".equalsIgnoreCase(jdbcType) || "INT UNSIGNED".equalsIgnoreCase(jdbcType)) {
+//            return "INTEGER";
+//        } else if ("DATETIME".equalsIgnoreCase(jdbcType)) {
+//            return "TIMESTAMP";
+//        }
+//        return jdbcType;
+        return SystemUtil.convertJdbcType(jdbcType, jdbcTypeNum);
     }
 
     private String toJavaType(String jdbcType) {
@@ -156,5 +162,13 @@ public class JdbcMapJavaInfo {
 
     public void setPrimaryKey(boolean primaryKey) {
         this.primaryKey = primaryKey;
+    }
+
+    public String getXmlJdbcType() {
+        return xmlJdbcType;
+    }
+
+    public void setXmlJdbcType(String xmlJdbcType) {
+        this.xmlJdbcType = xmlJdbcType;
     }
 }
