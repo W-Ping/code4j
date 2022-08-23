@@ -225,7 +225,8 @@ public class SystemUtil {
         } else if ("DATE".equals(dataType) || "YEAR".equals(dataType)) {
             return "java.util.Date";
         } else if ("TIMESTAMP".equals(dataType) || "DATETIME".equals(dataType)) {
-            return "java.sql.Timestamp";
+//            return "java.sql.Timestamp";
+            return "java.time.LocalDateTime";
         } else if ("BIT".equals(dataType) || "BOOL".equals(dataType)) {
             return "java.lang.Boolean";
         } else if ("BLOB".equals(dataType)) {
