@@ -351,9 +351,6 @@ public class GenerateCodeAction implements ActionListener {
             packages.addAll(superPackages);
         }
         dataMap.put("packages", packages);
-        for (String aPackage : packages) {
-            log.info("Service import {}", aPackage);
-        }
         return dataMap;
     }
 
@@ -427,12 +424,8 @@ public class GenerateCodeAction implements ActionListener {
             }
         } else {
             if (isMybatisPlus) {
-                String pojoName = null;
-                String packageName = null;
-                if (superPojoInfo.isGenericFlag()) {
-                    pojoName = doPojo != null ? doPojo.getPojoName() : "XXXEntity";
-                    packageName = doPojo != null ? doPojo.getPackageName() : Code4jConstants.DEFAULT_DO_PACKAGE;
-                }
+                String pojoName = doPojo != null ? doPojo.getPojoName() : "XXXEntity";
+                String packageName = doPojo != null ? doPojo.getPackageName() : Code4jConstants.DEFAULT_DO_PACKAGE;
                 if (baseTemplateInfo instanceof InterfaceParamsInfo) {
                     //默认使用mybatisplus IService
                     superPojoInfo = new SuperPojoInfo("IService", pojoName, packageName);
@@ -452,7 +445,9 @@ public class GenerateCodeAction implements ActionListener {
                     packages.add(superPojoInfo.getGenericMapperPackageName());
                     packages.add("com.baomidou.mybatisplus.extension.service.impl.ServiceImpl");
                 }
-                packages.add(superPojoInfo.getGenericPagePath());
+                if (superPojoInfo != null) {
+                    packages.add(superPojoInfo.getGenericPagePath());
+                }
             }
         }
         return packages;

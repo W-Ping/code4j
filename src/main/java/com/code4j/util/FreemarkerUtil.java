@@ -1,7 +1,10 @@
 package com.code4j.util;
 
+import com.code4j.enums.DataSourceTypeEnum;
 import com.code4j.enums.TemplateTypeEnum;
 import com.code4j.pojo.BaseTemplateInfo;
+import com.code4j.pojo.JdbcSourceInfo;
+import com.code4j.pojo.JdbcTableInfo;
 import com.code4j.pojo.TemplateInfo;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -43,7 +46,20 @@ public class FreemarkerUtil {
                 if (outFile.exists()) {
                     outFile.delete();
                 }
-                Template template = configuration.getTemplate(templateTypeEnum.getTemplateName());
+                String templateName = templateTypeEnum.getTemplateName();
+                if (TemplateTypeEnum.XML == templateTypeEnum) {
+                    final JdbcTableInfo jdbcTableInfo = baseTemplateInfo.getJdbcTableInfo();
+                    if (jdbcTableInfo != null) {
+                        final JdbcSourceInfo jdbcSourceInfo = jdbcTableInfo.getJdbcSourceInfo();
+                        if (jdbcSourceInfo != null) {
+                            final DataSourceTypeEnum dataSourceTypeEnum = jdbcSourceInfo.getDataSourceTypeEnum();
+                            if (DataSourceTypeEnum.POSTGRESQL == dataSourceTypeEnum) {
+                                templateName = templateTypeEnum.getTemplateName().replace(".", "_" + DataSourceTypeEnum.POSTGRESQL.typeName() + ".");
+                            }
+                        }
+                    }
+                }
+                Template template = configuration.getTemplate(templateName);
                 out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile), FreemarkerUtil.UTF_8));
                 template.process(dataMap, out);
                 out.flush();

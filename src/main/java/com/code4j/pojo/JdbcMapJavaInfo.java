@@ -24,6 +24,7 @@ public class JdbcMapJavaInfo {
      * 数据库类型
      */
     private String jdbcType;
+
     /**
      *
      */
@@ -34,9 +35,13 @@ public class JdbcMapJavaInfo {
     private String javaProperty;
 
     /**
-     * java类型
+     * java类型 java.lang.String
      */
     private String javaType;
+    /**
+     * 数据库类型名称 String
+     */
+    private String javaTypeSimpleName;
 
     /**
      * 是否忽略此字段
@@ -77,6 +82,14 @@ public class JdbcMapJavaInfo {
         this.comment = comment;
         this.javaProperty = toJavaProperty(column);
         this.javaType = toJavaType(this.jdbcType);
+        this.javaTypeSimpleName = toJavaTypeSimpleName(javaType);
+    }
+
+    private String toJavaTypeSimpleName(String jdbcType) {
+        if (jdbcType.indexOf(".") > 0) {
+            return jdbcType.substring(jdbcType.lastIndexOf(".") + 1);
+        }
+        return jdbcType;
     }
 
     private String toJdbcType(String jdbcType, Integer jdbcTypeNum) {
@@ -145,6 +158,9 @@ public class JdbcMapJavaInfo {
     }
 
     public void setJavaType(final String javaType) {
+        if (javaType != null && javaType.length() > 0) {
+            this.setJavaTypeSimpleName(toJavaTypeSimpleName(javaType));
+        }
         this.javaType = javaType;
     }
 
@@ -170,5 +186,13 @@ public class JdbcMapJavaInfo {
 
     public void setXmlJdbcType(String xmlJdbcType) {
         this.xmlJdbcType = xmlJdbcType;
+    }
+
+    public String getJavaTypeSimpleName() {
+        return javaTypeSimpleName;
+    }
+
+    public void setJavaTypeSimpleName(String javaTypeSimpleName) {
+        this.javaTypeSimpleName = javaTypeSimpleName;
     }
 }

@@ -27,23 +27,23 @@ public class ${(baseInfo.pojoName)!}{
 
 <#if (baseInfo.interfaceParamsInfo)??>
     @Resource
-    private ${baseInfo.interfaceParamsInfo.pojoName} ${baseInfo.interfaceParamsInfo.pojoName};
+    private ${baseInfo.interfaceParamsInfo.pojoName} ${baseInfo.interfaceParamsInfo.pojoName?uncap_first};
 </#if>
 
 <#if (apiInfos)??>
-    <#list apiInfos as model>
-      /**
-       * ${model.apiDesc}
-       *
-       * @return ${model.resultType?no_esc}
-       */
-     <#if isSwagger==true>
-     @ApiOperation(value = "${model.apiDesc}")
-     </#if>
-     @RequestMapping(value = "${model.requestMapping}",method = ${model.method})
-     public  ${model.resultType?no_esc}  ${model.apiId}(<#if (model.parameterInfos)??><#list model.parameterInfos as pm>${pm.annotations?no_esc} ${pm.parameterType?no_esc} ${pm.parameterName}<#if pm_has_next>,</#if></#list></#if>){
+   <#list apiInfos as model>
+    /**
+     * ${model.apiDesc}
+     *
+     * @return
+     */
+    <#if isSwagger==true>
+    @ApiOperation(value = "${model.apiDesc}")
+    </#if>
+    @RequestMapping(value = "${model.requestMapping}",method = ${model.method})
+    public ${model.resultType?no_esc}  ${model.apiId}(<#if (model.parameterInfos)??><#list model.parameterInfos as pm>${pm.annotations?no_esc} ${pm.parameterType?no_esc} ${pm.parameterName}<#if pm_has_next>,</#if></#list></#if>){
         return null;
-     }
-    </#list>
+    }
+   </#list>
 </#if>
 }

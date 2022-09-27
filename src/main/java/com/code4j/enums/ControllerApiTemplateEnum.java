@@ -22,11 +22,11 @@ public enum ControllerApiTemplateEnum {
     /**
      *
      */
-    DETAIL("detail", "详情", "getDetail", "object","get/{id}", RequestMethod.GET),
+    DETAIL("detail", "查询详情", "getDetail", "object","get/{id}", RequestMethod.GET),
     /**
      *
      */
-    SEARCH("search", "查询", "search", "objectList","/search", RequestMethod.POST),
+    SEARCH("search", "查询列表", "search", "objectList","/search", RequestMethod.POST),
     /**
      *
      */

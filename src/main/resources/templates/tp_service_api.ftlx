@@ -15,5 +15,4 @@ public interface ${(pojo.pojoName)!} extends ${pojo.superPojoInfo.pojoName}<#if 
     <#else>
 public interface ${(pojo.pojoName)!}{
 </#if>
-
 }

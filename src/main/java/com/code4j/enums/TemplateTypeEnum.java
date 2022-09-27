@@ -13,7 +13,7 @@ public enum TemplateTypeEnum {
     /**
      *
      */
-    DO("DO", "tp_do.ftlx", ".java", "Entity 配置"),
+    DO("Entity", "tp_do.ftlx", ".java", "Entity 配置"),
     /**
      *
      */
