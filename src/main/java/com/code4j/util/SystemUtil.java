@@ -2,6 +2,8 @@ package com.code4j.util;
 
 import com.code4j.config.Code4jConstants;
 import com.code4j.enums.JdbcType;
+import com.github.houbb.markdown.toc.util.StringUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +81,9 @@ public class SystemUtil {
      * @param content
      */
     public static void writeFile(String path, String content) {
+        if(StringUtil.isEmpty(content)){
+            return ;
+        }
         try {
             File file = new File(path);
             if (file.exists()) {
